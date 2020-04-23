@@ -1,0 +1,129 @@
+.layout {
+  width: 600px;
+  height: 600px;
+}
+
+.box-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.box {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 1;
+  width: 400px;
+  height: 425px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  transition-property: width opacity;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+
+.menu {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 1;
+  width: 400px;
+  height: 175px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  transition-property: opacity;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+
+.menu-closed {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 0;
+  width: 400px;
+  height: 175px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  transition-property: opacity;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+
+.box-closed {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 0;
+  width: 400px;
+  height: 425px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  transition-property: opacity width;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+
+.box-container {
+  width: 400px;
+  height: 375px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.box-wide {
+  margin-top: 10px;
+  margin-left: 40px;
+  width: 600px;
+  height: 425px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+  transition-property: width;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-in-out;
+}
+
+.header {
+  width: 600px;
+  height: 30px;
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  list-style: none;
+}
+
+.header-title {
+  padding-left: 50px;
+  margin-right: 10px;
+}
+
+.header-title2 {
+  margin-left: 10px;
+}
+
+.header-button {
+  padding: 8px 20px;
+  display: inline-block;
+}
+
+.timer-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  width: 400px;
+}
