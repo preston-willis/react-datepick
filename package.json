@@ -1,8 +1,10 @@
 {
-  "name": "react-datepick",
-  "version": "0.1.0",
-  "private": true,
+  "name": "@preston10/react-datepick",
+  "version": "0.1.2",
+  "private": false,
   "dependencies": {
+    "@material-ui/core": "^4.9.11",
+    "@material-ui/icons": "^4.9.1",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -10,8 +12,12 @@
     "@types/node": "^12.12.35",
     "@types/react": "^16.9.34",
     "@types/react-dom": "^16.9.6",
+    "date-fns": "^2.12.0",
+    "material-ui": "^0.20.2",
+    "ms": "^2.1.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-list": "^0.8.14",
     "react-scripts": "3.4.1",
     "typescript": "^3.7.5"
   },
