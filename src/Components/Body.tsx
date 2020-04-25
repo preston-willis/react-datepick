@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import {
   Button,
   Box,
@@ -11,7 +11,11 @@ import {
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ReactList from "react-list";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import { DateSelect } from "./DateSelect.tsx";
 import "./Styling.css";
+import DateRange from "./DateRange.tsx";
+import ms from "ms";
 import {
   format,
   formatDistance,
@@ -29,8 +33,22 @@ interface State {
   setDateTextContents(c): void;
   setDateError(f): void;
   setDaysInMonth(g): void;
-  getData(h): void;
-  formatDateforDisplay(i): void;
+  setTimeError(j): void;
+  setTimeTextContents(k): void;
+  setTermAnchorEl(x): void;
+  setIntervalAnchorEl(y): void;
+  setQuickSelectText(z): void;
+  setBodySubTabIndex(m): void;
+  setResetDateOnRefresh(n): void;
+  dateFormatter: Intl.DateTimeFormat;
+  resetDateOnRefresh: boolean[];
+  bodySubTabIndex: number;
+  timeTextContents: string[];
+  quickSelectText: string[];
+  termAnchorEl: any;
+  intervalAnchorEl: any;
+  timeIntervalText: string[][];
+  timeError: boolean[];
   boxClass: string;
   index: number;
   dates: Date[];
@@ -38,6 +56,7 @@ interface State {
   dateTextContents: string[];
   dateError: boolean[];
   daysInMonth: number[];
+  timeFormat: string;
 }
 
 enum property {
@@ -49,6 +68,21 @@ enum property {
 export function Body(props: State) {
   const day = ["S", "M", "T", "W", "T", "F", "S"];
 
+  const terms = ["ago", "from now"];
+  const intervals = [
+    "1 minute",
+    "15 minutes",
+    "30 minutes",
+    "1 hour",
+    "6 hours",
+    "12 hours",
+    "1 day",
+    "7 days",
+    "30 days",
+    "90 days",
+    "1 year",
+  ];
+
   const getVariant = (item) => {
     if (item == props.dates[props.index].getDate()) {
       return "contained";
@@ -56,6 +90,12 @@ export function Body(props: State) {
       return "outlined";
     }
   };
+
+  function formatDateForDisplay(index) {
+    var date = new Date(props.dates[index]);
+    date.setDate(date.getDate());
+    return props.dateFormatter.format(date);
+  }
 
   function toggleBox() {
     if (props.boxClass == "box") {
@@ -125,16 +165,68 @@ export function Body(props: State) {
     stateFormatter(error, props.dateError, props.setDateError);
   }
 
+  function handleTimeChange(event) {
+    var error = false;
+
+    stateFormatter(event, props.timeTextContents, props.setTimeTextContents);
+
+    try {
+      var date = new Date(
+        props.dates[props.index].toDateString() + " " + event
+      );
+      if (!isNaN(date.getTime())) {
+        stateFormatter(date, props.dates, props.setDates);
+      } else {
+        error = true;
+      }
+    } catch (err) {
+      error = true;
+    }
+
+    stateFormatter(error, props.timeError, props.setTimeError);
+  }
+
   function handleClick(key, value) {
     resetDate(key, value);
     stateFormatter(
-      props.formatDateforDisplay(props.index),
+      formatDateForDisplay(props.index),
       props.dateTextContents,
       props.setDateTextContents
     );
+    stateFormatter(
+      props.dates[props.index].toLocaleTimeString(props.timeFormat),
+      props.timeTextContents,
+      props.setTimeTextContents
+    );
+  }
+
+  function handleDateSelectClick(text) {
+    console.log(text);
+    var date = new Date();
+    if (text.includes("from now")) {
+      date.setTime(date.getTime() + ms(text.split(" ").slice(0, 2).join(" ")));
+    } else {
+      date.setTime(date.getTime() - ms(text.split(" ").slice(0, 2).join(" ")));
+    }
+    stateFormatter(date, props.dates, props.setDates);
+    stateFormatter(
+      false,
+      props.resetDateOnRefresh,
+      props.setResetDateOnRefresh
+    );
+  }
+
+  function setNow() {
+    stateFormatter(new Date(), props.dates, props.setDates);
+    stateFormatter(true, props.resetDateOnRefresh, props.setResetDateOnRefresh);
   }
 
   function resetDate(key, value) {
+    stateFormatter(
+      false,
+      props.resetDateOnRefresh,
+      props.setResetDateOnRefresh
+    );
     var date = props.dates[props.index];
 
     if (key == property.day) {
@@ -153,7 +245,6 @@ export function Body(props: State) {
       0
     ).getDate();
     stateFormatter(daysInMonthContent, props.daysInMonth, props.setDaysInMonth);
-    props.getData(props.dates);
   }
 
   function renderItem(index) {
@@ -225,88 +316,145 @@ export function Body(props: State) {
     }
   }
 
+  function renderTabButton(title) {
+    return (
+      <Button
+        color="primary"
+        variant="text"
+        style={{
+          minHeight: "35px",
+          maxHeight: "35px",
+          minWidth: "100px",
+          maxWidth: "100px",
+        }}
+      >
+        {title}
+      </Button>
+    );
+  }
+
+  function renderTab(index) {
+    if (index !== 0) {
+      props.setBoxClass("box-tiny");
+    } else {
+      props.setBoxClass("box");
+    }
+    props.setBodySubTabIndex(index);
+  }
+
+  useEffect(() => {
+    props.setQuickSelectText(["15 minutes", "ago"]);
+  }, []);
+
+  useEffect(() => {
+    props.setBodySubTabIndex(0);
+    props.setBoxClass("box");
+  }, [props.index]);
+
+  useEffect(() => {
+    if (props.boxClass == "box-closed") {
+      props.setBodySubTabIndex(0);
+    }
+  }, [props.boxClass]);
+
+  useEffect(() => {
+    props.setDateTextContents([
+      formatDateForDisplay(0),
+      formatDateForDisplay(1),
+    ]);
+    props.setTimeTextContents([
+      props.dates[0].toLocaleTimeString(props.timeFormat),
+      props.dates[1].toLocaleTimeString(props.timeFormat),
+    ]);
+  }, [props.dates]);
+
+  function getDateSelectObj() {
+    return {
+      quickSelectText: props.quickSelectText,
+      termAnchorEl: props.termAnchorEl,
+      intervalAnchorEl: props.intervalAnchorEl,
+      timeIntervalText: props.timeIntervalText,
+      handleClick: handleDateSelectClick,
+      setTermAnchorEl: props.setTermAnchorEl,
+      setIntervalAnchorEl: props.setIntervalAnchorEl,
+      setQuickSelectText: props.setQuickSelectText,
+      terms: intervals,
+      intervals: terms,
+    };
+  }
+
   return (
     <Box className={props.boxClass}>
-      <Box className="box-container">
-        <Box className="box-header" mt={2} mb={2}>
-          <Box mt={2}>
-            <Button
-              onClick={() => updateTransition(0)}
-              style={{
-                maxWidth: "30px",
-                maxHeight: "30px",
-                minWidth: "30px",
-                minHeight: "30px",
-              }}
-              size="small"
-              variant="text"
-            >
-              <ArrowForwardIosIcon />
-            </Button>
-          </Box>
-          <Box mt={2} mr={1}>
-            <Typography color="textPrimary" variant="h5">
-              {props.dates[props.index].toLocaleString("default", {
-                month: "long",
-              })}
-            </Typography>
-          </Box>
-          <Box mt={2}>
-            <Typography color="secondary" variant="h5">
-              {props.dates[props.index].getFullYear()}
-            </Typography>
-          </Box>
-          <Box ml={1} mt={2}>
-            <Button
-              onClick={() => updateTransition(1)}
-              style={{
-                maxWidth: "30px",
-                maxHeight: "30px",
-                minWidth: "30px",
-                minHeight: "30px",
-              }}
-              size="small"
-              color="secondary"
-              variant="text"
-            >
-              <ArrowBackIosIcon />
-            </Button>
-          </Box>
-        </Box>
-        <Box ml={4}>
-          <Grid
-            container
-            justify="flex-start"
-            spacing={1}
+      <Tabs
+        onSelect={(index) => renderTab(index)}
+        selectedIndex={props.bodySubTabIndex}
+      >
+        <TabList
+          style={{
+            width: "400px",
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "row",
+            listStyle: "none",
+            height: "25px",
+          }}
+        >
+          <Tab>
+            <Box ml={1} style={{ height: "10px" }}>
+              {renderTabButton("Absolute")}
+            </Box>
+          </Tab>
+          <Tab>
+            <Box ml={1} style={{ height: "10px" }}>
+              {renderTabButton("Relative")}
+            </Box>
+          </Tab>
+          <Tab>
+            <Box ml={1} style={{ height: "10px" }}>
+              {renderTabButton("Now")}
+            </Box>
+          </Tab>
+        </TabList>
+        <TabPanel>
+          <Box
             style={{
-              maxWidth: "300px",
-              maxHeight: "200px",
-              minWidth: "300px",
-              minHeight: "200px",
+              alignItems: "center",
+              display: "flex",
+              flexDirection: "column",
+              width: "400px",
             }}
           >
-            {[...Array(7).keys()].map((item) => (
-              <Grid item>
+            <Box className="box-header" mt={2} mb={2}>
+              <Box mt={2}>
                 <Button
-                  disableRipple={true}
-                  color="secondary"
+                  onClick={() => updateTransition(0)}
+                  style={{
+                    maxWidth: "30px",
+                    maxHeight: "30px",
+                    minWidth: "30px",
+                    minHeight: "30px",
+                  }}
                   size="small"
                   variant="text"
-                  style={{
-                    maxWidth: "30px",
-                    maxHeight: "30px",
-                    minWidth: "30px",
-                    minHeight: "30px",
-                  }}
                 >
-                  {day[item]}
+                  <ArrowForwardIosIcon />
                 </Button>
-              </Grid>
-            ))}
-            {[...Array(props.daysInMonth[props.index]).keys()].map((item) => (
-              <Grid key={item} item>
+              </Box>
+              <Box mt={2} mr={1}>
+                <Typography color="textPrimary" variant="h5">
+                  {props.dates[props.index].toLocaleString("default", {
+                    month: "long",
+                  })}
+                </Typography>
+              </Box>
+              <Box mt={2}>
+                <Typography color="secondary" variant="h5">
+                  {props.dates[props.index].getFullYear()}
+                </Typography>
+              </Box>
+              <Box ml={1} mt={2}>
                 <Button
-                  onClick={() => handleClick("day", item + 1)}
+                  onClick={() => updateTransition(1)}
                   style={{
                     maxWidth: "30px",
                     maxHeight: "30px",
@@ -314,29 +462,135 @@ export function Body(props: State) {
                     minHeight: "30px",
                   }}
                   size="small"
-                  color="primary"
-                  variant={getVariant(item + 1)}
-                  disableRipple
+                  color="secondary"
+                  variant="text"
                 >
-                  {item + 1}
+                  <ArrowBackIosIcon />
                 </Button>
+              </Box>
+            </Box>
+            <Box ml={4}>
+              <Grid
+                container
+                justify="flex-start"
+                spacing={1}
+                style={{
+                  maxWidth: "300px",
+                  maxHeight: "200px",
+                  minWidth: "300px",
+                  minHeight: "200px",
+                }}
+              >
+                {[...Array(7).keys()].map((item) => (
+                  <Grid item>
+                    <Button
+                      disableRipple={true}
+                      color="secondary"
+                      size="small"
+                      variant="text"
+                      style={{
+                        maxWidth: "30px",
+                        maxHeight: "30px",
+                        minWidth: "30px",
+                        minHeight: "30px",
+                      }}
+                    >
+                      {day[item]}
+                    </Button>
+                  </Grid>
+                ))}
+                {[...Array(props.daysInMonth[props.index]).keys()].map(
+                  (item) => (
+                    <Grid key={item} item>
+                      <Button
+                        onClick={() => handleClick("day", item + 1)}
+                        style={{
+                          maxWidth: "30px",
+                          maxHeight: "30px",
+                          minWidth: "30px",
+                          minHeight: "30px",
+                        }}
+                        size="small"
+                        color="primary"
+                        variant={getVariant(item + 1)}
+                        disableRipple
+                      >
+                        {item + 1}
+                      </Button>
+                    </Grid>
+                  )
+                )}
               </Grid>
-            ))}
-          </Grid>
-        </Box>
-        <Box mt={7}>
-          <TextField
-            error={props.dateError[props.index]}
-            fullWidth={true}
-            value={props.dateTextContents[props.index]}
-            size="small"
-            id="outlined-basic"
-            label={getTextTitle()}
-            variant="outlined"
-            onChange={(event) => handleTextDate(event.target.value)}
-          />
-        </Box>
-      </Box>
+            </Box>
+            <Box mt={7} style={{ display: "flex", flexDirection: "row" }}>
+              <TextField
+                error={props.dateError[props.index]}
+                fullWidth={false}
+                style={{ width: 125 }}
+                value={props.dateTextContents[props.index]}
+                size="small"
+                id="outlined-basic"
+                label={getTextTitle()}
+                variant="outlined"
+                onChange={(event) => handleTextDate(event.target.value)}
+              />
+              <TextField
+                error={props.timeError[props.index]}
+                fullWidth={false}
+                style={{ width: 125 }}
+                value={props.timeTextContents[props.index]}
+                size="small"
+                id="outlined-basic"
+                label="Time"
+                variant="outlined"
+                onChange={(event) => handleTimeChange(event.target.value)}
+              />
+            </Box>
+          </Box>
+        </TabPanel>
+        <TabPanel>
+          <Box
+            mt={5}
+            style={{
+              alignItems: "center",
+              display: "flex",
+              flexDirection: "column",
+              width: "400px",
+              height: "225px",
+            }}
+          >
+            <DateSelect {...getDateSelectObj()} />
+          </Box>
+        </TabPanel>
+        <TabPanel>
+          <Box
+            style={{
+              alignItems: "center",
+              display: "flex",
+              flexDirection: "column",
+              width: "400px",
+              height: "225px",
+            }}
+          >
+            <Box mt={3} style={{ width: "300px" }}>
+              <Typography>
+                Setting time to now means that on every refresh, the current
+                time will be reset.
+              </Typography>
+            </Box>
+            <Box mt={3}>
+              <Button
+                onClick={() => setNow()}
+                variant="contained"
+                color="primary"
+                style={{ width: "200px", height: "40px" }}
+              >
+                Set time to now
+              </Button>
+            </Box>
+          </Box>
+        </TabPanel>
+      </Tabs>
       {renderScroll()}
     </Box>
   );

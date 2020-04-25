@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Box,
@@ -32,11 +32,14 @@ interface Inputs {
   getData(x): void;
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
+  timeIntervalText?: string[][];
+  timeFormat?: string;
 }
 
 export function Layout(props: Inputs) {
-  const [start, setStart] = useState(true);
-  const [recentlySelected, setRecentlySelected] = useState([]);
+  const [resetDateOnRefresh, setResetDateOnRefresh] = useState([false, false]);
+  const [displayedDate, setDisplayedDate] = useState([new Date(), new Date()]);
+  const [recentlySelected, setRecentlySelected] = useState([[]]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [termAnchorEl, setTermAnchorEl] = useState(null);
   const [intervalAnchorEl, setIntervalAnchorEl] = useState(null);
@@ -59,15 +62,49 @@ export function Layout(props: Inputs) {
   ]);
   const [timerRunning, setTimerRunning] = useState(false);
   const [menuError, setMenuError] = useState(false);
+  const [bodySubTabIndex, setBodySubTabIndex] = useState(0);
   const [dateError, setDateError] = useState([false, false]);
+  const [timeError, setTimeError] = useState([false, false]);
   const [dateTextContents, setDateTextContents] = useState([
-    formatDateforDisplay(0),
-    formatDateforDisplay(1),
+    formatDateForDisplay(0),
+    formatDateForDisplay(1),
   ]);
+  var timeFormat: string = "en-US";
+  var timeIntervalText: string[][] = [
+    ["Last", "15 Minutes"],
+    ["Last", "30 Minutes"],
+    ["Last", "1 Hour"],
+    ["Last", "24 hours"],
+    ["Last", "7 days"],
+    ["Last", "30 days"],
+    ["Last", "90 days"],
+    ["Last", "1 year"],
+  ];
+  var dateFormatter = new Intl.DateTimeFormat("en", {
+    year: "numeric",
+    month: "numeric",
+    day: "2-digit",
+  });
+  const [timeTextContents, setTimeTextContents] = useState([
+    new Date().toLocaleTimeString(timeFormat),
+    new Date().toLocaleTimeString(timeFormat),
+  ]);
+
+  useEffect(() => {
+    if (props.timeFormat) {
+      timeFormat = props.timeFormat;
+    }
+    if (props.timeIntervalText) {
+      timeIntervalText = props.timeIntervalText;
+    }
+    if (props.dateFormatter) {
+      dateFormatter = props.dateFormatter;
+    }
+  }, []);
 
   const toggleDropdown = (num) => {
     if (num != 1 && tabSelected != num) {
-      if (boxClass == "box-closed") {
+      if (boxClass == "box-closed" || boxClass == "box-tiny") {
         setBoxClass("box");
         setMenuClass("menu-closed");
       }
@@ -91,71 +128,102 @@ export function Layout(props: Inputs) {
     }
   };
 
-  function formatDateforDisplay(index) {
-    var date = new Date(dates[index]);
+  function formatDateForDisplay(index) {
+    var date = new Date(displayedDate[index]);
     date.setDate(date.getDate());
-    if (props.dateFormatter) {
-      return props.dateFormatter.format(date);
-    } else {
-      return new Intl.DateTimeFormat("en", {
-        year: "numeric",
-        month: "numeric",
-        day: "2-digit",
-      }).format(date);
-    }
+    return new Intl.DateTimeFormat("en", {
+      year: "numeric",
+      month: "numeric",
+      day: "2-digit",
+    }).format(date);
   }
 
   function getMenuObj() {
     return {
-      menuError: menuError,
-      setMenuError: setMenuError,
-      timerRunning: timerRunning,
-      setTimerRunning: setTimerRunning,
-      refreshInterval: refreshInterval,
-      setRefreshInterval: setRefreshInterval,
-      anchorEl: anchorEl,
-      setAnchorEl: setAnchorEl,
-      refreshIntervalUnits: refreshIntervalUnits,
-      setRefreshIntervalUnits: setRefreshIntervalUnits,
-      refreshIntervalEnabled: refreshIntervalEnabled,
-      setRefreshIntervalEnabled: setRefreshIntervalEnabled,
-      menuClass: menuClass,
+      menuError,
+      setMenuError,
+      timerRunning,
+      setTimerRunning,
+      refreshInterval,
+      setRefreshInterval,
+      anchorEl,
+      setAnchorEl,
+      refreshIntervalUnits,
+      setRefreshIntervalUnits,
+      refreshIntervalEnabled,
+      setRefreshIntervalEnabled,
+      menuClass,
     };
   }
 
   function getBodyObj(index) {
     return {
-      daysInMonth: daysInMonth,
-      setDaysInMonth: setDaysInMonth,
-      propertySelected: propertySelected,
-      setPropertySelected: setPropertySelected,
-      boxClass: boxClass,
-      setBoxClass: setBoxClass,
-      index: index,
-      dates: dates,
-      setDates: setDates,
-      dateError: dateError,
-      setDateError: setDateError,
-      dateTextContents: dateTextContents,
-      setDateTextContents: setDateTextContents,
-      getData: props.getData,
-      formatDateforDisplay: formatDateforDisplay,
+      daysInMonth,
+      setDaysInMonth,
+      propertySelected,
+      setPropertySelected,
+      boxClass,
+      setBoxClass,
+      index,
+      dates,
+      setDates,
+      dateError,
+      setDateError,
+      dateTextContents,
+      setDateTextContents,
+      formatDateForDisplay,
+      timeError,
+      setTimeError,
+      timeTextContents,
+      setTimeTextContents,
+      timeFormat,
+      bodySubTabIndex,
+      setBodySubTabIndex,
+      resetDateOnRefresh,
+      setResetDateOnRefresh,
+      dateFormatter,
     };
   }
 
   function getQuickSelectObj() {
     return {
-      boxClass: boxClass,
-      recentlySelected: recentlySelected,
-      setRecentlySelected: setRecentlySelected,
-      setDates: setDates,
-      setQuickSelectText: setQuickSelectText,
-      quickSelectText: quickSelectText,
-      setTermAnchorEl: setTermAnchorEl,
-      termAnchorEl: termAnchorEl,
-      setIntervalAnchorEl: setIntervalAnchorEl,
-      intervalAnchorEl: intervalAnchorEl,
+      boxClass,
+      recentlySelected,
+      setRecentlySelected,
+      setDates,
+      setQuickSelectText,
+      quickSelectText,
+      setTermAnchorEl,
+      termAnchorEl,
+      setIntervalAnchorEl,
+      intervalAnchorEl,
+      getData: props.getData,
+      dates,
+      setTimeTextContents,
+      setDateTextContents,
+      formatDateForDisplay,
+      dateTextContents,
+      timeIntervalText,
+      timeFormat,
+      setDisplayedDate,
     };
+  }
+
+  function getDateSelectObj() {
+    return {
+      quickSelectText,
+      termAnchorEl,
+      intervalAnchorEl,
+      timeIntervalText,
+      setTermAnchorEl,
+      setIntervalAnchorEl,
+      setQuickSelectText,
+    };
+  }
+
+  function applyChanges() {
+    props.getData(dates);
+    setDisplayedDate(dates);
   }
 
   return (
@@ -190,25 +258,43 @@ export function Layout(props: Inputs) {
                     refreshIntervalUnits={refreshIntervalUnits}
                     resetFn={props.resetFn}
                     setTimerRunning={setTimerRunning}
+                    dates={dates}
+                    setDates={setDates}
+                    resetDateOnRefresh={resetDateOnRefresh}
                   />
                 </Button>
               </Box>
             </Tab>
+            <Box ml={1}>
+              <Button
+                onClick={() => applyChanges()}
+                variant="contained"
+                color="primary"
+                style={{
+                  maxWidth: "80px",
+                  minWidth: "80px",
+                  maxHeight: "35px",
+                  minHeight: "35px",
+                }}
+              >
+                Apply
+              </Button>
+            </Box>
             <Tab>
               <Box ml={2}>
                 <Button color="primary" variant="text" className="header-title">
-                  {formatDateforDisplay(0) +
+                  {formatDateForDisplay(0) +
                     " @ " +
-                    dates[0].toLocaleTimeString("en-US")}
+                    displayedDate[0].toLocaleTimeString(timeFormat)}
                 </Button>
               </Box>
             </Tab>
             <span>&#10230;</span>
             <Tab>
               <Button color="primary" variant="text" className="header-title2">
-                {formatDateforDisplay(1) +
+                {formatDateForDisplay(1) +
                   " @ " +
-                  dates[1].toLocaleTimeString("en-US")}
+                  displayedDate[1].toLocaleTimeString(timeFormat)}
               </Button>
             </Tab>
           </TabList>
@@ -219,10 +305,10 @@ export function Layout(props: Inputs) {
             <MenuView {...getMenuObj()} />
           </TabPanel>
           <TabPanel>
-            <Body {...getBodyObj(0)} />
+            <Body {...getBodyObj(0)} {...getDateSelectObj()} />
           </TabPanel>
           <TabPanel>
-            <Body {...getBodyObj(1)} />
+            <Body {...getBodyObj(1)} {...getDateSelectObj()} />
           </TabPanel>
         </Tabs>
       </div>

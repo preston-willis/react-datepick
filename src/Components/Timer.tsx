@@ -2,12 +2,16 @@ import Timer from "react-compound-timer";
 import React, { useState } from "react";
 import ms from "ms";
 
+
 interface Inputs {
   refreshInterval: number;
   refreshIntervalUnits: string;
   timerRunning: boolean;
+  dates: Date[]
+  resetDateOnRefresh: boolean[];
   resetFn(): void;
   setTimerRunning(x): void;
+  setDates(g): void;
 }
 
 export function TimerUI(props: Inputs) {
@@ -22,6 +26,15 @@ export function TimerUI(props: Inputs) {
   }
 
   function resetTimer() {
+    var temp = props.dates
+    var i;
+    for (i=0; i<2; i++) {
+      if (props.resetDateOnRefresh[i]) {
+        temp[i] = new Date()
+      }
+      props.setDates(temp)
+    }
+
     props.resetFn();
     props.setTimerRunning(false);
     props.setTimerRunning(true);

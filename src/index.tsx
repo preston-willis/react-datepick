@@ -8,6 +8,8 @@ interface Inputs {
   resetFn(): void;
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
+  timeIntervalText?: string[][];
+  timeFormat?: string;
 }
 
 export default function DatePick(props: Inputs) {
