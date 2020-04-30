@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Divider } from "@material-ui/core";
 import ms from "ms";
 import {
   Button,
@@ -11,28 +12,25 @@ import {
   Menu,
   MenuItem,
 } from "@material-ui/core";
-import { DateSelect } from "./DateSelect.tsx";
+import { DateSelect } from "./DateSelect2.tsx";
 import DateRange from "./DateRange.tsx";
 
 interface Inputs {
   boxClass: string;
   recentlySelected: string[][];
-  quickSelectText: string[];
   termAnchorEl: any;
   intervalAnchorEl: any;
-  dates: Date[];
   timeIntervalText: string[][];
   timeFormat: string;
-  setDisplayedDate(t): void;
+  quickSelectContent: string[];
+  setDateRange(h): void;
+  setQuickSelectContent(r): void;
+  dateRange: DateRange;
+  applyChanges(): void;
   getData(f): void;
-  setDateTextContents(f): void;
-  setTimeTextContents(d): void;
-  formatDateForDisplay(d): void;
+  setRecentlySelected(i): void;
   setTermAnchorEl(w): void;
   setIntervalAnchorEl(w): void;
-  setQuickSelectText(z): void;
-  setRecentlySelected(x): void;
-  setDates(y): void;
 }
 
 export function QuickSelect(props: Inputs) {
@@ -51,31 +49,24 @@ export function QuickSelect(props: Inputs) {
     "1 year",
   ];
 
+  var dateRange: DateRange;
+
   useEffect(() => {
-    props.setQuickSelectText(["Last", "15 minutes"])
+    dateRange = props.dateRange;
   }, []);
 
-  useEffect(() => {
-    props.setDateTextContents([
-      props.formatDateForDisplay(0),
-      props.formatDateForDisplay(1),
-    ]);
-    props.setTimeTextContents([
-      props.dates[0].toLocaleTimeString(props.timeFormat),
-      props.dates[1].toLocaleTimeString(props.timeFormat),
-    ]);
-  }, [props.dates]);
-
   function handleClick(text) {
-    var object = new DateRange(text.join(' '));
-    object.quickSelectFormat();
+    props.setQuickSelectContent(text);
+  }
 
-    props.setDates([object.startDate, object.endDate]);
-    props.getData([object.startDate, object.endDate])
-    props.setDisplayedDate([object.startDate, object.endDate])
+  function apply() {
+    dateRange = props.dateRange;
+    dateRange.setQuickSelect(props.quickSelectContent);
+    props.setDateRange(dateRange);
+    props.applyChanges();
 
     var recentlySelected = props.recentlySelected;
-    recentlySelected.unshift(text);
+    recentlySelected.unshift(props.quickSelectContent);
     if (recentlySelected.length > 6) {
       recentlySelected.pop();
     }
@@ -84,14 +75,14 @@ export function QuickSelect(props: Inputs) {
 
   function getDateSelectObj() {
     return {
-      quickSelectText: props.quickSelectText,
+      quickSelectContent: props.quickSelectContent,
+      dateRange,
+      handleClick,
       termAnchorEl: props.termAnchorEl,
       intervalAnchorEl: props.intervalAnchorEl,
       timeIntervalText: props.timeIntervalText,
-      handleClick,
       setTermAnchorEl: props.setTermAnchorEl,
       setIntervalAnchorEl: props.setIntervalAnchorEl,
-      setQuickSelectText: props.setQuickSelectText,
       terms,
       intervals,
     };
@@ -101,56 +92,91 @@ export function QuickSelect(props: Inputs) {
     <Box className={props.boxClass}>
       <Box style={{ flexDirection: "column" }}>
         <Box ml={2} mt={2}>
-          <Typography color="textPrimary" variant="h5">
+          <Typography variant="subtitle1" color="textPrimary">
             Quick Select
           </Typography>
-          <DateSelect {...getDateSelectObj()} />
+          <Box mt={1} style={{ display: "flex", flexDirection: "row" }}>
+            <DateSelect {...getDateSelectObj()} />
+            <Box ml={1}>
+              <Button
+                onClick={() => apply()}
+                variant="contained"
+                color="primary"
+                style={{
+                  maxWidth: "80px",
+                  minWidth: "80px",
+                  maxHeight: "40px",
+                  minHeight: "40px",
+                }}
+              >
+                Apply
+              </Button>
+            </Box>
+          </Box>
         </Box>
         <Box ml={2} mt={2} style={{ display: "flex", flexDirection: "column" }}>
-          <Typography color="textPrimary" variant="h5">
+          <Divider light />
+          <Box mt={1} />
+          <Typography color="textPrimary" variant="subtitle1">
             Commonly used
           </Typography>
           <Box style={{ display: "flex", flexDirection: "row" }}>
             <Box style={{ display: "flex", flexDirection: "column" }}>
               {props.timeIntervalText.slice(0, 4).map((object) => (
-                <Button
-                  onClick={() => props.setQuickSelectText(object)}
-                  color="primary"
-                  variant="text"
-                  size="small"
-                  style={{
-                    maxWidth: "150px",
-                    minWidth: "150px",
-                    maxHeight: "30px",
-                    minHeight: "30px",
-                  }}
-                >
-                  {object.join(' ')}
-                </Button>
+                <Box>
+                  <Button
+                    onClick={() => handleClick(object)}
+                    color="primary"
+                    variant="text"
+                    size="small"
+                    disableFocusRipple={true}
+                    disableRipple={true}
+                    style={{
+                      backgroundColor: "transparent",
+                      maxWidth: "150px",
+                      minWidth: "150px",
+                      maxHeight: "30px",
+                      minHeight: "30px",
+                    }}
+                  ></Button>
+                  <Box mt={-3}>
+                    <Typography color="primary" variant="subtitle2">
+                      {object.join(" ")}
+                    </Typography>
+                  </Box>
+                </Box>
               ))}
             </Box>
             <Box style={{ display: "flex", flexDirection: "column" }}>
               {props.timeIntervalText.slice(4, 8).map((object) => (
-                <Button
-                  onClick={() => props.setQuickSelectText(object)}
-                  color="primary"
-                  variant="text"
-                  size="small"
-                  style={{
-                    maxWidth: "150px",
-                    minWidth: "150px",
-                    maxHeight: "30px",
-                    minHeight: "30px",
-                  }}
-                >
-                  {object.join(' ')}
-                </Button>
+                <Box>
+                  <Button
+                    onClick={() => handleClick(object)}
+                    color="primary"
+                    variant="text"
+                    size="small"
+                    style={{
+                      textAlign: "left",
+                      maxWidth: "150px",
+                      minWidth: "150px",
+                      maxHeight: "30px",
+                      minHeight: "30px",
+                    }}
+                  ></Button>
+                  <Box mt={-3}>
+                    <Typography color="primary" variant="subtitle2">
+                      {object.join(" ")}
+                    </Typography>
+                  </Box>
+                </Box>
               ))}
             </Box>
           </Box>
         </Box>
         <Box ml={2} mt={2} style={{ flexDirection: "column" }}>
-          <Typography color="textPrimary" variant="h5">
+          <Divider light />
+          <Box mt={1} />
+          <Typography color="textPrimary" variant="subtitle1">
             Recently used date ranges
           </Typography>
           <Box mt={1} style={{ display: "flex", flexDirection: "row" }}>
@@ -158,40 +184,52 @@ export function QuickSelect(props: Inputs) {
               {props.recentlySelected
                 .slice(0, Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
-                  <Button
-                    onClick={() => props.setQuickSelectText(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    style={{
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      maxHeight: "30px",
-                      minHeight: "30px",
-                    }}
-                  >
-                    {object.join(' ')}
-                  </Button>
+                  <Box>
+                    <Button
+                      onClick={() => handleClick(object)}
+                      color="primary"
+                      variant="text"
+                      size="small"
+                      style={{
+                        textAlign: "left",
+                        maxWidth: "150px",
+                        minWidth: "150px",
+                        maxHeight: "30px",
+                        minHeight: "30px",
+                      }}
+                    ></Button>
+                    <Box mt={-3}>
+                      <Typography color="primary" variant="subtitle2">
+                        {object.join(" ")}
+                      </Typography>
+                    </Box>
+                  </Box>
                 ))}
             </Box>
             <Box style={{ display: "flex", flexDirection: "column" }}>
               {props.recentlySelected
                 .slice(Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
-                  <Button
-                    onClick={() => props.setQuickSelectText(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    style={{
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      maxHeight: "30px",
-                      minHeight: "30px",
-                    }}
-                  >
-                    {object.join(' ')}
-                  </Button>
+                  <Box>
+                    <Button
+                      onClick={() => handleClick(object)}
+                      color="primary"
+                      variant="text"
+                      size="small"
+                      style={{
+                        textAlign: "left",
+                        maxWidth: "150px",
+                        minWidth: "150px",
+                        maxHeight: "30px",
+                        minHeight: "30px",
+                      }}
+                    ></Button>
+                    <Box mt={-3}>
+                      <Typography color="primary" variant="subtitle2">
+                        {object.join(" ")}
+                      </Typography>
+                    </Box>
+                  </Box>
                 ))}
             </Box>
           </Box>

@@ -12,7 +12,4 @@ function getData(data) {
   console.log(data);
 }
 
-ReactDOM.render(
-  <DateRangePicker resetFn={reset} getData={getData} />,
-  app
-);
+ReactDOM.render(<DateRangePicker resetFn={reset} getData={getData} />, app);

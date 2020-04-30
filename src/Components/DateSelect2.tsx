@@ -21,8 +21,8 @@ interface Inputs {
   terms: string[];
   intervals: string[];
   dateRange: DateRange;
-  relativeSelectContent: string[];
-  applyFn(j): void;
+  quickSelectContent: string[];
+  handleClick(f): void;
   setTermAnchorEl(x): void;
   setIntervalAnchorEl(y): void;
 }
@@ -55,9 +55,9 @@ export function DateSelect(props: Inputs) {
 
   function handleClose(identifier, item) {
     setAnchorEl(identifier, null);
-    var words = props.relativeSelectContent;
+    var words = props.quickSelectContent;
     words[identifier] = item;
-    props.applyFn(words);
+    props.handleClick(words);
   }
 
   function renderdropdownMenu(identifier) {
@@ -82,7 +82,7 @@ export function DateSelect(props: Inputs) {
           onClick={(event) => handleMenuClick(identifier, event)}
         >
           <Box style={{ display: "flex", flexDirection: "row" }}>
-            {props.relativeSelectContent[identifier]}
+            {props.quickSelectContent[identifier]}
             <Box ml={1} />
             <ExpandMoreIcon />
           </Box>
@@ -93,7 +93,7 @@ export function DateSelect(props: Inputs) {
           keepMounted
           open={Boolean(getAnchorEl(identifier))}
           onClose={() =>
-            handleClose(identifier, props.relativeSelectContent[identifier])
+            handleClose(identifier, props.quickSelectContent[identifier])
           }
         >
           {list.map((item) => (

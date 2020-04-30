@@ -80,7 +80,7 @@ export function MenuView(props: Inputs) {
                 onChange={() => toggleSwitch()}
               />
             }
-            label="Refresh Interval"
+            label="Timer"
           />
         </FormGroup>
       </Box>

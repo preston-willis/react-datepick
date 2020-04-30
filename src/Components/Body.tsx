@@ -1,4 +1,5 @@
 import React, { Fragment, useEffect } from "react";
+import { Divider } from "@material-ui/core";
 import {
   Button,
   Box,
@@ -27,33 +28,30 @@ import {
 } from "date-fns";
 
 interface State {
-  setDates(y): void;
   setBoxClass(z): void;
   setPropertySelected(a): void;
-  setDateTextContents(c): void;
   setDateError(f): void;
   setDaysInMonth(g): void;
   setTimeError(j): void;
-  setTimeTextContents(k): void;
   setTermAnchorEl(x): void;
   setIntervalAnchorEl(y): void;
-  setQuickSelectText(z): void;
   setBodySubTabIndex(m): void;
-  setResetDateOnRefresh(n): void;
-  dateFormatter: Intl.DateTimeFormat;
-  resetDateOnRefresh: boolean[];
-  bodySubTabIndex: number;
+  setDateRange(h): void;
+  setDateTextContents(k): void;
+  setTimeTextContents(j): void;
+  setRelativeSelectContent(f): void;
+  relativeSelectContent: string[];
+  dateTextContents: string[];
   timeTextContents: string[];
-  quickSelectText: string[];
+  dateRange: DateRange;
+  bodySubTabIndex: number;
   termAnchorEl: any;
   intervalAnchorEl: any;
   timeIntervalText: string[][];
   timeError: boolean[];
   boxClass: string;
   index: number;
-  dates: Date[];
   propertySelected: number;
-  dateTextContents: string[];
   dateError: boolean[];
   daysInMonth: number[];
   timeFormat: string;
@@ -67,7 +65,7 @@ enum property {
 
 export function Body(props: State) {
   const day = ["S", "M", "T", "W", "T", "F", "S"];
-
+  var dateRange: DateRange;
   const terms = ["ago", "from now"];
   const intervals = [
     "1 minute",
@@ -83,19 +81,17 @@ export function Body(props: State) {
     "1 year",
   ];
 
+  useEffect(() => {
+    dateRange = props.dateRange;
+  }, []);
+
   const getVariant = (item) => {
-    if (item == props.dates[props.index].getDate()) {
+    if (item == props.dateRange.dates[props.index].getDate()) {
       return "contained";
     } else {
       return "outlined";
     }
   };
-
-  function formatDateForDisplay(index) {
-    var date = new Date(props.dates[index]);
-    date.setDate(date.getDate());
-    return props.dateFormatter.format(date);
-  }
 
   function toggleBox() {
     if (props.boxClass == "box") {
@@ -172,10 +168,10 @@ export function Body(props: State) {
 
     try {
       var date = new Date(
-        props.dates[props.index].toDateString() + " " + event
+        dateRange.dates[props.index].toDateString() + " " + event
       );
       if (!isNaN(date.getTime())) {
-        stateFormatter(date, props.dates, props.setDates);
+        dateRange.dates[props.index] = date;
       } else {
         error = true;
       }
@@ -189,45 +185,32 @@ export function Body(props: State) {
   function handleClick(key, value) {
     resetDate(key, value);
     stateFormatter(
-      formatDateForDisplay(props.index),
+      DateRange.formatAbsoluteDate(dateRange.dates[props.index]),
       props.dateTextContents,
       props.setDateTextContents
     );
     stateFormatter(
-      props.dates[props.index].toLocaleTimeString(props.timeFormat),
+      dateRange.dates[props.index].toLocaleTimeString(props.timeFormat),
       props.timeTextContents,
       props.setTimeTextContents
     );
   }
 
-  function handleDateSelectClick(text) {
-    console.log(text);
-    var date = new Date();
-    if (text.includes("from now")) {
-      date.setTime(date.getTime() + ms(text.split(" ").slice(0, 2).join(" ")));
-    } else {
-      date.setTime(date.getTime() - ms(text.split(" ").slice(0, 2).join(" ")));
-    }
-    stateFormatter(date, props.dates, props.setDates);
-    stateFormatter(
-      false,
-      props.resetDateOnRefresh,
-      props.setResetDateOnRefresh
-    );
+  function applyFn(text) {
+    dateRange = props.dateRange;
+    dateRange.setRelative(text.join(" "), props.index);
+    props.setDateRange(dateRange);
   }
 
   function setNow() {
-    stateFormatter(new Date(), props.dates, props.setDates);
-    stateFormatter(true, props.resetDateOnRefresh, props.setResetDateOnRefresh);
+    dateRange = props.dateRange;
+    dateRange.setNow(props.index);
+    props.setDateRange(dateRange);
   }
 
   function resetDate(key, value) {
-    stateFormatter(
-      false,
-      props.resetDateOnRefresh,
-      props.setResetDateOnRefresh
-    );
-    var date = props.dates[props.index];
+    dateRange = props.dateRange;
+    var date = dateRange.dates[props.index];
 
     if (key == property.day) {
       date = new Date(date.getFullYear(), date.getMonth(), value);
@@ -237,7 +220,10 @@ export function Body(props: State) {
       date = new Date(value, date.getMonth(), date.getDate());
     }
 
-    stateFormatter(date, props.dates, props.setDates);
+    dateRange.setDate(date, props.index);
+    props.setDateRange(dateRange);
+
+    console.log("NEW DATE: " + dateRange.displayText[props.index]);
 
     var daysInMonthContent = new Date(
       date.getFullYear(),
@@ -343,10 +329,6 @@ export function Body(props: State) {
   }
 
   useEffect(() => {
-    props.setQuickSelectText(["15 minutes", "ago"]);
-  }, []);
-
-  useEffect(() => {
     props.setBodySubTabIndex(0);
     props.setBoxClass("box");
   }, [props.index]);
@@ -357,27 +339,16 @@ export function Body(props: State) {
     }
   }, [props.boxClass]);
 
-  useEffect(() => {
-    props.setDateTextContents([
-      formatDateForDisplay(0),
-      formatDateForDisplay(1),
-    ]);
-    props.setTimeTextContents([
-      props.dates[0].toLocaleTimeString(props.timeFormat),
-      props.dates[1].toLocaleTimeString(props.timeFormat),
-    ]);
-  }, [props.dates]);
-
   function getDateSelectObj() {
     return {
-      quickSelectText: props.quickSelectText,
       termAnchorEl: props.termAnchorEl,
       intervalAnchorEl: props.intervalAnchorEl,
       timeIntervalText: props.timeIntervalText,
-      handleClick: handleDateSelectClick,
       setTermAnchorEl: props.setTermAnchorEl,
+      relativeSelectContent: props.relativeSelectContent,
+      applyFn,
+      dateRange,
       setIntervalAnchorEl: props.setIntervalAnchorEl,
-      setQuickSelectText: props.setQuickSelectText,
       terms: intervals,
       intervals: terms,
     };
@@ -442,14 +413,17 @@ export function Body(props: State) {
               </Box>
               <Box mt={2} mr={1}>
                 <Typography color="textPrimary" variant="h5">
-                  {props.dates[props.index].toLocaleString("default", {
-                    month: "long",
-                  })}
+                  {props.dateRange.dates[props.index].toLocaleString(
+                    "default",
+                    {
+                      month: "long",
+                    }
+                  )}
                 </Typography>
               </Box>
               <Box mt={2}>
                 <Typography color="secondary" variant="h5">
-                  {props.dates[props.index].getFullYear()}
+                  {props.dateRange.dates[props.index].getFullYear()}
                 </Typography>
               </Box>
               <Box ml={1} mt={2}>
@@ -497,6 +471,31 @@ export function Body(props: State) {
                     >
                       {day[item]}
                     </Button>
+                  </Grid>
+                ))}
+
+                {[
+                  ...Array(
+                    new Date(
+                      props.dateRange.dates[props.index].getFullYear(),
+                      props.dateRange.dates[props.index].getMonth(),
+                      1
+                    ).getDay()
+                  ).keys(),
+                ].map((item) => (
+                  <Grid key={item} item>
+                    <Button
+                      style={{
+                        maxWidth: "30px",
+                        maxHeight: "30px",
+                        minWidth: "30px",
+                        minHeight: "30px",
+                      }}
+                      size="small"
+                      color="primary"
+                      variant="contained"
+                      disableRipple
+                    ></Button>
                   </Grid>
                 ))}
                 {[...Array(props.daysInMonth[props.index]).keys()].map(
@@ -550,7 +549,7 @@ export function Body(props: State) {
         </TabPanel>
         <TabPanel>
           <Box
-            mt={5}
+            mt={7}
             style={{
               alignItems: "center",
               display: "flex",

@@ -17,6 +17,7 @@ import {
   getDay,
   getYear,
 } from "date-fns";
+import DateRange from "./DateRange.tsx";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import Timer from "react-compound-timer";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -25,6 +26,9 @@ import { MenuView } from "./Menu.tsx";
 import { TimerUI } from "./Timer.tsx";
 import { QuickSelect } from "./QuickSelect.tsx";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
+import KeyboardTabIcon from "@material-ui/icons/KeyboardTab";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import "./Styling.css";
 
 interface Inputs {
@@ -36,40 +40,62 @@ interface Inputs {
   timeFormat?: string;
 }
 
+var timeFormat: string = "en-US";
+
 export function Layout(props: Inputs) {
-  const [resetDateOnRefresh, setResetDateOnRefresh] = useState([false, false]);
-  const [displayedDate, setDisplayedDate] = useState([new Date(), new Date()]);
-  const [recentlySelected, setRecentlySelected] = useState([[]]);
-  const [anchorEl, setAnchorEl] = useState(null);
+  // DATES
+  const [propertySelected, setPropertySelected] = useState(-1);
+  const [daysInMonth, setDaysInMonth] = useState([
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(),
+    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(),
+  ]);
+  const [dateRange, setDateRange] = useState(new DateRange());
+
+  // TAB LOGIC
+  const [tabSelected, setTabSelected] = useState(-1);
+  const [bodySubTabIndex, setBodySubTabIndex] = useState(0);
+
+  // DROPDOWN DATA
   const [termAnchorEl, setTermAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [intervalAnchorEl, setIntervalAnchorEl] = useState(null);
-  const [quickSelectText, setQuickSelectText] = useState([
-    "last",
+  const [quickSelectContent, setQuickSelectContent] = useState([
+    "Last",
     "15 minutes",
   ]);
-  const [refreshIntervalUnits, setRefreshIntervalUnits] = useState("Minutes");
-  const [tabSelected, setTabSelected] = useState(-1);
-  const [propertySelected, setPropertySelected] = useState(-1);
+  const [relativeSelectContent, setRelativeSelectContent] = useState([
+    "15 minutes",
+    "ago",
+  ]);
 
+  // QUICK SELECT
+  const [recentlySelected, setRecentlySelected] = useState([[]]);
+
+  // TEXT FIELD INPUT
+  const [dateTextContents, setDateTextContents] = useState([
+    DateRange.formatAbsoluteDate(new Date()),
+    DateRange.formatAbsoluteDate(new Date()),
+  ]);
+  const [timeTextContents, setTimeTextContents] = useState([
+    new Date().toLocaleTimeString(timeFormat),
+    new Date().toLocaleTimeString(timeFormat),
+  ]);
+
+  // STYLING
   const [menuClass, setMenuClass] = useState("menu-closed");
   const [boxClass, setBoxClass] = useState("box-closed");
+
+  // TIMER
+  const [refreshIntervalUnits, setRefreshIntervalUnits] = useState("Minutes");
   const [refreshInterval, setRefreshInterval] = useState(-1);
   const [refreshIntervalEnabled, setRefreshIntervalEnabled] = useState(false);
-  const [dates, setDates] = useState([new Date(), new Date()]);
-  const [daysInMonth, setDaysInMonth] = useState([
-    new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate(),
-    new Date(new Date().getFullYear(), new Date().getMonth(), 0).getDate(),
-  ]);
   const [timerRunning, setTimerRunning] = useState(false);
+
+  // TEXT FIELD ERRORS
   const [menuError, setMenuError] = useState(false);
-  const [bodySubTabIndex, setBodySubTabIndex] = useState(0);
   const [dateError, setDateError] = useState([false, false]);
   const [timeError, setTimeError] = useState([false, false]);
-  const [dateTextContents, setDateTextContents] = useState([
-    formatDateForDisplay(0),
-    formatDateForDisplay(1),
-  ]);
-  var timeFormat: string = "en-US";
+
   var timeIntervalText: string[][] = [
     ["Last", "15 Minutes"],
     ["Last", "30 Minutes"],
@@ -85,10 +111,6 @@ export function Layout(props: Inputs) {
     month: "numeric",
     day: "2-digit",
   });
-  const [timeTextContents, setTimeTextContents] = useState([
-    new Date().toLocaleTimeString(timeFormat),
-    new Date().toLocaleTimeString(timeFormat),
-  ]);
 
   useEffect(() => {
     if (props.timeFormat) {
@@ -128,16 +150,6 @@ export function Layout(props: Inputs) {
     }
   };
 
-  function formatDateForDisplay(index) {
-    var date = new Date(displayedDate[index]);
-    date.setDate(date.getDate());
-    return new Intl.DateTimeFormat("en", {
-      year: "numeric",
-      month: "numeric",
-      day: "2-digit",
-    }).format(date);
-  }
-
   function getMenuObj() {
     return {
       menuError,
@@ -158,6 +170,8 @@ export function Layout(props: Inputs) {
 
   function getBodyObj(index) {
     return {
+      relativeSelectContent,
+      setRelativeSelectContent,
       daysInMonth,
       setDaysInMonth,
       propertySelected,
@@ -165,69 +179,117 @@ export function Layout(props: Inputs) {
       boxClass,
       setBoxClass,
       index,
-      dates,
-      setDates,
-      dateError,
-      setDateError,
-      dateTextContents,
-      setDateTextContents,
-      formatDateForDisplay,
-      timeError,
-      setTimeError,
       timeTextContents,
       setTimeTextContents,
+      setDateTextContents,
+      dateTextContents,
+      dateError,
+      setDateError,
+      timeError,
+      setTimeError,
       timeFormat,
       bodySubTabIndex,
       setBodySubTabIndex,
-      resetDateOnRefresh,
-      setResetDateOnRefresh,
       dateFormatter,
+      dateRange,
+      setDateRange: resetDateRange,
     };
   }
 
   function getQuickSelectObj() {
     return {
+      dateRange,
+      applyChanges,
+      quickSelectContent,
+      setQuickSelectContent,
+      setDateRange: resetDateRange,
       boxClass,
       recentlySelected,
       setRecentlySelected,
-      setDates,
-      setQuickSelectText,
-      quickSelectText,
       setTermAnchorEl,
       termAnchorEl,
       setIntervalAnchorEl,
       intervalAnchorEl,
       getData: props.getData,
-      dates,
-      setTimeTextContents,
-      setDateTextContents,
-      formatDateForDisplay,
-      dateTextContents,
       timeIntervalText,
       timeFormat,
-      setDisplayedDate,
     };
   }
 
   function getDateSelectObj() {
     return {
-      quickSelectText,
       termAnchorEl,
       intervalAnchorEl,
       timeIntervalText,
       setTermAnchorEl,
       setIntervalAnchorEl,
-      setQuickSelectText,
     };
   }
 
-  function applyChanges() {
-    props.getData(dates);
-    setDisplayedDate(dates);
+  function resetDateRange(previous) {
+    var newObject = new DateRange();
+    newObject.load(previous);
+    setDateRange(newObject);
   }
 
+  function applyChanges() {
+    dateRange.applyChanges();
+    resetDateRange(dateRange);
+    console.log("DATE APPLIED: " + dateRange.finalDisplayText);
+
+    props.getData(dateRange.dates);
+
+    if (timerRunning) {
+      setTimerRunning(false);
+    }
+  }
+
+  function refreshTime() {
+    dateRange.refreshDates();
+    resetDateRange(dateRange);
+
+    props.getData(dateRange);
+    setTimerRunning(false);
+    setTimerRunning(true);
+  }
+
+  function getApplyText() {
+    if (timerRunning) {
+      return (
+        <Box style={{ display: "flex", flexDirection: "row" }}>
+          <RefreshIcon />
+          <Box ml={1} />
+          Refresh
+        </Box>
+      );
+    } else {
+      return (
+        <Box style={{ display: "flex", flexDirection: "row" }}>
+          <KeyboardTabIcon />
+          <Box ml={1} />
+          Update
+        </Box>
+      );
+    }
+  }
+
+  const theme = createMuiTheme({
+    typography: {
+      subtitle1: {
+        fontSize: 16,
+        fontWeight: 600,
+      },
+      subtitle2: {
+        color: "primary",
+      },
+      button: {
+        fontWeight: 500,
+      },
+    },
+  });
+
   return (
-    <MuiThemeProvider theme={props.theme}>
+    <MuiThemeProvider theme={theme}>
       <div className="layout">
         <Tabs onSelect={(index) => toggleDropdown(index)}>
           <TabList className="header">
@@ -238,11 +300,12 @@ export function Layout(props: Inputs) {
                 style={{
                   minHeight: "35px",
                   maxHeight: "35px",
-                  minWidth: "35px",
-                  maxWidth: "35px",
+                  minWidth: "80px",
+                  maxWidth: "80px",
                 }}
               >
                 <CalendarTodayIcon />
+                <ExpandMoreIcon />
               </Button>
             </Tab>
             <Tab>
@@ -251,16 +314,19 @@ export function Layout(props: Inputs) {
                   color="primary"
                   variant="contained"
                   className="header-button"
+                  style={{
+                    minHeight: "35px",
+                    maxHeight: "35px",
+                    minWidth: "80px",
+                    maxWidth: "80px",
+                  }}
                 >
                   <TimerUI
                     timerRunning={timerRunning}
                     refreshInterval={refreshInterval}
                     refreshIntervalUnits={refreshIntervalUnits}
                     resetFn={props.resetFn}
-                    setTimerRunning={setTimerRunning}
-                    dates={dates}
-                    setDates={setDates}
-                    resetDateOnRefresh={resetDateOnRefresh}
+                    applyFn={refreshTime}
                   />
                 </Button>
               </Box>
@@ -271,30 +337,26 @@ export function Layout(props: Inputs) {
                 variant="contained"
                 color="primary"
                 style={{
-                  maxWidth: "80px",
-                  minWidth: "80px",
+                  maxWidth: "150px",
+                  minWidth: "150px",
                   maxHeight: "35px",
                   minHeight: "35px",
                 }}
               >
-                Apply
+                {getApplyText()}
               </Button>
             </Box>
             <Tab>
               <Box ml={2}>
                 <Button color="primary" variant="text" className="header-title">
-                  {formatDateForDisplay(0) +
-                    " @ " +
-                    displayedDate[0].toLocaleTimeString(timeFormat)}
+                  {dateRange.finalDisplayText[0]}
                 </Button>
               </Box>
             </Tab>
             <span>&#10230;</span>
             <Tab>
               <Button color="primary" variant="text" className="header-title2">
-                {formatDateForDisplay(1) +
-                  " @ " +
-                  displayedDate[1].toLocaleTimeString(timeFormat)}
+                {dateRange.finalDisplayText[1]}
               </Button>
             </Tab>
           </TabList>
