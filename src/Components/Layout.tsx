@@ -36,13 +36,17 @@ interface Inputs {
   getData(x): void;
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
-  timeIntervalText?: string[][];
+  commonlyUsedText?: string[][];
+  quickSelectTerms?: string[];
+  quickSelectIntervals?: string[];
+  relativeTerms?: string[];
+  relativeIntervals?: string[];
   timeFormat?: string;
 }
 
 var timeFormat: string = "en-US";
 
-export function Layout(props: Inputs) {
+export const Layout: React.FC<Inputs> = (props) => {
   // DATES
   const [propertySelected, setPropertySelected] = useState(-1);
   const [daysInMonth, setDaysInMonth] = useState([
@@ -96,7 +100,7 @@ export function Layout(props: Inputs) {
   const [dateError, setDateError] = useState([false, false]);
   const [timeError, setTimeError] = useState([false, false]);
 
-  var timeIntervalText: string[][] = [
+  var commonlyUsedText: string[][] = [
     ["Last", "15 Minutes"],
     ["Last", "30 Minutes"],
     ["Last", "1 Hour"],
@@ -106,6 +110,26 @@ export function Layout(props: Inputs) {
     ["Last", "90 days"],
     ["Last", "1 year"],
   ];
+
+  var quickSelectTerms = ["Last", "Next"];
+  var quickSelectIntervals = [
+    "1 minute",
+    "15 minutes",
+    "30 minutes",
+    "1 hour",
+    "6 hours",
+    "12 hours",
+    "1 day",
+    "7 days",
+    "30 days",
+    "90 days",
+    "1 year",
+  ];
+
+  var relativeIntervals = quickSelectIntervals;
+
+  var relativeTerms = ["ago", "from now"];
+
   var dateFormatter = new Intl.DateTimeFormat("en", {
     year: "numeric",
     month: "numeric",
@@ -116,15 +140,27 @@ export function Layout(props: Inputs) {
     if (props.timeFormat) {
       timeFormat = props.timeFormat;
     }
-    if (props.timeIntervalText) {
-      timeIntervalText = props.timeIntervalText;
+    if (props.quickSelectTerms) {
+      quickSelectTerms = props.quickSelectTerms;
+    }
+    if (props.quickSelectIntervals) {
+      quickSelectIntervals = props.quickSelectIntervals;
+    }
+    if (props.relativeTerms) {
+      relativeTerms = props.relativeTerms;
+    }
+    if (props.relativeIntervals) {
+      relativeIntervals = props.relativeIntervals;
+    }
+    if (props.commonlyUsedText) {
+      commonlyUsedText = props.commonlyUsedText;
     }
     if (props.dateFormatter) {
       dateFormatter = props.dateFormatter;
     }
   }, []);
 
-  const toggleDropdown = (num) => {
+  const toggleDropdown = (num: number): void => {
     if (num != 1 && tabSelected != num) {
       if (boxClass == "box-closed" || boxClass == "box-tiny") {
         setBoxClass("box");
@@ -168,7 +204,7 @@ export function Layout(props: Inputs) {
     };
   }
 
-  function getBodyObj(index) {
+  function getBodyObj(index: number) {
     return {
       relativeSelectContent,
       setRelativeSelectContent,
@@ -192,6 +228,8 @@ export function Layout(props: Inputs) {
       setBodySubTabIndex,
       dateFormatter,
       dateRange,
+      relativeTerms,
+      relativeIntervals,
       setDateRange: resetDateRange,
     };
   }
@@ -207,11 +245,13 @@ export function Layout(props: Inputs) {
       recentlySelected,
       setRecentlySelected,
       setTermAnchorEl,
+      quickSelectTerms,
+      quickSelectIntervals,
       termAnchorEl,
       setIntervalAnchorEl,
       intervalAnchorEl,
       getData: props.getData,
-      timeIntervalText,
+      commonlyUsedText,
       timeFormat,
     };
   }
@@ -220,22 +260,22 @@ export function Layout(props: Inputs) {
     return {
       termAnchorEl,
       intervalAnchorEl,
-      timeIntervalText,
+      commonlyUsedText,
       setTermAnchorEl,
       setIntervalAnchorEl,
     };
   }
 
-  function resetDateRange(previous) {
+  function resetDateRange(previous: DateRange): void {
     var newObject = new DateRange();
     newObject.load(previous);
     setDateRange(newObject);
   }
 
-  function applyChanges() {
+  function applyChanges(): void {
     dateRange.applyChanges();
     resetDateRange(dateRange);
-    console.log("DATE APPLIED: " + dateRange.finalDisplayText);
+    console.log(dateRange);
 
     props.getData(dateRange.dates);
 
@@ -244,7 +284,7 @@ export function Layout(props: Inputs) {
     }
   }
 
-  function refreshTime() {
+  function refreshTime(): void {
     dateRange.refreshDates();
     resetDateRange(dateRange);
 
@@ -253,7 +293,7 @@ export function Layout(props: Inputs) {
     setTimerRunning(true);
   }
 
-  function getApplyText() {
+  function getApplyText(): JSX.Element {
     if (timerRunning) {
       return (
         <Box style={{ display: "flex", flexDirection: "row" }}>
@@ -376,4 +416,4 @@ export function Layout(props: Inputs) {
       </div>
     </MuiThemeProvider>
   );
-}
+};

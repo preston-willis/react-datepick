@@ -9,6 +9,10 @@ interface Inputs {
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
   timeIntervalText?: string[][];
+  quickSelectTerms?: string[];
+  quickSelectIntervals?: string[];
+  relativeTerms?: string[];
+  relativeIntervals?: string[];
   timeFormat?: string;
 }
 

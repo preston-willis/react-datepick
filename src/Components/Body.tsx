@@ -13,7 +13,7 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ReactList from "react-list";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { DateSelect } from "./DateSelect.tsx";
+import { DateSelect } from "./RelativeDateSelect.tsx";
 import "./Styling.css";
 import DateRange from "./DateRange.tsx";
 import ms from "ms";
@@ -27,7 +27,7 @@ import {
   getYear,
 } from "date-fns";
 
-interface State {
+interface Inputs {
   setBoxClass(z): void;
   setPropertySelected(a): void;
   setDateError(f): void;
@@ -40,6 +40,8 @@ interface State {
   setDateTextContents(k): void;
   setTimeTextContents(j): void;
   setRelativeSelectContent(f): void;
+  relativeTerms: string[];
+  relativeIntervals: string[];
   relativeSelectContent: string[];
   dateTextContents: string[];
   timeTextContents: string[];
@@ -47,7 +49,6 @@ interface State {
   bodySubTabIndex: number;
   termAnchorEl: any;
   intervalAnchorEl: any;
-  timeIntervalText: string[][];
   timeError: boolean[];
   boxClass: string;
   index: number;
@@ -63,29 +64,10 @@ enum property {
   year = "year",
 }
 
-export function Body(props: State) {
+export const Body: React.FC<Inputs> = (props) => {
   const day = ["S", "M", "T", "W", "T", "F", "S"];
-  var dateRange: DateRange;
-  const terms = ["ago", "from now"];
-  const intervals = [
-    "1 minute",
-    "15 minutes",
-    "30 minutes",
-    "1 hour",
-    "6 hours",
-    "12 hours",
-    "1 day",
-    "7 days",
-    "30 days",
-    "90 days",
-    "1 year",
-  ];
 
-  useEffect(() => {
-    dateRange = props.dateRange;
-  }, []);
-
-  const getVariant = (item) => {
+  const getVariant = (item: number) => {
     if (item == props.dateRange.dates[props.index].getDate()) {
       return "contained";
     } else {
@@ -93,7 +75,7 @@ export function Body(props: State) {
     }
   };
 
-  function toggleBox() {
+  function toggleBox(): void {
     if (props.boxClass == "box") {
       props.setBoxClass("box-wide");
     } else {
@@ -101,7 +83,7 @@ export function Body(props: State) {
     }
   }
 
-  function updateTransition(index) {
+  function updateTransition(index: number): void {
     if (props.propertySelected == -1) {
       props.setPropertySelected(index);
       props.setBoxClass("box-wide");
@@ -118,13 +100,17 @@ export function Body(props: State) {
     }
   }
 
-  function stateFormatter(value, getProp, setProp) {
+  function stateFormatter(
+    value: any,
+    getProp: any,
+    setProp: (f: any) => void
+  ): void {
     var temp = getProp;
     temp[props.index] = value;
     setProp([temp[0], temp[1]]);
   }
 
-  function handleTextDate(event) {
+  function handleTextChange(event: string): void {
     var error = false;
 
     stateFormatter(event, props.dateTextContents, props.setDateTextContents);
@@ -161,17 +147,18 @@ export function Body(props: State) {
     stateFormatter(error, props.dateError, props.setDateError);
   }
 
-  function handleTimeChange(event) {
+  function handleTimeChange(event: string): void {
     var error = false;
-
+    var dateRange = props.dateRange
     stateFormatter(event, props.timeTextContents, props.setTimeTextContents);
 
     try {
       var date = new Date(
-        dateRange.dates[props.index].toDateString() + " " + event
+        props.dateRange.dates[props.index].toDateString() + " " + event
       );
       if (!isNaN(date.getTime())) {
-        dateRange.dates[props.index] = date;
+        dateRange.setDate(date, props.index);
+        props.setDateRange(dateRange)
       } else {
         error = true;
       }
@@ -182,34 +169,34 @@ export function Body(props: State) {
     stateFormatter(error, props.timeError, props.setTimeError);
   }
 
-  function handleClick(key, value) {
+  function handleClick(key: string, value: string | number): void {
     resetDate(key, value);
     stateFormatter(
-      DateRange.formatAbsoluteDate(dateRange.dates[props.index]),
+      DateRange.formatAbsoluteDate(props.dateRange.dates[props.index]),
       props.dateTextContents,
       props.setDateTextContents
     );
     stateFormatter(
-      dateRange.dates[props.index].toLocaleTimeString(props.timeFormat),
+      props.dateRange.dates[props.index].toLocaleTimeString(props.timeFormat),
       props.timeTextContents,
       props.setTimeTextContents
     );
   }
 
-  function applyFn(text) {
-    dateRange = props.dateRange;
+  function applyFn(text: string[]): void {
+    var dateRange = props.dateRange;
     dateRange.setRelative(text.join(" "), props.index);
     props.setDateRange(dateRange);
   }
 
-  function setNow() {
-    dateRange = props.dateRange;
+  function setNow(): void {
+    var dateRange = props.dateRange;
     dateRange.setNow(props.index);
     props.setDateRange(dateRange);
   }
 
-  function resetDate(key, value) {
-    dateRange = props.dateRange;
+  function resetDate(key: string, value: any): void {
+    var dateRange = props.dateRange;
     var date = dateRange.dates[props.index];
 
     if (key == property.day) {
@@ -233,9 +220,9 @@ export function Body(props: State) {
     stateFormatter(daysInMonthContent, props.daysInMonth, props.setDaysInMonth);
   }
 
-  function renderItem(index) {
+  function renderItem(index: number): JSX.Element {
     var key = property.year;
-    var name = index;
+    var name = "";
     if (props.propertySelected == 0) {
       key = property.month;
       name = new Date(0, index + 1, 0).toLocaleString("default", {
@@ -260,7 +247,7 @@ export function Body(props: State) {
     );
   }
 
-  function renderScroll() {
+  function renderScroll(): JSX.Element {
     if (props.boxClass == "box-wide") {
       if (props.propertySelected == 1) {
         return (
@@ -294,7 +281,7 @@ export function Body(props: State) {
     }
   }
 
-  function getTextTitle() {
+  function getTextTitle(): string {
     if (props.index == 1) {
       return "End Date";
     } else {
@@ -302,7 +289,7 @@ export function Body(props: State) {
     }
   }
 
-  function renderTabButton(title) {
+  function renderTabButton(title: string): JSX.Element {
     return (
       <Button
         color="primary"
@@ -319,7 +306,7 @@ export function Body(props: State) {
     );
   }
 
-  function renderTab(index) {
+  function renderTab(index: number): void {
     if (index !== 0) {
       props.setBoxClass("box-tiny");
     } else {
@@ -343,14 +330,12 @@ export function Body(props: State) {
     return {
       termAnchorEl: props.termAnchorEl,
       intervalAnchorEl: props.intervalAnchorEl,
-      timeIntervalText: props.timeIntervalText,
       setTermAnchorEl: props.setTermAnchorEl,
       relativeSelectContent: props.relativeSelectContent,
       applyFn,
-      dateRange,
       setIntervalAnchorEl: props.setIntervalAnchorEl,
-      terms: intervals,
-      intervals: terms,
+      relativeTerms: props.relativeIntervals,
+      relativeIntervals: props.relativeTerms,
     };
   }
 
@@ -521,7 +506,7 @@ export function Body(props: State) {
                 )}
               </Grid>
             </Box>
-            <Box mt={7} style={{ display: "flex", flexDirection: "row" }}>
+            <Box mt={11} style={{ display: "flex", flexDirection: "row" }}>
               <TextField
                 error={props.dateError[props.index]}
                 fullWidth={false}
@@ -531,7 +516,7 @@ export function Body(props: State) {
                 id="outlined-basic"
                 label={getTextTitle()}
                 variant="outlined"
-                onChange={(event) => handleTextDate(event.target.value)}
+                onChange={(event) => handleTextChange(event.target.value)}
               />
               <TextField
                 error={props.timeError[props.index]}
@@ -593,4 +578,4 @@ export function Body(props: State) {
       {renderScroll()}
     </Box>
   );
-}
+};

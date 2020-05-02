@@ -12,7 +12,7 @@ import {
   Menu,
   MenuItem,
 } from "@material-ui/core";
-import { DateSelect } from "./DateSelect2.tsx";
+import { DateSelect } from "./QuickDateSelect.tsx";
 import DateRange from "./DateRange.tsx";
 
 interface Inputs {
@@ -20,7 +20,9 @@ interface Inputs {
   recentlySelected: string[][];
   termAnchorEl: any;
   intervalAnchorEl: any;
-  timeIntervalText: string[][];
+  commonlyUsedText: string[][];
+  quickSelectIntervals: string[];
+  quickSelectTerms: string[];
   timeFormat: string;
   quickSelectContent: string[];
   setDateRange(h): void;
@@ -33,33 +35,18 @@ interface Inputs {
   setIntervalAnchorEl(w): void;
 }
 
-export function QuickSelect(props: Inputs) {
-  const terms = ["Last", "Next"];
-  const intervals = [
-    "1 minute",
-    "15 minutes",
-    "30 minutes",
-    "1 hour",
-    "6 hours",
-    "12 hours",
-    "1 day",
-    "7 days",
-    "30 days",
-    "90 days",
-    "1 year",
-  ];
-
+export const QuickSelect: React.FC<Inputs> = (props) => {
   var dateRange: DateRange;
 
   useEffect(() => {
     dateRange = props.dateRange;
   }, []);
 
-  function handleClick(text) {
+  function handleClick(text: string[]): void {
     props.setQuickSelectContent(text);
   }
 
-  function apply() {
+  function apply(): void {
     dateRange = props.dateRange;
     dateRange.setQuickSelect(props.quickSelectContent);
     props.setDateRange(dateRange);
@@ -76,15 +63,13 @@ export function QuickSelect(props: Inputs) {
   function getDateSelectObj() {
     return {
       quickSelectContent: props.quickSelectContent,
-      dateRange,
       handleClick,
       termAnchorEl: props.termAnchorEl,
       intervalAnchorEl: props.intervalAnchorEl,
-      timeIntervalText: props.timeIntervalText,
       setTermAnchorEl: props.setTermAnchorEl,
       setIntervalAnchorEl: props.setIntervalAnchorEl,
-      terms,
-      intervals,
+      quickSelectTerms: props.quickSelectTerms,
+      quickSelectIntervals: props.quickSelectIntervals,
     };
   }
 
@@ -122,7 +107,7 @@ export function QuickSelect(props: Inputs) {
           </Typography>
           <Box style={{ display: "flex", flexDirection: "row" }}>
             <Box style={{ display: "flex", flexDirection: "column" }}>
-              {props.timeIntervalText.slice(0, 4).map((object) => (
+              {props.commonlyUsedText.slice(0, 4).map((object) => (
                 <Box>
                   <Button
                     onClick={() => handleClick(object)}
@@ -148,7 +133,7 @@ export function QuickSelect(props: Inputs) {
               ))}
             </Box>
             <Box style={{ display: "flex", flexDirection: "column" }}>
-              {props.timeIntervalText.slice(4, 8).map((object) => (
+              {props.commonlyUsedText.slice(4, 8).map((object) => (
                 <Box>
                   <Button
                     onClick={() => handleClick(object)}
@@ -237,4 +222,4 @@ export function QuickSelect(props: Inputs) {
       </Box>
     </Box>
   );
-}
+};

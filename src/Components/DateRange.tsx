@@ -5,22 +5,24 @@ enum DateType {
   relative = "relative",
 }
 
+enum DateIndex {
+  start = 0,
+  end = 1,
+}
+
 export default class DateRange {
-  dates: Date[];
-  dateTypes: DateType[];
-  displayText: string[];
-  finalDates: Date[];
-  finalDisplayText: string[];
+  dates: Date[] = [new Date(), new Date()];
+  dateTypes: DateType[] = [DateType.relative, DateType.relative];
+  displayText: string[] = ["", ""];
+  finalDates: Date[] = [new Date(), new Date()];
+  finalDisplayText: string[] = ["", ""];
 
   constructor() {
-    this.dates = [new Date(), new Date()];
-    this.displayText = ["now", "now"];
-    this.dateTypes = [DateType.relative, DateType.relative];
-    this.finalDates = [new Date(), new Date()];
-    this.finalDisplayText = ["now", "now"];
+    this.setNow(DateIndex.start), this.setNow(DateIndex.end);
+    this.applyChanges();
   }
 
-  load(obj) {
+  load(obj: DateRange): void {
     this.dates = obj.dates;
     this.displayText = obj.displayText;
     this.dateTypes = obj.dateTypes;
@@ -28,25 +30,27 @@ export default class DateRange {
     this.finalDisplayText = obj.finalDisplayText;
   }
 
-  setQuickSelect(text) {
-    var quickSelectText = text;
-
-    this.setNow(0);
-    this.setNow(1);
+  setQuickSelect(quickSelectText: String[]): void {
+    this.setNow(DateIndex.start);
+    this.setNow(DateIndex.end);
 
     if (quickSelectText[0].includes("Next")) {
-      this.dates[1].setTime(this.dates[0].getTime() + ms(quickSelectText[1]));
-      this.displayText[0] = "now";
-      this.displayText[1] = quickSelectText[1] + " from now";
+      this.dates[DateIndex.end].setTime(
+        this.dates[DateIndex.start].getTime() + ms(quickSelectText[1])
+      );
+      this.displayText[DateIndex.start] = "now";
+      this.displayText[DateIndex.end] = quickSelectText[1] + " from now";
     } else if (quickSelectText[0].includes("Last")) {
-      this.dates[0].setTime(this.dates[0].getTime() - ms(quickSelectText[1]));
-      this.displayText[0] = quickSelectText[1] + " ago";
-      this.displayText[1] = "now";
+      this.dates[DateIndex.start].setTime(
+        this.dates[DateIndex.start].getTime() - ms(quickSelectText[1])
+      );
+      this.displayText[DateIndex.start] = quickSelectText[1] + " ago";
+      this.displayText[DateIndex.end] = "now";
     }
     this.dateTypes = [DateType.relative, DateType.relative];
   }
 
-  static formatAbsoluteDate(date: Date) {
+  static formatAbsoluteDate(date: Date): string {
     return new Intl.DateTimeFormat("en", {
       year: "numeric",
       month: "numeric",
@@ -54,11 +58,11 @@ export default class DateRange {
     }).format(date);
   }
 
-  static formatAbsoluteTime(date: Date) {
+  static formatAbsoluteTime(date: Date): String {
     return date.toLocaleTimeString("en-US");
   }
 
-  setDate(date, index) {
+  setDate(date: Date, index: number): void {
     this.dates[index] = date;
     this.displayText[index] =
       DateRange.formatAbsoluteDate(this.dates[index]) +
@@ -67,19 +71,19 @@ export default class DateRange {
     this.dateTypes[index] = DateType.absolute;
   }
 
-  setRelative(text, index) {
+  setRelative(text: string, index: number): void {
     this.setNow(index);
-    text = [text.split(" ").slice(0, 2).join(" "), text];
-    if (text[1].includes("ago")) {
-      this.dates[index].setTime(this.dates[index].getTime() - ms(text[0]));
-    } else if (text[1].includes("from now")) {
-      this.dates[index].setTime(this.dates[index].getTime() + ms(text[0]));
+    const textParts = [text.split(" ").slice(0, 2).join(" "), text];
+    if (textParts[1].includes("ago")) {
+      this.dates[index].setTime(this.dates[index].getTime() - ms(textParts[0]));
+    } else if (textParts[1].includes("from now")) {
+      this.dates[index].setTime(this.dates[index].getTime() + ms(textParts[0]));
     }
-    this.displayText[index] = text[1];
+    this.displayText[index] = textParts[1];
     this.dateTypes[index] = DateType.relative;
   }
 
-  refreshDates() {
+  refreshDates(): void {
     var i = 0;
     for (i = 0; i < this.dates.length; i++) {
       if (!this.isAbsolute(i)) {
@@ -88,20 +92,23 @@ export default class DateRange {
     }
   }
 
-  applyChanges() {
-    this.finalDates = [this.dates[0], this.dates[1]];
-    this.finalDisplayText = [this.displayText[0], this.displayText[1]];
+  applyChanges(): void {
+    this.finalDates = [this.dates[DateIndex.start], this.dates[DateIndex.end]];
+    this.finalDisplayText = [
+      this.displayText[DateIndex.start],
+      this.displayText[DateIndex.end],
+    ];
     this.refreshDates();
   }
 
-  isAbsolute(index) {
+  isAbsolute(index: number): Boolean {
     if (this.dateTypes[index] == DateType.absolute) {
       return true;
     } else {
       return false;
     }
   }
-  setNow(index) {
+  setNow(index: number): void {
     this.dates[index] = new Date();
     this.displayText[index] = "now";
     this.dateTypes[index] = DateType.relative;
