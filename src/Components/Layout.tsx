@@ -104,6 +104,24 @@ export const Layout: React.FC<Inputs> = (props) => {
           day: "2-digit",
         });
 
+  const theme =
+    props.theme !== undefined
+      ? props.theme
+      : createMuiTheme({
+          typography: {
+            subtitle1: {
+              fontSize: 16,
+              fontWeight: 600,
+            },
+            subtitle2: {
+              color: "primary",
+            },
+            button: {
+              fontWeight: 500,
+            },
+          },
+        });
+
   // DATES
   const [propertySelected, setPropertySelected] = useState(-1);
   const [daysInMonth, setDaysInMonth] = useState([
@@ -309,21 +327,6 @@ export const Layout: React.FC<Inputs> = (props) => {
       );
     }
   }
-
-  const theme = createMuiTheme({
-    typography: {
-      subtitle1: {
-        fontSize: 16,
-        fontWeight: 600,
-      },
-      subtitle2: {
-        color: "primary",
-      },
-      button: {
-        fontWeight: 500,
-      },
-    },
-  });
 
   return (
     <MuiThemeProvider theme={theme}>
