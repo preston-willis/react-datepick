@@ -70,29 +70,30 @@ ReactDOM.render(
 - `relativeTerms` (optional)
   - Takes an array of 2 relative terms to be used in the relative date select dropdown menu
   ```javascript
-   relativeTerms=["ago", "from now"]
+   relativeTerms={["ago", "from now"]}
     ```
 - `relativeIntervals` (optional)
   - Takes an array of relative intervals to be used in the relative date select dropdown menu
   ```javascript
-   relativeIntervals=["15 minutes", "1 hour"]
+   relativeIntervals={["15 minutes", "1 hour"]}
     ```
 - `quickSelectTerms` (optional)
   - Takes an array of relative terms to be used in the quick select dropdown menu
   ```javascript
-   quickSelectTerms=["ago", "from now"]
+   quickSelectTerms={["ago", "from now"]}
    
 - `quickSelectIntervals` (optional)
   - Takes an array of relative intervals to be used in the quick select dropdown menu
   ```javascript
-   quickSelectIntervals=["last", "next"]
+   quickSelectIntervals={["last", "next"]}
    
 - `commonlyUsedText` (optional)
   - Takes an array of relative intervals to be used in the quick select dropdown menu
   ```javascript
-   commonlyUsedText=["last 20 minutes", "next 1 hour"]
+   commonlyUsedText={["last 20 minutes", "next 1 hour"]}
    
 ## Customization
  - Utilizes materialUI elements
  - Compatible with any materialUI `createMuiTheme()` object configuration
  - Add custom date formatters (11/2/2000 vs November 2, 2000)
+ - Add custom menu text and preset time options
