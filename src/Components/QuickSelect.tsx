@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Divider } from "@material-ui/core";
 import ms from "ms";
 import {
   Button,
@@ -11,166 +12,79 @@ import {
   Menu,
   MenuItem,
 } from "@material-ui/core";
-
-class DateRange {
-  text: string;
-  startDate: Date;
-  endDate: Date;
-
-  constructor(text) {
-    this.text = text;
-    if (this.text.includes("next")) {
-      this.startDate = new Date();
-      this.endDate = new Date();
-      this.endDate.setTime(this.startDate.getTime() + ms(this.text.slice(5)));
-    } else {
-      this.startDate = new Date();
-      this.endDate = new Date();
-      this.startDate.setTime(this.startDate.getTime() - ms(this.text.slice(5)));
-    }
-  }
-}
+import { DateSelect } from "./QuickDateSelect.tsx";
+import DateRange from "./DateRange.tsx";
 
 interface Inputs {
   boxClass: string;
-  recentlySelected: DateRange[];
-  quickSelectText: string[];
+  recentlySelected: string[][];
   termAnchorEl: any;
   intervalAnchorEl: any;
+  commonlyUsedText: string[][];
+  quickSelectIntervals: string[];
+  quickSelectTerms: string[];
+  timeFormat: string;
+  quickSelectContent: string[];
+  setDateRange(h): void;
+  setQuickSelectContent(r): void;
+  dateRange: DateRange;
+  applyChanges(): void;
+  getData(f): void;
+  setRecentlySelected(i): void;
   setTermAnchorEl(w): void;
   setIntervalAnchorEl(w): void;
-  setQuickSelectText(z): void;
-  setRecentlySelected(x): void;
-  setDates(y): void;
 }
 
-export function QuickSelect(props: Inputs) {
-  const timeIntervalObjects = [
-    new DateRange("Last 15 Minutes"),
-    new DateRange("Last 30 Minutes"),
-    new DateRange("Last 1 Hour"),
-    new DateRange("Last 24 hours"),
-    new DateRange("Last 7 days"),
-    new DateRange("Last 30 days"),
-    new DateRange("Last 90 days"),
-    new DateRange("Last 1 year"),
-  ];
+export const QuickSelect: React.FC<Inputs> = (props) => {
+  var dateRange: DateRange;
 
-  enum menu {
-    term = 0,
-    interval = 1,
+  useEffect(() => {
+    dateRange = props.dateRange;
+  }, []);
+
+  function handleClick(text: string[]): void {
+    props.setQuickSelectContent(text);
   }
 
-  function getAnchorEl(identifier) {
-    if (identifier == menu.term) {
-      return props.termAnchorEl;
-    } else {
-      return props.intervalAnchorEl;
-    }
-  }
+  function apply(): void {
+    dateRange = props.dateRange;
+    dateRange.setQuickSelect(props.quickSelectContent);
+    props.setDateRange(dateRange);
+    props.applyChanges();
 
-  function setAnchorEl(identifier, item) {
-    if (identifier == menu.term) {
-      props.setTermAnchorEl(item);
-    } else {
-      props.setIntervalAnchorEl(item);
-    }
-  }
-
-  function handleClick(object) {
-    props.setDates([object.startDate, object.endDate]);
     var recentlySelected = props.recentlySelected;
-    recentlySelected.unshift(object);
+    recentlySelected.unshift(props.quickSelectContent);
     if (recentlySelected.length > 6) {
       recentlySelected.pop();
     }
     props.setRecentlySelected(recentlySelected);
   }
 
-  function handleMenuClick(identifier, event) {
-    setAnchorEl(identifier, event.currentTarget);
-  }
-
-  function handleClose(identifier, item) {
-    setAnchorEl(identifier, null);
-    var words = props.quickSelectText;
-    words[identifier] = item;
-    props.setQuickSelectText(words);
-  }
-
-  function applyChanges() {
-    var dateRange = new DateRange(props.quickSelectText.join(" "));
-    props.setDates([dateRange.startDate, dateRange.endDate]);
-    handleClick(dateRange);
-  }
-
-  function renderdropdownMenu(identifier) {
-    var term = ["last", "next"];
-    var interval = [
-      "1 minute",
-      "15 minutes",
-      "30 minutes",
-      "1 hour",
-      "6 hours",
-      "12 hours",
-      "1 day",
-      "7 days",
-      "30 days",
-      "90 days",
-      "1 year",
-    ];
-
-    var list: string[] = [];
-    if (identifier == menu.term) {
-      list = term;
-    } else if (identifier == menu.interval) {
-      list = interval;
-    }
-
-    return (
-      <div>
-        <Button
-          style={{ maxHeight: "40px", minHeight: "40px" }}
-          aria-controls={String(identifier)}
-          variant="outlined"
-          color="primary"
-          aria-haspopup="true"
-          onClick={(event) => handleMenuClick(identifier, event)}
-        >
-          {props.quickSelectText[identifier]}
-        </Button>
-        <Menu
-          id={String(identifier)}
-          anchorEl={getAnchorEl(identifier)}
-          keepMounted
-          open={Boolean(getAnchorEl(identifier))}
-          onClose={() =>
-            handleClose(identifier, props.quickSelectText[identifier])
-          }
-        >
-          {list.map((item) => (
-            <MenuItem onClick={() => handleClose(identifier, item)}>
-              {item}
-            </MenuItem>
-          ))}
-        </Menu>
-      </div>
-    );
+  function getDateSelectObj() {
+    return {
+      quickSelectContent: props.quickSelectContent,
+      handleClick,
+      termAnchorEl: props.termAnchorEl,
+      intervalAnchorEl: props.intervalAnchorEl,
+      setTermAnchorEl: props.setTermAnchorEl,
+      setIntervalAnchorEl: props.setIntervalAnchorEl,
+      quickSelectTerms: props.quickSelectTerms,
+      quickSelectIntervals: props.quickSelectIntervals,
+    };
   }
 
   return (
     <Box className={props.boxClass}>
       <Box style={{ flexDirection: "column" }}>
         <Box ml={2} mt={2}>
-          <Typography color="textPrimary" variant="h5">
+          <Typography variant="subtitle1" color="textPrimary">
             Quick Select
           </Typography>
           <Box mt={1} style={{ display: "flex", flexDirection: "row" }}>
-            <Box>{renderdropdownMenu(menu.term)}</Box>
-            <Box ml={1}>{renderdropdownMenu(menu.interval)}</Box>
+            <DateSelect {...getDateSelectObj()} />
             <Box ml={1}>
               <Button
-                onClick={() => applyChanges()}
+                onClick={() => apply()}
                 variant="contained"
                 color="primary"
                 style={{
@@ -186,50 +100,68 @@ export function QuickSelect(props: Inputs) {
           </Box>
         </Box>
         <Box ml={2} mt={2} style={{ display: "flex", flexDirection: "column" }}>
-          <Typography color="textPrimary" variant="h5">
+          <Divider light />
+          <Box mt={1} />
+          <Typography color="textPrimary" variant="subtitle1">
             Commonly used
           </Typography>
           <Box style={{ display: "flex", flexDirection: "row" }}>
             <Box style={{ display: "flex", flexDirection: "column" }}>
-              {timeIntervalObjects.slice(0, 4).map((object) => (
-                <Button
-                  onClick={() => handleClick(object)}
-                  color="primary"
-                  variant="text"
-                  size="small"
-                  style={{
-                    maxWidth: "150px",
-                    minWidth: "150px",
-                    maxHeight: "30px",
-                    minHeight: "30px",
-                  }}
-                >
-                  {object.text}
-                </Button>
+              {props.commonlyUsedText.slice(0, 4).map((object) => (
+                <Box>
+                  <Button
+                    onClick={() => handleClick(object)}
+                    color="primary"
+                    variant="text"
+                    size="small"
+                    disableFocusRipple={true}
+                    disableRipple={true}
+                    style={{
+                      backgroundColor: "transparent",
+                      maxWidth: "150px",
+                      minWidth: "150px",
+                      maxHeight: "30px",
+                      minHeight: "30px",
+                    }}
+                  ></Button>
+                  <Box mt={-3}>
+                    <Typography color="primary" variant="subtitle2">
+                      {object.join(" ")}
+                    </Typography>
+                  </Box>
+                </Box>
               ))}
             </Box>
             <Box style={{ display: "flex", flexDirection: "column" }}>
-              {timeIntervalObjects.slice(4, 8).map((object) => (
-                <Button
-                  onClick={() => handleClick(object)}
-                  color="primary"
-                  variant="text"
-                  size="small"
-                  style={{
-                    maxWidth: "150px",
-                    minWidth: "150px",
-                    maxHeight: "30px",
-                    minHeight: "30px",
-                  }}
-                >
-                  {object.text}
-                </Button>
+              {props.commonlyUsedText.slice(4, 8).map((object) => (
+                <Box>
+                  <Button
+                    onClick={() => handleClick(object)}
+                    color="primary"
+                    variant="text"
+                    size="small"
+                    style={{
+                      textAlign: "left",
+                      maxWidth: "150px",
+                      minWidth: "150px",
+                      maxHeight: "30px",
+                      minHeight: "30px",
+                    }}
+                  ></Button>
+                  <Box mt={-3}>
+                    <Typography color="primary" variant="subtitle2">
+                      {object.join(" ")}
+                    </Typography>
+                  </Box>
+                </Box>
               ))}
             </Box>
           </Box>
         </Box>
         <Box ml={2} mt={2} style={{ flexDirection: "column" }}>
-          <Typography color="textPrimary" variant="h5">
+          <Divider light />
+          <Box mt={1} />
+          <Typography color="textPrimary" variant="subtitle1">
             Recently used date ranges
           </Typography>
           <Box mt={1} style={{ display: "flex", flexDirection: "row" }}>
@@ -237,40 +169,52 @@ export function QuickSelect(props: Inputs) {
               {props.recentlySelected
                 .slice(0, Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
-                  <Button
-                    onClick={() => handleClick(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    style={{
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      maxHeight: "30px",
-                      minHeight: "30px",
-                    }}
-                  >
-                    {object.text}
-                  </Button>
+                  <Box>
+                    <Button
+                      onClick={() => handleClick(object)}
+                      color="primary"
+                      variant="text"
+                      size="small"
+                      style={{
+                        textAlign: "left",
+                        maxWidth: "150px",
+                        minWidth: "150px",
+                        maxHeight: "30px",
+                        minHeight: "30px",
+                      }}
+                    ></Button>
+                    <Box mt={-3}>
+                      <Typography color="primary" variant="subtitle2">
+                        {object.join(" ")}
+                      </Typography>
+                    </Box>
+                  </Box>
                 ))}
             </Box>
             <Box style={{ display: "flex", flexDirection: "column" }}>
               {props.recentlySelected
                 .slice(Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
-                  <Button
-                    onClick={() => handleClick(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    style={{
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      maxHeight: "30px",
-                      minHeight: "30px",
-                    }}
-                  >
-                    {object.text}
-                  </Button>
+                  <Box>
+                    <Button
+                      onClick={() => handleClick(object)}
+                      color="primary"
+                      variant="text"
+                      size="small"
+                      style={{
+                        textAlign: "left",
+                        maxWidth: "150px",
+                        minWidth: "150px",
+                        maxHeight: "30px",
+                        minHeight: "30px",
+                      }}
+                    ></Button>
+                    <Box mt={-3}>
+                      <Typography color="primary" variant="subtitle2">
+                        {object.join(" ")}
+                      </Typography>
+                    </Box>
+                  </Box>
                 ))}
             </Box>
           </Box>
@@ -278,4 +222,4 @@ export function QuickSelect(props: Inputs) {
       </Box>
     </Box>
   );
-}
+};

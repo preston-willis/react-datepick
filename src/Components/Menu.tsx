@@ -27,12 +27,12 @@ interface Inputs {
   menuError: boolean;
 }
 
-export function MenuView(props: Inputs) {
+export const MenuView: React.FC<Inputs> = props => {
   function applyChanges() {
     props.setTimerRunning(true);
   }
 
-  function toggleSwitch() {
+  function toggleSwitch(): void {
     if (props.refreshIntervalEnabled) {
       props.setRefreshIntervalEnabled(false);
       props.setTimerRunning(false);
@@ -41,25 +41,25 @@ export function MenuView(props: Inputs) {
     }
   }
 
-  function handleTextChange(event) {
-    if (String(parseFloat(event.target.value)) == "NaN") {
+  function handleTextChange(event: string): void {
+    if (String(parseFloat(event)) == "NaN") {
       props.setMenuError(true);
     } else {
-      props.setRefreshInterval(parseFloat(event.target.value));
+      props.setRefreshInterval(parseFloat(event));
       props.setMenuError(false);
     }
   }
 
-  function handleClick(event) {
-    props.setAnchorEl(event.currentTarget);
+  function handleClick(event: EventTarget): void {
+    props.setAnchorEl(event);
   }
 
-  function handleClose(item) {
+  function handleClose(item: string): void {
     props.setAnchorEl(null);
     props.setRefreshIntervalUnits(item);
   }
 
-  function setDefaultValue() {
+  function setDefaultValue(): string | number {
     if (props.refreshInterval != -1) {
       return props.refreshInterval;
     } else {
@@ -80,7 +80,7 @@ export function MenuView(props: Inputs) {
                 onChange={() => toggleSwitch()}
               />
             }
-            label="Refresh Interval"
+            label="Timer"
           />
         </FormGroup>
       </Box>
@@ -88,7 +88,7 @@ export function MenuView(props: Inputs) {
         <TextField
           error={props.menuError}
           helperText={props.menuError}
-          onChange={(event) => handleTextChange(event)}
+          onChange={(event) => handleTextChange(event.target.value)}
           size="small"
           defaultValue={setDefaultValue()}
           disabled={!props.refreshIntervalEnabled}
@@ -103,7 +103,7 @@ export function MenuView(props: Inputs) {
           variant="outlined"
           color="primary"
           aria-haspopup="true"
-          onClick={(event) => handleClick(event)}
+          onClick={(event) => handleClick(event.currentTarget)}
         >
           {props.refreshIntervalUnits}
         </Button>

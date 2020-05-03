@@ -15,15 +15,12 @@
   margin-left: 40px;
   opacity: 1;
   width: 400px;
-  height: 425px;
+  height: 500px;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
   align-items: left;
-  transition-property: width opacity;
-  transition-duration: 0.25s;
-  transition-timing-function: ease-in-out;
 }
 
 .menu {
@@ -37,9 +34,6 @@
   display: flex;
   flex-direction: column;
   align-items: left;
-  transition-property: opacity;
-  transition-duration: 0.25s;
-  transition-timing-function: ease-in-out;
 }
 
 .menu-closed {
@@ -53,9 +47,6 @@
   display: flex;
   flex-direction: column;
   align-items: left;
-  transition-property: opacity;
-  transition-duration: 0.25s;
-  transition-timing-function: ease-in-out;
 }
 
 .box-closed {
@@ -63,20 +54,17 @@
   margin-left: 40px;
   opacity: 0;
   width: 400px;
-  height: 425px;
+  height: 500px;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
   align-items: left;
-  transition-property: opacity width;
-  transition-duration: 0.25s;
-  transition-timing-function: ease-in-out;
 }
 
 .box-container {
-  width: 400px;
-  height: 375px;
+  width: 525px;
+  height: 525px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -87,19 +75,28 @@
   margin-top: 10px;
   margin-left: 40px;
   width: 600px;
-  height: 425px;
+  height: 500px;
   border-radius: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
   align-items: left;
-  transition-property: width;
-  transition-duration: 0.25s;
-  transition-timing-function: ease-in-out;
+}
+
+.box-tiny {
+  margin-top: 10px;
+  margin-left: 40px;
+  width: 400px;
+  height: 225px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: left;
 }
 
 .header {
-  width: 600px;
+  width: 800px;
   height: 30px;
   display: flex;
   justify-content: left;

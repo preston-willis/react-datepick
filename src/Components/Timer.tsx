@@ -1,13 +1,17 @@
 import Timer from "react-compound-timer";
 import React, { useState } from "react";
+import TimerOffIcon from "@material-ui/icons/TimerOff";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import TimerIcon from "@material-ui/icons/Timer";
+import { Button, Box } from "@material-ui/core";
 import ms from "ms";
 
 interface Inputs {
   refreshInterval: number;
   refreshIntervalUnits: string;
   timerRunning: boolean;
+  applyFn(): void;
   resetFn(): void;
-  setTimerRunning(x): void;
 }
 
 export function TimerUI(props: Inputs) {
@@ -23,8 +27,7 @@ export function TimerUI(props: Inputs) {
 
   function resetTimer() {
     props.resetFn();
-    props.setTimerRunning(false);
-    props.setTimerRunning(true);
+    props.applyFn();
   }
 
   if (props.timerRunning == true) {
@@ -39,17 +42,18 @@ export function TimerUI(props: Inputs) {
           },
         ]}
       >
-        <React.Fragment>
-          {"Refresh in "}
-          <Timer.Hours />
-          {":"}
-          <Timer.Minutes />
-          {":"}
-          <Timer.Seconds />
-        </React.Fragment>
+        <Box>
+          <TimerIcon />
+          <ExpandMoreIcon />
+        </Box>
       </Timer>
     );
   } else {
-    return <div>Refresh</div>;
+    return (
+      <Box>
+        <TimerOffIcon />
+        <ExpandMoreIcon />
+      </Box>
+    );
   }
 }
