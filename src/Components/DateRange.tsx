@@ -50,24 +50,28 @@ export default class DateRange {
     this.dateTypes = [DateType.relative, DateType.relative];
   }
 
-  static formatAbsoluteDate(date: Date): string {
-    return new Intl.DateTimeFormat("en", {
-      year: "numeric",
-      month: "numeric",
-      day: "2-digit",
-    }).format(date);
+  static formatAbsoluteDate(
+    date: Date,
+    dateFormatter: Intl.DateTimeFormat
+  ): string {
+    return dateFormatter.format(date);
   }
 
-  static formatAbsoluteTime(date: Date): String {
-    return date.toLocaleTimeString("en-US");
+  static formatAbsoluteTime(date: Date, timeFormat: string): String {
+    return date.toLocaleTimeString(timeFormat);
   }
 
-  setDate(date: Date, index: number): void {
+  setDate(
+    date: Date,
+    index: number,
+    dateFormatter: Intl.DateTimeFormat,
+    timeFormat: string
+  ): void {
     this.dates[index] = date;
     this.displayText[index] =
-      DateRange.formatAbsoluteDate(this.dates[index]) +
+      DateRange.formatAbsoluteDate(this.dates[index], dateFormatter) +
       " @ " +
-      DateRange.formatAbsoluteTime(this.dates[index]);
+      DateRange.formatAbsoluteTime(this.dates[index], timeFormat);
     this.dateTypes[index] = DateType.absolute;
   }
 

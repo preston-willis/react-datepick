@@ -56,6 +56,7 @@ interface Inputs {
   dateError: boolean[];
   daysInMonth: number[];
   timeFormat: string;
+  dateFormatter: Intl.DateTimeFormat;
 }
 
 enum property {
@@ -149,7 +150,7 @@ export const Body: React.FC<Inputs> = (props) => {
 
   function handleTimeChange(event: string): void {
     var error = false;
-    var dateRange = props.dateRange
+    var dateRange = props.dateRange;
     stateFormatter(event, props.timeTextContents, props.setTimeTextContents);
 
     try {
@@ -157,8 +158,13 @@ export const Body: React.FC<Inputs> = (props) => {
         props.dateRange.dates[props.index].toDateString() + " " + event
       );
       if (!isNaN(date.getTime())) {
-        dateRange.setDate(date, props.index);
-        props.setDateRange(dateRange)
+        dateRange.setDate(
+          date,
+          props.index,
+          props.dateFormatter,
+          props.timeFormat
+        );
+        props.setDateRange(dateRange);
       } else {
         error = true;
       }
@@ -172,7 +178,10 @@ export const Body: React.FC<Inputs> = (props) => {
   function handleClick(key: string, value: string | number): void {
     resetDate(key, value);
     stateFormatter(
-      DateRange.formatAbsoluteDate(props.dateRange.dates[props.index]),
+      DateRange.formatAbsoluteDate(
+        props.dateRange.dates[props.index],
+        props.dateFormatter
+      ),
       props.dateTextContents,
       props.setDateTextContents
     );
@@ -207,7 +216,7 @@ export const Body: React.FC<Inputs> = (props) => {
       date = new Date(value, date.getMonth(), date.getDate());
     }
 
-    dateRange.setDate(date, props.index);
+    dateRange.setDate(date, props.index, props.dateFormatter, props.timeFormat);
     props.setDateRange(dateRange);
 
     console.log("NEW DATE: " + dateRange.displayText[props.index]);
@@ -228,6 +237,8 @@ export const Body: React.FC<Inputs> = (props) => {
       name = new Date(0, index + 1, 0).toLocaleString("default", {
         month: "long",
       });
+    } else {
+      name = String(index);
     }
     return (
       <Button
@@ -252,11 +263,11 @@ export const Body: React.FC<Inputs> = (props) => {
       if (props.propertySelected == 1) {
         return (
           <Box mt={10}>
-            <div style={{ overflow: "auto", maxHeight: 200, maxWidth: 120 }}>
+            <div style={{ overflow: "auto", maxHeight: 350, maxWidth: 120 }}>
               {" "}
               <ReactList
-                itemRenderer={(index) => renderItem(index + 2000)}
-                length={100}
+                itemRenderer={(index) => renderItem(index)}
+                length={2100}
                 type="uniform"
               />
             </div>
@@ -265,7 +276,7 @@ export const Body: React.FC<Inputs> = (props) => {
       } else {
         return (
           <Box mt={10}>
-            <div style={{ overflow: "auto", maxHeight: 200, maxWidth: 120 }}>
+            <div style={{ overflow: "auto", maxHeight: 350, maxWidth: 120 }}>
               {" "}
               <ReactList
                 itemRenderer={(index) => renderItem(index)}

@@ -44,9 +44,66 @@ interface Inputs {
   timeFormat?: string;
 }
 
-var timeFormat: string = "en-US";
-
 export const Layout: React.FC<Inputs> = (props) => {
+  // OPTIONAL
+  var timeFormat: string =
+    props.timeFormat !== undefined ? props.timeFormat : "en-US";
+
+  const commonlyUsedText: string[][] =
+    props.commonlyUsedText !== undefined
+      ? props.commonlyUsedText
+      : [
+          ["Last", "15 Minutes"],
+          ["Last", "30 Minutes"],
+          ["Last", "1 Hour"],
+          ["Last", "24 hours"],
+          ["Last", "7 days"],
+          ["Last", "30 days"],
+          ["Last", "90 days"],
+          ["Last", "1 year"],
+        ];
+
+  var quickSelectTerms =
+    props.quickSelectTerms !== undefined
+      ? props.quickSelectTerms
+      : ["Last", "Next"];
+
+  var quickSelectIntervals =
+    props.quickSelectIntervals !== undefined
+      ? props.quickSelectIntervals
+      : [
+          "1 minute",
+          "15 minutes",
+          "30 minutes",
+          "1 hour",
+          "6 hours",
+          "12 hours",
+          "1 day",
+          "7 days",
+          "30 days",
+          "90 days",
+          "1 year",
+        ];
+
+  var relativeIntervals =
+    props.relativeIntervals !== undefined
+      ? props.relativeIntervals
+      : quickSelectIntervals;
+
+  const relativeTerms =
+    props.relativeTerms !== undefined
+      ? props.relativeTerms
+      : ["ago", "from now"];
+
+  const dateFormatter =
+    props.dateFormatter !== undefined
+      ? props.dateFormatter
+      : new Intl.DateTimeFormat("en", {
+          year: "numeric",
+          month: "numeric",
+          day: "2-digit",
+        });
+
   // DATES
   const [propertySelected, setPropertySelected] = useState(-1);
   const [daysInMonth, setDaysInMonth] = useState([
@@ -77,8 +134,8 @@ export const Layout: React.FC<Inputs> = (props) => {
 
   // TEXT FIELD INPUT
   const [dateTextContents, setDateTextContents] = useState([
-    DateRange.formatAbsoluteDate(new Date()),
-    DateRange.formatAbsoluteDate(new Date()),
+    DateRange.formatAbsoluteDate(new Date(), dateFormatter),
+    DateRange.formatAbsoluteDate(new Date(), dateFormatter),
   ]);
   const [timeTextContents, setTimeTextContents] = useState([
     new Date().toLocaleTimeString(timeFormat),
@@ -99,66 +156,6 @@ export const Layout: React.FC<Inputs> = (props) => {
   const [menuError, setMenuError] = useState(false);
   const [dateError, setDateError] = useState([false, false]);
   const [timeError, setTimeError] = useState([false, false]);
-
-  var commonlyUsedText: string[][] = [
-    ["Last", "15 Minutes"],
-    ["Last", "30 Minutes"],
-    ["Last", "1 Hour"],
-    ["Last", "24 hours"],
-    ["Last", "7 days"],
-    ["Last", "30 days"],
-    ["Last", "90 days"],
-    ["Last", "1 year"],
-  ];
-
-  var quickSelectTerms = ["Last", "Next"];
-  var quickSelectIntervals = [
-    "1 minute",
-    "15 minutes",
-    "30 minutes",
-    "1 hour",
-    "6 hours",
-    "12 hours",
-    "1 day",
-    "7 days",
-    "30 days",
-    "90 days",
-    "1 year",
-  ];
-
-  var relativeIntervals = quickSelectIntervals;
-
-  var relativeTerms = ["ago", "from now"];
-
-  var dateFormatter = new Intl.DateTimeFormat("en", {
-    year: "numeric",
-    month: "numeric",
-    day: "2-digit",
-  });
-
-  useEffect(() => {
-    if (props.timeFormat) {
-      timeFormat = props.timeFormat;
-    }
-    if (props.quickSelectTerms) {
-      quickSelectTerms = props.quickSelectTerms;
-    }
-    if (props.quickSelectIntervals) {
-      quickSelectIntervals = props.quickSelectIntervals;
-    }
-    if (props.relativeTerms) {
-      relativeTerms = props.relativeTerms;
-    }
-    if (props.relativeIntervals) {
-      relativeIntervals = props.relativeIntervals;
-    }
-    if (props.commonlyUsedText) {
-      commonlyUsedText = props.commonlyUsedText;
-    }
-    if (props.dateFormatter) {
-      dateFormatter = props.dateFormatter;
-    }
-  }, []);
 
   const toggleDropdown = (num: number): void => {
     if (num != 1 && tabSelected != num) {
