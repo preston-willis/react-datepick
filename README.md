@@ -96,7 +96,8 @@ ReactDOM.render(
 - `nowText` (optional)
   - Takes a string to represent the displayed "now" text
   ```javascript
-   nowText={"ahora"}
+   nowText="ahora"
+   ```
    
 ## Customization
  - Utilizes materialUI elements
