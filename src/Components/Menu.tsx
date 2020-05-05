@@ -13,17 +13,18 @@ import {
 
 interface Inputs {
   refreshIntervalEnabled: boolean;
-  setRefreshIntervalEnabled(x): void;
+  setRefreshIntervalEnabled(isEnabled: boolean): void;
   menuClass: string;
-  setAnchorEl(x): void;
+  classes: any;
+  setAnchorEl(element: EventTarget | null): void;
   anchorEl: any;
   refreshIntervalUnits: string;
-  setRefreshIntervalUnits(x): void;
+  setRefreshIntervalUnits(units: string): void;
   refreshInterval: number;
-  setRefreshInterval(x): void;
-  setTimerRunning(x): void;
+  setRefreshInterval(interval: number): void;
+  setTimerRunning(isRunning: boolean): void;
   timerRunning: boolean;
-  setMenuError(x): void;
+  setMenuError(error: boolean): void;
   menuError: boolean;
 }
 
@@ -42,7 +43,7 @@ export const MenuView: React.FC<Inputs> = props => {
   }
 
   function handleTextChange(event: string): void {
-    if (String(parseFloat(event)) == "NaN") {
+    if (isNaN(parseFloat(event))) {
       props.setMenuError(true);
     } else {
       props.setRefreshInterval(parseFloat(event));
@@ -98,7 +99,7 @@ export const MenuView: React.FC<Inputs> = props => {
         />
         <Button
           disabled={!props.refreshIntervalEnabled}
-          style={{ maxHeight: "40px", minHeight: "40px" }}
+          className={props.classes.menuEnableButton}
           aria-controls="simple-menu"
           variant="outlined"
           color="primary"
@@ -119,16 +120,11 @@ export const MenuView: React.FC<Inputs> = props => {
           <MenuItem onClick={() => handleClose("Hours")}>Hours</MenuItem>
         </Menu>
       </Box>
-      <Box mt={1} ml={2} className="timer-buttons">
+      <Box mt={1} ml={2} className={props.classes.menuTimerButtonsContainer}>
         <Box>
           <Button
             disabled={!props.refreshIntervalEnabled || props.menuError}
-            style={{
-              maxHeight: "40px",
-              minHeight: "40px",
-              maxWidth: "80px",
-              minWidth: "80px",
-            }}
+            className={props.classes.menuTimerStateButton}
             aria-controls="simple-menu"
             variant="contained"
             color="primary"
@@ -141,12 +137,7 @@ export const MenuView: React.FC<Inputs> = props => {
         <Box ml={1}>
           <Button
             disabled={!props.timerRunning}
-            style={{
-              maxHeight: "40px",
-              minHeight: "40px",
-              maxWidth: "80px",
-              minWidth: "80px",
-            }}
+            className={props.classes.menuTimerStateButton}
             variant="contained"
             color="primary"
             onClick={() => props.setTimerRunning(false)}

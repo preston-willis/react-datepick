@@ -28,18 +28,23 @@ import {
 } from "date-fns";
 
 interface Inputs {
-  setBoxClass(z): void;
-  setPropertySelected(a): void;
-  setDateError(f): void;
-  setDaysInMonth(g): void;
-  setTimeError(j): void;
-  setTermAnchorEl(x): void;
-  setIntervalAnchorEl(y): void;
-  setBodySubTabIndex(m): void;
-  setDateRange(h): void;
-  setDateTextContents(k): void;
-  setTimeTextContents(j): void;
-  setRelativeSelectContent(f): void;
+  setBoxClass(boxClass: string): void;
+  setPropertySelected(property: number): void;
+  setDateError(error: boolean[]): void;
+  setDaysInMonth(days: number[]): void;
+  setTimeError(time: boolean[]): void;
+  setTermAnchorEl(element: EventTarget | null): void;
+  setIntervalAnchorEl(element: EventTarget | null): void;
+  setBodySubTabIndex(index: number): void;
+  setDateRange(dateRange: DateRange): void;
+  setDateTextContents(content: string[]): void;
+  setTimeTextContents(content: string[]): void;
+  setRelativeSelectContent(content: string[]): void;
+  formatTimeTextField(dates?: DateRange): void;
+  formatDateTextField(dates?: DateRange): void;
+  classes: any;
+  minimumYearValue: number;
+  maximumYearValue: number;
   relativeTerms: string[];
   relativeIntervals: string[];
   relativeSelectContent: string[];
@@ -66,7 +71,31 @@ enum property {
 }
 
 export const Body: React.FC<Inputs> = (props) => {
-  const day = ["S", "M", "T", "W", "T", "F", "S"];
+  const shortWeekdayDateMap = {
+    Mon: new Date("2020-01-06"),
+    Tue: new Date("2020-01-07"),
+    Wed: new Date("2020-01-08"),
+    Thu: new Date("2020-01-09"),
+    Fri: new Date("2020-01-10"),
+    Sat: new Date("2020-01-11"),
+    Sun: new Date("2020-01-12"),
+  };
+
+  const shortWeekdays = Object.keys(shortWeekdayDateMap);
+
+  const getDayOfWeek = (
+    shortName,
+    locale = props.timeFormat,
+    length = "short"
+  ) =>
+    new Intl.DateTimeFormat(locale, { weekday: length }).format(
+      shortWeekdayDateMap[shortName]
+    );
+
+  const getDaysOfWeek = (locale = props.timeFormat, length = "short") =>
+    shortWeekdays.map((shortName) => getDayOfWeek(shortName, locale, length));
+
+  const day = getDaysOfWeek(props.timeFormat);
 
   const getVariant = (item: number) => {
     if (item == props.dateRange.dates[props.index].getDate()) {
@@ -106,22 +135,18 @@ export const Body: React.FC<Inputs> = (props) => {
     getProp: any,
     setProp: (f: any) => void
   ): void {
-    var temp = getProp;
+    let temp = getProp;
     temp[props.index] = value;
     setProp([temp[0], temp[1]]);
   }
 
   function handleTextChange(event: string): void {
-    var error = false;
+    let error = false;
 
     stateFormatter(event, props.dateTextContents, props.setDateTextContents);
     try {
-      var newDate = new Date(event);
-      const dtf = new Intl.DateTimeFormat("en", {
-        year: "numeric",
-        month: "numeric",
-        day: "2-digit",
-      });
+      let newDate = new Date(event);
+      const dtf = props.dateFormatter;
 
       const [
         { value: textMonth },
@@ -135,8 +160,8 @@ export const Body: React.FC<Inputs> = (props) => {
         parseInt(textDay) >= 0 &&
         parseInt(textMonth) >= 0 &&
         parseInt(textMonth) < 12 &&
-        parseInt(textYear) < 3000 &&
-        parseInt(textYear) > 0
+        parseInt(textYear) < props.minimumYearValue &&
+        parseInt(textYear) > props.maximumYearValue
       ) {
         resetDate(property.day, textDay);
         resetDate(property.month, String(parseInt(textMonth) - 1));
@@ -149,12 +174,12 @@ export const Body: React.FC<Inputs> = (props) => {
   }
 
   function handleTimeChange(event: string): void {
-    var error = false;
-    var dateRange = props.dateRange;
+    let error = false;
+    let dateRange = props.dateRange;
     stateFormatter(event, props.timeTextContents, props.setTimeTextContents);
 
     try {
-      var date = new Date(
+      let date = new Date(
         props.dateRange.dates[props.index].toDateString() + " " + event
       );
       if (!isNaN(date.getTime())) {
@@ -193,20 +218,24 @@ export const Body: React.FC<Inputs> = (props) => {
   }
 
   function applyFn(text: string[]): void {
-    var dateRange = props.dateRange;
+    let dateRange = props.dateRange;
     dateRange.setRelative(text.join(" "), props.index);
     props.setDateRange(dateRange);
+    props.formatDateTextField(dateRange);
+    props.formatTimeTextField(dateRange);
   }
 
   function setNow(): void {
-    var dateRange = props.dateRange;
+    let dateRange = props.dateRange;
     dateRange.setNow(props.index);
     props.setDateRange(dateRange);
+    props.formatTimeTextField(dateRange);
+    props.formatDateTextField(dateRange);
   }
 
   function resetDate(key: string, value: any): void {
-    var dateRange = props.dateRange;
-    var date = dateRange.dates[props.index];
+    let dateRange = props.dateRange;
+    let date = dateRange.dates[props.index];
 
     if (key == property.day) {
       date = new Date(date.getFullYear(), date.getMonth(), value);
@@ -221,7 +250,7 @@ export const Body: React.FC<Inputs> = (props) => {
 
     console.log("NEW DATE: " + dateRange.displayText[props.index]);
 
-    var daysInMonthContent = new Date(
+    let daysInMonthContent = new Date(
       date.getFullYear(),
       date.getMonth() + 1,
       0
@@ -230,28 +259,23 @@ export const Body: React.FC<Inputs> = (props) => {
   }
 
   function renderItem(index: number): JSX.Element {
-    var key = property.year;
-    var name = "";
+    let key = property.year;
+    let name = "";
     if (props.propertySelected == 0) {
       key = property.month;
-      name = new Date(0, index + 1, 0).toLocaleString("default", {
+      name = new Date(0, index + 1, 0).toLocaleString(props.timeFormat, {
         month: "long",
       });
     } else {
-      name = String(index);
+      name = String(index + props.minimumYearValue);
     }
     return (
       <Button
-        onClick={() => handleClick(key, index)}
+        onClick={() => handleClick(key, index + props.minimumYearValue)}
         variant="text"
         color="primary"
         size="large"
-        style={{
-          maxWidth: "100px",
-          maxHeight: "30px",
-          minWidth: "100px",
-          minHeight: "30px",
-        }}
+        className={props.classes.bodyList}
       >
         {name}
       </Button>
@@ -263,11 +287,11 @@ export const Body: React.FC<Inputs> = (props) => {
       if (props.propertySelected == 1) {
         return (
           <Box mt={10}>
-            <div style={{ overflow: "auto", maxHeight: 350, maxWidth: 120 }}>
+            <div className={props.classes.bodyListContainer}>
               {" "}
               <ReactList
                 itemRenderer={(index) => renderItem(index)}
-                length={2100}
+                length={props.maximumYearValue - props.minimumYearValue}
                 type="uniform"
               />
             </div>
@@ -276,7 +300,7 @@ export const Body: React.FC<Inputs> = (props) => {
       } else {
         return (
           <Box mt={10}>
-            <div style={{ overflow: "auto", maxHeight: 350, maxWidth: 120 }}>
+            <div className={props.classes.bodyListContainer}>
               {" "}
               <ReactList
                 itemRenderer={(index) => renderItem(index)}
@@ -305,12 +329,7 @@ export const Body: React.FC<Inputs> = (props) => {
       <Button
         color="primary"
         variant="text"
-        style={{
-          minHeight: "35px",
-          maxHeight: "35px",
-          minWidth: "100px",
-          maxWidth: "100px",
-        }}
+        className={props.classes.bodyTabButton}
       >
         {title}
       </Button>
@@ -344,6 +363,7 @@ export const Body: React.FC<Inputs> = (props) => {
       setTermAnchorEl: props.setTermAnchorEl,
       relativeSelectContent: props.relativeSelectContent,
       applyFn,
+      classes: props.classes,
       setIntervalAnchorEl: props.setIntervalAnchorEl,
       relativeTerms: props.relativeIntervals,
       relativeIntervals: props.relativeTerms,
@@ -367,40 +387,28 @@ export const Body: React.FC<Inputs> = (props) => {
           }}
         >
           <Tab>
-            <Box ml={1} style={{ height: "10px" }}>
+            <Box ml={1} className={props.classes.bodyTabHeader}>
               {renderTabButton("Absolute")}
             </Box>
           </Tab>
           <Tab>
-            <Box ml={1} style={{ height: "10px" }}>
+            <Box ml={1} className={props.classes.bodyTabHeader}>
               {renderTabButton("Relative")}
             </Box>
           </Tab>
           <Tab>
-            <Box ml={1} style={{ height: "10px" }}>
+            <Box ml={1} className={props.classes.bodyTabHeader}>
               {renderTabButton("Now")}
             </Box>
           </Tab>
         </TabList>
         <TabPanel>
-          <Box
-            style={{
-              alignItems: "center",
-              display: "flex",
-              flexDirection: "column",
-              width: "400px",
-            }}
-          >
-            <Box className="box-header" mt={2} mb={2}>
+          <Box className={props.classes.bodyAbsoluteTab}>
+            <Box className={props.classes.bodyHeader} mt={2} mb={2}>
               <Box mt={2}>
                 <Button
                   onClick={() => updateTransition(0)}
-                  style={{
-                    maxWidth: "30px",
-                    maxHeight: "30px",
-                    minWidth: "30px",
-                    minHeight: "30px",
-                  }}
+                  className={props.classes.calendarButton}
                   size="small"
                   variant="text"
                 >
@@ -410,7 +418,7 @@ export const Body: React.FC<Inputs> = (props) => {
               <Box mt={2} mr={1}>
                 <Typography color="textPrimary" variant="h5">
                   {props.dateRange.dates[props.index].toLocaleString(
-                    "default",
+                    props.timeFormat,
                     {
                       month: "long",
                     }
@@ -425,12 +433,7 @@ export const Body: React.FC<Inputs> = (props) => {
               <Box ml={1} mt={2}>
                 <Button
                   onClick={() => updateTransition(1)}
-                  style={{
-                    maxWidth: "30px",
-                    maxHeight: "30px",
-                    minWidth: "30px",
-                    minHeight: "30px",
-                  }}
+                  className={props.classes.calendarButton}
                   size="small"
                   color="secondary"
                   variant="text"
@@ -444,12 +447,7 @@ export const Body: React.FC<Inputs> = (props) => {
                 container
                 justify="flex-start"
                 spacing={1}
-                style={{
-                  maxWidth: "300px",
-                  maxHeight: "200px",
-                  minWidth: "300px",
-                  minHeight: "200px",
-                }}
+                className={props.classes.calendar}
               >
                 {[...Array(7).keys()].map((item) => (
                   <Grid item>
@@ -458,12 +456,7 @@ export const Body: React.FC<Inputs> = (props) => {
                       color="secondary"
                       size="small"
                       variant="text"
-                      style={{
-                        maxWidth: "30px",
-                        maxHeight: "30px",
-                        minWidth: "30px",
-                        minHeight: "30px",
-                      }}
+                      className={props.classes.calendarButton}
                     >
                       {day[item]}
                     </Button>
@@ -481,12 +474,7 @@ export const Body: React.FC<Inputs> = (props) => {
                 ].map((item) => (
                   <Grid key={item} item>
                     <Button
-                      style={{
-                        maxWidth: "30px",
-                        maxHeight: "30px",
-                        minWidth: "30px",
-                        minHeight: "30px",
-                      }}
+                      className={props.classes.calendarButton}
                       size="small"
                       color="primary"
                       variant="contained"
@@ -499,12 +487,7 @@ export const Body: React.FC<Inputs> = (props) => {
                     <Grid key={item} item>
                       <Button
                         onClick={() => handleClick("day", item + 1)}
-                        style={{
-                          maxWidth: "30px",
-                          maxHeight: "30px",
-                          minWidth: "30px",
-                          minHeight: "30px",
-                        }}
+                        className={props.classes.calendarButton}
                         size="small"
                         color="primary"
                         variant={getVariant(item + 1)}
@@ -517,11 +500,11 @@ export const Body: React.FC<Inputs> = (props) => {
                 )}
               </Grid>
             </Box>
-            <Box mt={11} style={{ display: "flex", flexDirection: "row" }}>
+            <Box mt={11} className={props.classes.flexRow}>
               <TextField
                 error={props.dateError[props.index]}
                 fullWidth={false}
-                style={{ width: 125 }}
+                className={props.classes.bodyTextField}
                 value={props.dateTextContents[props.index]}
                 size="small"
                 id="outlined-basic"
@@ -532,7 +515,7 @@ export const Body: React.FC<Inputs> = (props) => {
               <TextField
                 error={props.timeError[props.index]}
                 fullWidth={false}
-                style={{ width: 125 }}
+                className={props.classes.bodyTextField}
                 value={props.timeTextContents[props.index]}
                 size="small"
                 id="outlined-basic"
@@ -544,30 +527,13 @@ export const Body: React.FC<Inputs> = (props) => {
           </Box>
         </TabPanel>
         <TabPanel>
-          <Box
-            mt={7}
-            style={{
-              alignItems: "center",
-              display: "flex",
-              flexDirection: "column",
-              width: "400px",
-              height: "225px",
-            }}
-          >
+          <Box mt={7} className={props.classes.bodyDateSelectDropdown}>
             <DateSelect {...getDateSelectObj()} />
           </Box>
         </TabPanel>
         <TabPanel>
-          <Box
-            style={{
-              alignItems: "center",
-              display: "flex",
-              flexDirection: "column",
-              width: "400px",
-              height: "225px",
-            }}
-          >
-            <Box mt={3} style={{ width: "300px" }}>
+          <Box className={props.classes.bodyDateSelectDropdown}>
+            <Box mt={3} className={props.classes.bodySetNow}>
               <Typography>
                 Setting time to now means that on every refresh, the current
                 time will be reset.
@@ -578,7 +544,7 @@ export const Body: React.FC<Inputs> = (props) => {
                 onClick={() => setNow()}
                 variant="contained"
                 color="primary"
-                style={{ width: "200px", height: "40px" }}
+                className={props.classes.bodySetNowButton}
               >
                 Set time to now
               </Button>

@@ -25,34 +25,33 @@ interface Inputs {
   quickSelectTerms: string[];
   timeFormat: string;
   quickSelectContent: string[];
-  setDateRange(h): void;
-  setQuickSelectContent(r): void;
+  classes: any;
+  formatDateTextField(dates?: DateRange): void;
+  formatTimeTextField(dates?: DateRange): void;
+  setDateRange(dateRange: DateRange): void;
+  setQuickSelectContent(content: string[]): void;
   dateRange: DateRange;
   applyChanges(): void;
-  getData(f): void;
-  setRecentlySelected(i): void;
-  setTermAnchorEl(w): void;
-  setIntervalAnchorEl(w): void;
+  getDateRange(dates: Date[]): void;
+  setRecentlySelected(items: string[][]): void;
+  setTermAnchorEl(element: EventTarget | null): void;
+  setIntervalAnchorEl(element: EventTarget | null): void;
 }
 
 export const QuickSelect: React.FC<Inputs> = (props) => {
-  var dateRange: DateRange;
-
-  useEffect(() => {
-    dateRange = props.dateRange;
-  }, []);
-
   function handleClick(text: string[]): void {
     props.setQuickSelectContent(text);
   }
 
   function apply(): void {
-    dateRange = props.dateRange;
+    let dateRange = props.dateRange;
     dateRange.setQuickSelect(props.quickSelectContent);
+    props.formatDateTextField();
+    props.formatTimeTextField();
     props.setDateRange(dateRange);
     props.applyChanges();
 
-    var recentlySelected = props.recentlySelected;
+    let recentlySelected = props.recentlySelected;
     recentlySelected.unshift(props.quickSelectContent);
     if (recentlySelected.length > 6) {
       recentlySelected.pop();
@@ -64,6 +63,7 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
     return {
       quickSelectContent: props.quickSelectContent,
       handleClick,
+      classes: props.classes,
       termAnchorEl: props.termAnchorEl,
       intervalAnchorEl: props.intervalAnchorEl,
       setTermAnchorEl: props.setTermAnchorEl,
@@ -75,38 +75,33 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
 
   return (
     <Box className={props.boxClass}>
-      <Box style={{ flexDirection: "column" }}>
+      <Box className={props.classes.flexColumn}>
         <Box ml={2} mt={2}>
           <Typography variant="subtitle1" color="textPrimary">
             Quick Select
           </Typography>
-          <Box mt={1} style={{ display: "flex", flexDirection: "row" }}>
+          <Box mt={1} className={props.classes.flexRow}>
             <DateSelect {...getDateSelectObj()} />
             <Box ml={1}>
               <Button
                 onClick={() => apply()}
                 variant="contained"
                 color="primary"
-                style={{
-                  maxWidth: "80px",
-                  minWidth: "80px",
-                  maxHeight: "40px",
-                  minHeight: "40px",
-                }}
+                className={props.classes.quickSelectApplyButton}
               >
                 Apply
               </Button>
             </Box>
           </Box>
         </Box>
-        <Box ml={2} mt={2} style={{ display: "flex", flexDirection: "column" }}>
+        <Box ml={2} mt={2} className={props.classes.flexColumn}>
           <Divider light />
           <Box mt={1} />
           <Typography color="textPrimary" variant="subtitle1">
             Commonly used
           </Typography>
-          <Box style={{ display: "flex", flexDirection: "row" }}>
-            <Box style={{ display: "flex", flexDirection: "column" }}>
+          <Box className={props.classes.flexRow}>
+            <Box className={props.classes.flexColumn}>
               {props.commonlyUsedText.slice(0, 4).map((object) => (
                 <Box>
                   <Button
@@ -116,13 +111,7 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                     size="small"
                     disableFocusRipple={true}
                     disableRipple={true}
-                    style={{
-                      backgroundColor: "transparent",
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      maxHeight: "30px",
-                      minHeight: "30px",
-                    }}
+                    className={props.classes.quickSelectContainerButton}
                   ></Button>
                   <Box mt={-3}>
                     <Typography color="primary" variant="subtitle2">
@@ -132,7 +121,7 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                 </Box>
               ))}
             </Box>
-            <Box style={{ display: "flex", flexDirection: "column" }}>
+            <Box className={props.classes.flexColumn}>
               {props.commonlyUsedText.slice(4, 8).map((object) => (
                 <Box>
                   <Button
@@ -140,13 +129,9 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                     color="primary"
                     variant="text"
                     size="small"
-                    style={{
-                      textAlign: "left",
-                      maxWidth: "150px",
-                      minWidth: "150px",
-                      maxHeight: "30px",
-                      minHeight: "30px",
-                    }}
+                    disableFocusRipple={true}
+                    disableRipple={true}
+                    className={props.classes.quickSelectContainerButton}
                   ></Button>
                   <Box mt={-3}>
                     <Typography color="primary" variant="subtitle2">
@@ -158,14 +143,14 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
             </Box>
           </Box>
         </Box>
-        <Box ml={2} mt={2} style={{ flexDirection: "column" }}>
+        <Box ml={2} mt={2} className={props.classes.flexColumn}>
           <Divider light />
           <Box mt={1} />
           <Typography color="textPrimary" variant="subtitle1">
             Recently used date ranges
           </Typography>
-          <Box mt={1} style={{ display: "flex", flexDirection: "row" }}>
-            <Box style={{ display: "flex", flexDirection: "column" }}>
+          <Box mt={1} className={props.classes.flexRow}>
+            <Box className={props.classes.flexColumn}>
               {props.recentlySelected
                 .slice(0, Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
@@ -175,13 +160,9 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                       color="primary"
                       variant="text"
                       size="small"
-                      style={{
-                        textAlign: "left",
-                        maxWidth: "150px",
-                        minWidth: "150px",
-                        maxHeight: "30px",
-                        minHeight: "30px",
-                      }}
+                      disableFocusRipple={true}
+                      disableRipple={true}
+                      className={props.classes.quickSelectContainerButton}
                     ></Button>
                     <Box mt={-3}>
                       <Typography color="primary" variant="subtitle2">
@@ -191,7 +172,7 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                   </Box>
                 ))}
             </Box>
-            <Box style={{ display: "flex", flexDirection: "column" }}>
+            <Box className={props.classes.flexColumn}>
               {props.recentlySelected
                 .slice(Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
@@ -201,13 +182,9 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                       color="primary"
                       variant="text"
                       size="small"
-                      style={{
-                        textAlign: "left",
-                        maxWidth: "150px",
-                        minWidth: "150px",
-                        maxHeight: "30px",
-                        minHeight: "30px",
-                      }}
+                      disableFocusRipple={true}
+                      disableRipple={true}
+                      className={props.classes.quickSelectContainerButton}
                     ></Button>
                     <Box mt={-3}>
                       <Typography color="primary" variant="subtitle2">
