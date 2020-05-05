@@ -16,7 +16,7 @@ interface Inputs {
 
 export function TimerUI(props: Inputs) {
   function determineInitialTime() {
-    var time =
+    let time =
       ms(String(props.refreshInterval) + props.refreshIntervalUnits) - 1;
     if (time > 1000 * 60 * 60 * 24) {
       return 1000 * 60 * 60 * 24 - 1;

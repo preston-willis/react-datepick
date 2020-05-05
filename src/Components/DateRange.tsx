@@ -16,8 +16,15 @@ export default class DateRange {
   displayText: string[] = ["", ""];
   finalDates: Date[] = [new Date(), new Date()];
   finalDisplayText: string[] = ["", ""];
-
-  constructor() {
+  localeObj = {
+    quickSelectTerms: ["", ""],
+    quickSelectIntervals: ["", ""],
+    relativeTerms: ["", ""],
+    relativeIntervals: ["", ""],
+    nowText: "",
+  };
+  constructor(localeObj) {
+    this.localeObj = localeObj;
     this.setNow(DateIndex.start), this.setNow(DateIndex.end);
     this.applyChanges();
   }
@@ -34,18 +41,22 @@ export default class DateRange {
     this.setNow(DateIndex.start);
     this.setNow(DateIndex.end);
 
-    if (quickSelectText[0].includes("Next")) {
+    if (quickSelectText[0].includes(this.localeObj.quickSelectTerms[1])) {
       this.dates[DateIndex.end].setTime(
         this.dates[DateIndex.start].getTime() + ms(quickSelectText[1])
       );
-      this.displayText[DateIndex.start] = "now";
-      this.displayText[DateIndex.end] = quickSelectText[1] + " from now";
-    } else if (quickSelectText[0].includes("Last")) {
+      this.displayText[DateIndex.start] = this.localeObj.nowText;
+      this.displayText[DateIndex.end] =
+        quickSelectText[1] + " " + this.localeObj.relativeTerms[1];
+    } else if (
+      quickSelectText[0].includes(this.localeObj.quickSelectTerms[0])
+    ) {
       this.dates[DateIndex.start].setTime(
         this.dates[DateIndex.start].getTime() - ms(quickSelectText[1])
       );
-      this.displayText[DateIndex.start] = quickSelectText[1] + " ago";
-      this.displayText[DateIndex.end] = "now";
+      this.displayText[DateIndex.start] =
+        quickSelectText[1] + " " + this.localeObj.relativeTerms[0];
+      this.displayText[DateIndex.end] = this.localeObj.nowText;
     }
     this.dateTypes = [DateType.relative, DateType.relative];
   }
@@ -57,7 +68,7 @@ export default class DateRange {
     return dateFormatter.format(date);
   }
 
-  static formatAbsoluteTime(date: Date, timeFormat: string): String {
+  static formatAbsoluteTime(date: Date, timeFormat: string): string {
     return date.toLocaleTimeString(timeFormat);
   }
 
@@ -78,9 +89,9 @@ export default class DateRange {
   setRelative(text: string, index: number): void {
     this.setNow(index);
     const textParts = [text.split(" ").slice(0, 2).join(" "), text];
-    if (textParts[1].includes("ago")) {
+    if (textParts[1].includes(this.localeObj.relativeTerms[0])) {
       this.dates[index].setTime(this.dates[index].getTime() - ms(textParts[0]));
-    } else if (textParts[1].includes("from now")) {
+    } else if (textParts[1].includes(this.localeObj.relativeTerms[1])) {
       this.dates[index].setTime(this.dates[index].getTime() + ms(textParts[0]));
     }
     this.displayText[index] = textParts[1];
@@ -88,7 +99,7 @@ export default class DateRange {
   }
 
   refreshDates(): void {
-    var i = 0;
+    let i = 0;
     for (i = 0; i < this.dates.length; i++) {
       if (!this.isAbsolute(i)) {
         this.setRelative(this.finalDisplayText[i], i);
@@ -114,7 +125,7 @@ export default class DateRange {
   }
   setNow(index: number): void {
     this.dates[index] = new Date();
-    this.displayText[index] = "now";
+    this.displayText[index] = this.localeObj.nowText;
     this.dateTypes[index] = DateType.relative;
   }
 }

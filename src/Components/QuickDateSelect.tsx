@@ -21,9 +21,10 @@ interface Inputs {
   quickSelectTerms: string[];
   quickSelectIntervals: string[];
   quickSelectContent: string[];
-  handleClick(f): void;
-  setTermAnchorEl(x): void;
-  setIntervalAnchorEl(y): void;
+  classes: any;
+  handleClick(text: string[]): void;
+  setTermAnchorEl(element: EventTarget | null): void;
+  setIntervalAnchorEl(element: EventTarget | null): void;
 }
 
 export const DateSelect: React.FC<Inputs> = (props) => {
@@ -54,7 +55,7 @@ export const DateSelect: React.FC<Inputs> = (props) => {
 
   function handleClose(identifier: number, item: string): void {
     setAnchorEl(identifier, null);
-    var words = props.quickSelectContent;
+    let words = props.quickSelectContent;
     words[identifier] = item;
     props.handleClick(words);
   }
@@ -67,12 +68,13 @@ export const DateSelect: React.FC<Inputs> = (props) => {
       handleClose,
       handleMenuClick,
       getAnchorEl,
+      classes: props.classes,
       identifier: index,
     };
   }
 
   return (
-    <Box style={{ display: "flex", flexDirection: "row" }}>
+    <Box className={props.classes.flexRow}>
       <Box>
         <RelativeDateSelectDropdown {...getDropdownObj(0)} />
       </Box>

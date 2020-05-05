@@ -20,9 +20,10 @@ interface Inputs {
   relativeTerms: string[];
   relativeIntervals: string[];
   relativeSelectContent: string[];
-  applyFn(j): void;
-  setTermAnchorEl(x): void;
-  setIntervalAnchorEl(y): void;
+  classes: any;
+  applyFn(text: string[]): void;
+  setTermAnchorEl(element: EventTarget | null): void;
+  setIntervalAnchorEl(element: EventTarget | null): void;
 }
 
 export const DateSelect: React.FC<Inputs> = (props) => {
@@ -54,7 +55,7 @@ export const DateSelect: React.FC<Inputs> = (props) => {
   function handleClose(identifier: number, item: string): void {
     setAnchorEl(identifier, null);
     console.log(item)
-    var words = props.relativeSelectContent;
+    let words = props.relativeSelectContent;
     words[identifier] = item;
     props.applyFn(words);
   }
@@ -65,6 +66,7 @@ export const DateSelect: React.FC<Inputs> = (props) => {
       relativeIntervals: props.relativeIntervals,
       relativeSelectContent: props.relativeSelectContent,
       handleClose,
+      classes: props.classes,
       handleMenuClick,
       getAnchorEl,
       identifier: index,
@@ -72,7 +74,7 @@ export const DateSelect: React.FC<Inputs> = (props) => {
   }
 
   return (
-    <Box style={{ display: "flex", flexDirection: "row" }}>
+    <Box className={props.classes.flexRow}>
       <Box>
         <RelativeDateSelectDropdown {...getDropdownObj(0)} />
       </Box>

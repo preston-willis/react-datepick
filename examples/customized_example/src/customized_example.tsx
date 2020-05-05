@@ -11,14 +11,14 @@ function reset() {
   console.log("Reset!");
 }
 
-function getData(data) {
+function getDateRange(data) {
   console.log(data);
 }
 
 ReactDOM.render(
   <DateRangePicker
     resetFn={reset}
-    getData={getData}
+    getDateRange={getDateRange}
     dateFormatter={
       new Intl.DateTimeFormat("en", {
         year: "numeric",

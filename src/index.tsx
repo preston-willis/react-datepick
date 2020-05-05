@@ -4,7 +4,7 @@ import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { Layout } from "./Components/Layout.tsx";
 
 interface Inputs {
-  getData(a): void;
+  getDateRange(dates: Date[]): void;
   resetFn(): void;
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
@@ -14,6 +14,9 @@ interface Inputs {
   relativeTerms?: string[];
   relativeIntervals?: string[];
   timeFormat?: string;
+  nowText?: string;
+  minimumYearValue?: number;
+  maximumYearValue?: number;
 }
 
 export default function DatePick(props: Inputs) {

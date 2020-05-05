@@ -1,9 +1,10 @@
 # React-DatePick
 react-datepick can be used to pick a date range in react and specify a data refresh interval.
 ## Demo
-![media](https://github.com/iamPres/react-datepick/blob/master/media/readme-body-1.PNG)
-![media](https://github.com/iamPres/react-datepick/blob/master/media/readme-body-2.PNG)
-![media](https://github.com/iamPres/react-datepick/blob/master/media/readme-timer-1.PNG)
+![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-1.PNG)
+![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-2.PNG)
+![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-3.PNG)
+![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-4.PNG)
 ## Dependencies
  - install the [package.json](https://github.com/iamPres/react-datepick/blob/master/package.json) dependencies with npm
 

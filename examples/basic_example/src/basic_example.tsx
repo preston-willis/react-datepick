@@ -8,8 +8,8 @@ function reset() {
   console.log("Reset!");
 }
 
-function getData(data) {
+function getDateRange(data: Date[]): void {
   console.log(data);
 }
 
-ReactDOM.render(<DateRangePicker relativeTerms={["apo", "prom pow"]} resetFn={reset} getData={getData} />, app);
+ReactDOM.render(<DateRangePicker relativeTerms={["ago", "from now"]} resetFn={reset} getDateRange={getDateRange} />, app);

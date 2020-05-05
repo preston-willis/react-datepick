@@ -17,21 +17,22 @@ interface Inputs {
   relativeTerms: string[];
   relativeIntervals: string[];
   relativeSelectContent: string[];
-  handleMenuClick(x, y): void;
-  handleClose(x, y): void;
-  getAnchorEl(x): Element;
+  classes: any;
+  handleMenuClick(identifier: number, event: EventTarget): void;
+  handleClose(identifier: number, item: string): void;
+  getAnchorEl(identifier: number): Element;
 }
 
 export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
-  var term = props.relativeTerms;
-  var interval = props.relativeIntervals;
+  let term = props.relativeTerms;
+  let interval = props.relativeIntervals;
 
   enum menu {
     term = 0,
     interval = 1,
   }
 
-  var list: string[] = [];
+  let list: string[] = [];
   if (props.identifier == menu.term) {
     list = term;
   } else if (props.identifier == menu.interval) {
@@ -41,7 +42,7 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
   return (
     <div>
       <Button
-        style={{ maxHeight: "40px", minHeight: "40px" }}
+        className={props.classes.bodyDateSelectDropdownButton}
         aria-controls={String(props.identifier)}
         variant="outlined"
         color="primary"
@@ -50,7 +51,7 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
           props.handleMenuClick(props.identifier, event.currentTarget)
         }
       >
-        <Box style={{ display: "flex", flexDirection: "row" }}>
+        <Box className={props.classes.flexRow}>
           {props.relativeSelectContent[props.identifier]}
           <Box ml={1} />
           <ExpandMoreIcon />
