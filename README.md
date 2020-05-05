@@ -38,8 +38,8 @@ ReactDOM.render(
 ```
 
 ## Props
-- `getData(data)`
-  - Called every time the user chooses a date, takes a `Date()` object
+- `getData(data: Date[])`
+  - Called every time the user chooses a date, takes a `Date[]` object
 - `resetFn()`
   - Called when the refresh timer resets
 - `dateFormatter` (optional)
@@ -92,6 +92,11 @@ ReactDOM.render(
   - Takes an array of relative intervals to be used in the quick select dropdown menu
   ```javascript
    commonlyUsedText={["last 20 minutes", "next 1 hour"]}
+   
+- `nowText` (optional)
+  - Takes a string to represent the displayed "now" text
+  ```javascript
+   nowText={"ahora"}
    
 ## Customization
  - Utilizes materialUI elements
