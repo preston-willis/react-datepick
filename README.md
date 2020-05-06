@@ -98,6 +98,16 @@ ReactDOM.render(
   ```javascript
    nowText="ahora"
    ```
+- `minimumYearValue` (optional)
+  - Takes a number to represent the minimum year to be chosen
+  ```javascript
+      maximumYearValue={100}
+   ```
+- `maximumYearValue` (optional)
+ - Takes a number to represent the maximum year to be chosen
+  ```javascript
+   maximumYearValue={2500}
+   ```
    
 ## Customization
  - Utilizes materialUI elements
