@@ -31,6 +31,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { makeStyles } from "@material-ui/styles";
 import "./Styling.css";
+import { useHistory } from "react-router-dom";
 
 interface Inputs {
   resetFn(): void;
@@ -46,6 +47,8 @@ interface Inputs {
   nowText?: string;
   minimumYearValue?: number;
   maximumYearValue?: number;
+  setRawRange?(dateRange: Date[], history): void;
+  getRawRange?(history): Date[];
 }
 
 const commonlyUsedTextDefault: string[][] = [
@@ -146,6 +149,37 @@ export const Layout: React.FC<Inputs> = (props) => {
     relativeTerms,
     relativeIntervals,
     nowText,
+  };
+  let history = useHistory();
+
+  const getRawRange: (() => Date[]) | (() => null) = props.getRawRange
+    ? () => {
+        return props.getRawRange!(history);
+      }
+    : () => {
+        return null;
+      };
+
+  const setRawRange:
+    | ((dateRange: Date[]) => void)
+    | (() => null) = props.setRawRange
+    ? (dateRange) => {
+        return props.setRawRange!(dateRange, history);
+      }
+    : () => {
+        return null;
+      };
+
+  window.onload = (e) => {
+    let dates = getRawRange();
+    let index = 0;
+    if (dates) {
+      for (let i of dates) {
+        dateRange.setDate(i, index, dateFormatter, timeFormat);
+        index++;
+        applyChanges();
+      }
+    }
   };
 
   // DATES
@@ -326,10 +360,10 @@ export const Layout: React.FC<Inputs> = (props) => {
       minHeight: "40px",
     },
     menuTimerButtonsContainer: {
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "left",
-        width: "400px",
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "left",
+      width: "400px",
     },
   }));
 
@@ -477,6 +511,7 @@ export const Layout: React.FC<Inputs> = (props) => {
     console.log(dateRange);
 
     props.getDateRange(dateRange.dates);
+    setRawRange(dateRange.dates);
 
     if (timerRunning) {
       setTimerRunning(false);
@@ -591,6 +626,7 @@ export const Layout: React.FC<Inputs> = (props) => {
           </TabPanel>
         </Tabs>
       </div>
+      ,
     </MuiThemeProvider>
   );
 };
