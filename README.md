@@ -108,10 +108,10 @@ ReactDOM.render(
   ```javascript
    maximumYearValue={2500}
    ```
-- `getRawRange` (optional `((hist: History?) => Date[])`)
+- `getRawRange` (optional `((history) => Date[])`)
   - Takes a function with an optional `useHistory()` hook parameter, and a `Date[]` parameter. Can be used to store or parse data
   ```javascript
-   getRawRange={(history: History): Date[] => {
+   getRawRange={(history): Date[] => {
       let persistedRange = history.location.hash.substring(1).split("=")[1];
       persistedRange = persistedRange.replace(/\%22/g, '"');
       console.log(persistedRange);
@@ -120,10 +120,10 @@ ReactDOM.render(
       return [new Date(json[0]), new Date(json[1])];
     }
    ```
-- `setRawRange` (optional `((hist: History?, dates: Date[]) => void)`)
+- `setRawRange` (optional `((history, dates: Date[]) => void)`)
   - Takes a function that returns a `Date[]` object. Can be used to set date range data to preset or stored value
   ```javascript
-   setRawRange={(range: Date[], history: History): void => {
+   setRawRange={(range: Date[], history): void => {
       let json = JSON.stringify(range);
       history.replace("#range=" + json);
     }}
