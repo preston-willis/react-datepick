@@ -38,11 +38,11 @@ ReactDOM.render(
 ```
 
 ## Props
-- `getData(data: Date[])`
+- `getData(data: Date[])` (required `(data: Date[]) => void)`)
   - Called every time the user chooses a date, takes a `Date[]` object
-- `resetFn()`
+- `resetFn()` (required `(() => void)`)
   - Called when the refresh timer resets
-- `dateFormatter` (optional)
+- `dateFormatter` (optional `Intl.DateTimeFormat`)
   - Takes a `Intl.DateTimeFormat` object used to format displayed dates
   ```javascript
   dateFormatter={
