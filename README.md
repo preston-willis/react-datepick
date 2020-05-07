@@ -104,9 +104,20 @@ ReactDOM.render(
       maximumYearValue={100}
    ```
 - `maximumYearValue` (optional)
- - Takes a number to represent the maximum year to be chosen
+  - Takes a number to represent the maximum year to be chosen
   ```javascript
    maximumYearValue={2500}
+   ```
+- `getRawRange` (optional)
+  - Get date range data to parse or store 
+  ```javascript
+   getRawRange={getPersistRange}
+   ```
+- `setRawRange` (optional)
+  - Set date range data to preset or stored value
+  ```javascript
+   setRawRange={persistRange}
+
    ```
    
 ## Customization
