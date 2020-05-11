@@ -15,7 +15,7 @@ import ReactList from "react-list";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { DateSelect } from "./RelativeDateSelect.tsx";
 import "./Styling.css";
-import DateRange from "./DateRange.tsx";
+import { DateRange } from "./DateRange.tsx";
 import ms from "ms";
 import {
   format,
@@ -39,15 +39,16 @@ interface Inputs {
   setDateRange(dateRange: DateRange): void;
   setDateTextContents(content: string[]): void;
   setTimeTextContents(content: string[]): void;
-  setRelativeSelectContent(content: string[]): void;
+  setRelativeSelectContent(content: number[]): void;
   formatTimeTextField(dates?: DateRange): void;
   formatDateTextField(dates?: DateRange): void;
+  applyMasterChanges(dr: DateRange): void;
   classes: any;
   minimumYearValue: number;
   maximumYearValue: number;
   relativeTerms: string[];
-  relativeIntervals: string[];
-  relativeSelectContent: string[];
+  relativeIntervals: number[];
+  relativeSelectContent: number[];
   dateTextContents: string[];
   timeTextContents: string[];
   dateRange: DateRange;
@@ -217,9 +218,9 @@ export const Body: React.FC<Inputs> = (props) => {
     );
   }
 
-  function applyFn(text: string[]): void {
+  function applyFn(text: number): void {
     let dateRange = props.dateRange;
-    dateRange.setRelative(text.join(" "), props.index);
+    dateRange.setRelative(text, props.index);
     props.setDateRange(dateRange);
     props.formatDateTextField(dateRange);
     props.formatTimeTextField(dateRange);
@@ -228,7 +229,7 @@ export const Body: React.FC<Inputs> = (props) => {
   function setNow(): void {
     let dateRange = props.dateRange;
     dateRange.setNow(props.index);
-    props.setDateRange(dateRange);
+    props.applyMasterChanges(dateRange);
     props.formatTimeTextField(dateRange);
     props.formatDateTextField(dateRange);
   }
@@ -247,9 +248,6 @@ export const Body: React.FC<Inputs> = (props) => {
 
     dateRange.setDate(date, props.index, props.dateFormatter, props.timeFormat);
     props.setDateRange(dateRange);
-
-    console.log("NEW DATE: " + dateRange.displayText[props.index]);
-
     let daysInMonthContent = new Date(
       date.getFullYear(),
       date.getMonth() + 1,
@@ -363,10 +361,11 @@ export const Body: React.FC<Inputs> = (props) => {
       setTermAnchorEl: props.setTermAnchorEl,
       relativeSelectContent: props.relativeSelectContent,
       applyFn,
+      dateRange: props.dateRange,
       classes: props.classes,
       setIntervalAnchorEl: props.setIntervalAnchorEl,
-      relativeTerms: props.relativeIntervals,
-      relativeIntervals: props.relativeTerms,
+      firstDropdownText: props.relativeIntervals,
+      secondDropdownText: props.relativeTerms,
     };
   }
 

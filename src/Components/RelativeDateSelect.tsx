@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { DateRange, TermContext } from "./DateRange.tsx";
 import ms from "ms";
 import {
   Button,
@@ -17,11 +18,12 @@ import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown.tsx";
 interface Inputs {
   termAnchorEl: any;
   intervalAnchorEl: any;
-  relativeTerms: string[];
-  relativeIntervals: string[];
-  relativeSelectContent: string[];
+  firstDropdownText: number[];
+  secondDropdownText: string[];
+  relativeSelectContent: number[];
   classes: any;
-  applyFn(text: string[]): void;
+  dateRange: DateRange;
+  applyFn(text: number): void;
   setTermAnchorEl(element: EventTarget | null): void;
   setIntervalAnchorEl(element: EventTarget | null): void;
 }
@@ -52,20 +54,21 @@ export const DateSelect: React.FC<Inputs> = (props) => {
     setAnchorEl(identifier, event);
   }
 
-  function handleClose(identifier: number, item: string): void {
+  function handleClose(identifier: number, item: any): void {
     setAnchorEl(identifier, null);
-    console.log(item)
     let words = props.relativeSelectContent;
     words[identifier] = item;
-    props.applyFn(words);
+    props.applyFn(words[0] * words[1]);
   }
 
   function getDropdownObj(index: number) {
     return {
-      relativeTerms: props.relativeTerms,
-      relativeIntervals: props.relativeIntervals,
+      firstDropdownText: props.secondDropdownText,
+      secondDropdownText: props.firstDropdownText,
       relativeSelectContent: props.relativeSelectContent,
       handleClose,
+      dropdownType: TermContext.relative,
+      dateRange: props.dateRange,
       classes: props.classes,
       handleMenuClick,
       getAnchorEl,
@@ -76,10 +79,10 @@ export const DateSelect: React.FC<Inputs> = (props) => {
   return (
     <Box className={props.classes.flexRow}>
       <Box>
-        <RelativeDateSelectDropdown {...getDropdownObj(0)} />
+        <RelativeDateSelectDropdown {...getDropdownObj(1)} />
       </Box>
       <Box ml={1}>
-        <RelativeDateSelectDropdown {...getDropdownObj(1)} />
+        <RelativeDateSelectDropdown {...getDropdownObj(0)} />
       </Box>
     </Box>
   );

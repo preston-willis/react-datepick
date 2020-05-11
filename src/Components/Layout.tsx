@@ -8,6 +8,8 @@ import {
   TextField,
   Grid,
 } from "@material-ui/core";
+import ms from "ms";
+
 import {
   format,
   formatDistance,
@@ -17,7 +19,8 @@ import {
   getDay,
   getYear,
 } from "date-fns";
-import DateRange from "./DateRange.tsx";
+const humanize = require("humanize-duration");
+import { DateType, DateRange } from "./DateRange.tsx";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import Timer from "react-compound-timer";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
@@ -31,6 +34,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { makeStyles } from "@material-ui/styles";
 import "./Styling.css";
+var locale = require('browser-locale')()
 import { useHistory } from "react-router-dom";
 
 interface Inputs {
@@ -38,46 +42,47 @@ interface Inputs {
   getDateRange(dates: Date[]): void;
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
-  commonlyUsedText?: string[][];
+  commonlyUsedText?: number[];
   quickSelectTerms?: string[];
-  quickSelectIntervals?: string[];
+  quickSelectIntervals?: number[];
   relativeTerms?: string[];
-  relativeIntervals?: string[];
+  relativeIntervals?: number[];
   timeFormat?: string;
   nowText?: string;
   minimumYearValue?: number;
   maximumYearValue?: number;
-  setRawRange?(dateRange: Date[], history): void;
-  getRawRange?(history): Date[];
+  humanizer?: any;
+  setRawRange?(dateRange, history): void;
+  getRawRange?(history);
 }
 
-const commonlyUsedTextDefault: string[][] = [
-  ["Last", "15 Minutes"],
-  ["Last", "30 Minutes"],
-  ["Last", "1 Hour"],
-  ["Last", "24 hours"],
-  ["Last", "7 days"],
-  ["Last", "30 days"],
-  ["Last", "90 days"],
-  ["Last", "1 year"],
+const commonlyUsedTextDefault: number[] = [
+  -ms("15 Minutes"),
+  -ms("30 Minutes"),
+  -ms("1 Hour"),
+  -ms("24 hours"),
+  -ms("7 days"),
+  -ms("30 days"),
+  -ms("90 days"),
+  -ms("1 year"),
 ];
 
 const quickSelectTermsDefault: string[] = ["Last", "Next"];
 
-const timeFormatDefault: string = "en-US";
+const timeFormatDefault: string = locale.slice(0,2)
 
-const quickSelectIntervalsDefault: string[] = [
-  "1 minute",
-  "15 minutes",
-  "30 minutes",
-  "1 hour",
-  "6 hours",
-  "12 hours",
-  "1 day",
-  "7 days",
-  "30 days",
-  "90 days",
-  "1 year",
+const quickSelectIntervalsDefault: number[] = [
+  ms("1 minute"),
+  ms("15 minutes"),
+  ms("30 minutes"),
+  ms("1 hour"),
+  ms("6 hours"),
+  ms("12 hours"),
+  ms("1 day"),
+  ms("7 days"),
+  ms("30 days"),
+  ms("90 days"),
+  ms("1 year"),
 ];
 
 const relativeTermsDefault: string[] = ["ago", "from now"];
@@ -116,16 +121,16 @@ export const Layout: React.FC<Inputs> = (props) => {
   // OPTIONAL
   const timeFormat: string = props.timeFormat || timeFormatDefault;
 
-  const commonlyUsedText: string[][] =
+  const commonlyUsedText: number[] =
     props.commonlyUsedText || commonlyUsedTextDefault;
 
   const quickSelectTerms: string[] =
     props.quickSelectTerms || quickSelectTermsDefault;
 
-  const quickSelectIntervals: string[] =
+  const quickSelectIntervals: number[] =
     props.quickSelectIntervals || quickSelectIntervalsDefault;
 
-  const relativeIntervals: string[] =
+  const relativeIntervals: number[] =
     props.relativeIntervals || quickSelectIntervalsDefault;
 
   const relativeTerms: string[] = props.relativeTerms || relativeTermsDefault;
@@ -143,16 +148,25 @@ export const Layout: React.FC<Inputs> = (props) => {
   const maximumYearValue: number =
     props.maximumYearValue || maximumYearValueDefault;
 
+  const humanizer: any =
+    props.humanizer ||
+    humanize.humanizer({
+      language: timeFormat,
+    });
+
   const localeObj = {
+    localeString: timeFormat,
     quickSelectTerms,
     quickSelectIntervals,
     relativeTerms,
     relativeIntervals,
     nowText,
+    humanizer,
   };
+
   let history = useHistory();
 
-  const getRawRange: (() => Date[]) | (() => null) = props.getRawRange
+  const getRawRange = props.getRawRange
     ? () => {
         return props.getRawRange!(history);
       }
@@ -160,26 +174,41 @@ export const Layout: React.FC<Inputs> = (props) => {
         return null;
       };
 
-  const setRawRange:
-    | ((dateRange: Date[]) => void)
-    | (() => null) = props.setRawRange
+  const setRawRange: ((dateRange) => void) | (() => null) = props.setRawRange
     ? (dateRange) => {
-        return props.setRawRange!(dateRange, history);
+        let dates = [
+          dateRange.finalDates[0].getTime(),
+          dateRange.finalDates[1].getTime(),
+        ];
+        for (let i = 0; i < dates.length; i++) {
+          if (dateRange.isAbsolute(i)) {
+            dates[i] = dates[i] + "A";
+          } else {
+            dates[i] = dateRange.relativeMS[i] + "R";
+          }
+        }
+        return props.setRawRange!(dates, history);
       }
     : () => {
         return null;
       };
 
   window.onload = (e) => {
-    let dates = getRawRange();
-    let index = 0;
-    if (dates) {
-      for (let i of dates) {
-        dateRange.setDate(i, index, dateFormatter, timeFormat);
-        index++;
-        applyChanges();
+    let data = getRawRange();
+    if (data.length == 2) {
+      let identifier = [data[0].slice(-1), data[1].slice(-1)];
+      data = [data[0].slice(0, -1), data[1].slice(0, -1)];
+      for (let p = 0; p < data.length; p++) {
+        let set = false;
+        if (identifier[p] == "A") {
+          let out = new Date(parseInt(data[p]));
+          dateRange.setDate(out, p, dateFormatter, timeFormat);
+        } else {
+          dateRange.setRelative(parseInt(data[p]), p);
+        }
       }
     }
+    applyChanges(dateRange);
   };
 
   // DATES
@@ -202,17 +231,17 @@ export const Layout: React.FC<Inputs> = (props) => {
   const [intervalAnchorEl, setIntervalAnchorEl] = useState<EventTarget | null>(
     null
   );
-  const [quickSelectContent, setQuickSelectContent] = useState<string[]>([
-    quickSelectTerms[0],
+  const [quickSelectContent, setQuickSelectContent] = useState<number[]>([
+    -1,
     quickSelectIntervals[0],
   ]);
-  const [relativeSelectContent, setRelativeSelectContent] = useState<string[]>([
+  const [relativeSelectContent, setRelativeSelectContent] = useState<number[]>([
+    -1,
     relativeIntervals[0],
-    relativeTerms[0],
   ]);
 
   // QUICK SELECT
-  const [recentlySelected, setRecentlySelected] = useState<string[][]>([[""]]);
+  const [recentlySelected, setRecentlySelected] = useState<number[]>([]);
 
   // TEXT FIELD INPUT
   const [dateTextContents, setDateTextContents] = useState<string[]>([
@@ -419,6 +448,7 @@ export const Layout: React.FC<Inputs> = (props) => {
       relativeSelectContent,
       setRelativeSelectContent,
       classes,
+      applyMasterChanges: applyChanges,
       daysInMonth,
       setDaysInMonth,
       propertySelected,
@@ -505,13 +535,11 @@ export const Layout: React.FC<Inputs> = (props) => {
     setDateRange(newObject);
   }
 
-  function applyChanges(): void {
-    dateRange.applyChanges();
-    resetDateRange(dateRange);
-    console.log(dateRange);
-
-    props.getDateRange(dateRange.dates);
-    setRawRange(dateRange.dates);
+  function applyChanges(dr): void {
+    dr.applyChanges();
+    resetDateRange(dr);
+    props.getDateRange(dr.dates);
+    setRawRange(dr);
 
     if (timerRunning) {
       setTimerRunning(false);
@@ -590,7 +618,7 @@ export const Layout: React.FC<Inputs> = (props) => {
             </Tab>
             <Box ml={1}>
               <Button
-                onClick={() => applyChanges()}
+                onClick={() => applyChanges(dateRange)}
                 variant="contained"
                 color="primary"
                 className={classes.headerApplyButton}

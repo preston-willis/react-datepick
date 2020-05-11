@@ -13,34 +13,35 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import { DateSelect } from "./QuickDateSelect.tsx";
-import DateRange from "./DateRange.tsx";
+import { DateRange, TermContext } from "./DateRange.tsx";
 
 interface Inputs {
   boxClass: string;
-  recentlySelected: string[][];
+  recentlySelected: number[];
   termAnchorEl: any;
   intervalAnchorEl: any;
-  commonlyUsedText: string[][];
-  quickSelectIntervals: string[];
+  commonlyUsedText: number[];
+  quickSelectIntervals: number[];
   quickSelectTerms: string[];
   timeFormat: string;
-  quickSelectContent: string[];
+  quickSelectContent: number[];
   classes: any;
   formatDateTextField(dates?: DateRange): void;
   formatTimeTextField(dates?: DateRange): void;
   setDateRange(dateRange: DateRange): void;
-  setQuickSelectContent(content: string[]): void;
+  setQuickSelectContent(content: number[]): void;
   dateRange: DateRange;
-  applyChanges(): void;
+  applyChanges(dr: DateRange): void;
   getDateRange(dates: Date[]): void;
-  setRecentlySelected(items: string[][]): void;
+  setRecentlySelected(items: number[]): void;
   setTermAnchorEl(element: EventTarget | null): void;
   setIntervalAnchorEl(element: EventTarget | null): void;
 }
 
 export const QuickSelect: React.FC<Inputs> = (props) => {
-  function handleClick(text: string[]): void {
-    props.setQuickSelectContent(text);
+  function handleClick(text: number): void {
+    let out = DateRange.splitMilliseconds(text);
+    props.setQuickSelectContent(out);
   }
 
   function apply(): void {
@@ -48,11 +49,12 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
     dateRange.setQuickSelect(props.quickSelectContent);
     props.formatDateTextField();
     props.formatTimeTextField();
-    props.setDateRange(dateRange);
-    props.applyChanges();
+    props.applyChanges(dateRange);
 
     let recentlySelected = props.recentlySelected;
-    recentlySelected.unshift(props.quickSelectContent);
+    recentlySelected.unshift(
+      props.quickSelectContent[0] * props.quickSelectContent[1]
+    );
     if (recentlySelected.length > 6) {
       recentlySelected.pop();
     }
@@ -63,6 +65,7 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
     return {
       quickSelectContent: props.quickSelectContent,
       handleClick,
+      dateRange: props.dateRange,
       classes: props.classes,
       termAnchorEl: props.termAnchorEl,
       intervalAnchorEl: props.intervalAnchorEl,
@@ -115,7 +118,12 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                   ></Button>
                   <Box mt={-3}>
                     <Typography color="primary" variant="subtitle2">
-                      {object.join(" ")}
+                      {props.dateRange
+                        .millisecondsToHumanized(
+                          DateRange.splitMilliseconds(object),
+                          TermContext.quickSelect
+                        )
+                        .join(" ")}
                     </Typography>
                   </Box>
                 </Box>
@@ -135,7 +143,12 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                   ></Button>
                   <Box mt={-3}>
                     <Typography color="primary" variant="subtitle2">
-                      {object.join(" ")}
+                      {props.dateRange
+                        .millisecondsToHumanized(
+                          DateRange.splitMilliseconds(object),
+                          TermContext.quickSelect
+                        )
+                        .join(" ")}
                     </Typography>
                   </Box>
                 </Box>
@@ -166,7 +179,12 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                     ></Button>
                     <Box mt={-3}>
                       <Typography color="primary" variant="subtitle2">
-                        {object.join(" ")}
+                        {props.dateRange
+                          .millisecondsToHumanized(
+                            DateRange.splitMilliseconds(object),
+                            TermContext.quickSelect
+                          )
+                          .join(" ")}
                       </Typography>
                     </Box>
                   </Box>
@@ -188,7 +206,12 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                     ></Button>
                     <Box mt={-3}>
                       <Typography color="primary" variant="subtitle2">
-                        {object.join(" ")}
+                        {props.dateRange
+                          .millisecondsToHumanized(
+                            DateRange.splitMilliseconds(object),
+                            TermContext.quickSelect
+                          )
+                          .join(" ")}
                       </Typography>
                     </Box>
                   </Box>

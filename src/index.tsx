@@ -9,16 +9,17 @@ interface Inputs {
   resetFn(): void;
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
-  timeIntervalText?: string[][];
+  commonlyUsedText?: number[];
   quickSelectTerms?: string[];
-  quickSelectIntervals?: string[];
+  quickSelectIntervals?: number[];
   relativeTerms?: string[];
-  relativeIntervals?: string[];
+  relativeIntervals?: number[];
   timeFormat?: string;
   nowText?: string;
   minimumYearValue?: number;
   maximumYearValue?: number;
-  setRawRange?(dateRange: Date[], history): void;
+  humanizer?: any;
+  setRawRange?(dateRange, history): void;
   getRawRange?(history): Date[];
 }
 

@@ -12,17 +12,18 @@ import {
   Menu,
   MenuItem,
 } from "@material-ui/core";
-import DateRange from "./DateRange.tsx";
+import { DateRange, TermContext } from "./DateRange.tsx";
 import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown.tsx";
 
 interface Inputs {
   termAnchorEl: any;
   intervalAnchorEl: any;
   quickSelectTerms: string[];
-  quickSelectIntervals: string[];
-  quickSelectContent: string[];
+  quickSelectIntervals: number[];
+  quickSelectContent: number[];
   classes: any;
-  handleClick(text: string[]): void;
+  dateRange: DateRange;
+  handleClick(text: number): void;
   setTermAnchorEl(element: EventTarget | null): void;
   setIntervalAnchorEl(element: EventTarget | null): void;
 }
@@ -53,19 +54,21 @@ export const DateSelect: React.FC<Inputs> = (props) => {
     setAnchorEl(identifier, event);
   }
 
-  function handleClose(identifier: number, item: string): void {
+  function handleClose(identifier: number, item: any): void {
     setAnchorEl(identifier, null);
     let words = props.quickSelectContent;
     words[identifier] = item;
-    props.handleClick(words);
+    props.handleClick(words[0] * words[1]);
   }
 
   function getDropdownObj(index: number) {
     return {
-      relativeTerms: props.quickSelectTerms,
-      relativeIntervals: props.quickSelectIntervals,
+      firstDropdownText: props.quickSelectTerms,
+      secondDropdownText: props.quickSelectIntervals,
       relativeSelectContent: props.quickSelectContent,
+      dropdownType: TermContext.quickSelect,
       handleClose,
+      dateRange: props.dateRange,
       handleMenuClick,
       getAnchorEl,
       classes: props.classes,

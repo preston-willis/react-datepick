@@ -11,32 +11,46 @@ import {
   MenuItem,
 } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { DateType, DateRange, TermContext } from "./DateRange.tsx";
 
 interface Inputs {
   identifier: number;
-  relativeTerms: string[];
-  relativeIntervals: string[];
-  relativeSelectContent: string[];
+  firstDropdownText: any[];
+  secondDropdownText: any[];
+  relativeSelectContent: number[];
   classes: any;
+  dropdownType: TermContext;
+  dateRange: DateRange;
   handleMenuClick(identifier: number, event: EventTarget): void;
-  handleClose(identifier: number, item: string): void;
+  handleClose(identifier: number, item: any): void;
   getAnchorEl(identifier: number): Element;
 }
 
 export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
-  let term = props.relativeTerms;
-  let interval = props.relativeIntervals;
+  let term = props.firstDropdownText;
+  let interval = props.secondDropdownText;
 
   enum menu {
     term = 0,
     interval = 1,
   }
 
-  let list: string[] = [];
+  const displayTerm = (item) => {
+    return props.dateRange.multiplierToHumanized(item, props.dropdownType);
+  };
+
+  const displayInterval = (item) => {
+    return props.dateRange.localeObj.humanizer(item);
+  };
+
+  let displayFn: (item: any) => any;
+  let list: any = [];
   if (props.identifier == menu.term) {
-    list = term;
+    list = [-1, 1];
+    displayFn = displayTerm;
   } else if (props.identifier == menu.interval) {
     list = interval;
+    displayFn = displayInterval;
   }
 
   return (
@@ -52,7 +66,12 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
         }
       >
         <Box className={props.classes.flexRow}>
-          {props.relativeSelectContent[props.identifier]}
+          {
+            props.dateRange.millisecondsToHumanized(
+              props.relativeSelectContent,
+              props.dropdownType
+            )[props.identifier]
+          }
           <Box ml={1} />
           <ExpandMoreIcon />
         </Box>
@@ -71,7 +90,7 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
       >
         {list.map((item) => (
           <MenuItem onClick={() => props.handleClose(props.identifier, item)}>
-            {item}
+            {displayFn(item)}
           </MenuItem>
         ))}
       </Menu>
