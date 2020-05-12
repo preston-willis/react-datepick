@@ -1,8 +1,8 @@
 import React from "react";
 import { Divider } from "@material-ui/core";
 import { Button, Box, Typography } from "@material-ui/core";
-import { DateSelect } from "./QuickDateSelect.tsx";
-import { DateRange, TermContext } from "./DateRange.tsx";
+import { DateSelect } from "./QuickDateSelect";
+import { DateRange, TermContext } from "./DateRange";
 
 interface Inputs {
   boxClass: string;

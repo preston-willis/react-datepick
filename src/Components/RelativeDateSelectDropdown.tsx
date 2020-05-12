@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Box, Menu, MenuItem } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { DateRange, TermContext } from "./DateRange.tsx";
+import { DateRange, TermContext } from "./DateRange";
 
 interface Inputs {
   identifier: number;

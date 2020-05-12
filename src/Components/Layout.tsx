@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { Button, Box } from "@material-ui/core";
 import ms from "ms";
 
-import { DateRange } from "./DateRange.tsx";
+import { DateRange } from "./DateRange";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { Body } from "./Body.tsx";
-import { MenuView } from "./Menu.tsx";
-import { TimerUI } from "./Timer.tsx";
-import { QuickSelect } from "./QuickSelect.tsx";
+import { Body } from "./Body";
+import { MenuView } from "./Menu";
+import { TimerUI } from "./Timer";
+import { QuickSelect } from "./QuickSelect";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import KeyboardTabIcon from "@material-ui/icons/KeyboardTab";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -17,7 +17,7 @@ import { makeStyles } from "@material-ui/styles";
 import "./Styling.css";
 
 var locale = require("browser-locale")();
-const humanize = require("humanize-duration");
+import humanize from "humanize-duration";
 
 interface Inputs {
   resetFn(): void;

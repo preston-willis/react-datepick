@@ -11,9 +11,9 @@ import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import ReactList from "react-list";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { DateSelect } from "./RelativeDateSelect.tsx";
+import { DateSelect } from "./RelativeDateSelect";
 import "./Styling.css";
-import { DateRange } from "./DateRange.tsx";
+import { DateRange } from "./DateRange";
 
 interface Inputs {
   setBoxClass(boxClass: string): void;

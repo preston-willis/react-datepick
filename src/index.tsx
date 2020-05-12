@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout } from "./Components/Layout.tsx";
+import { Layout } from "./Components/Layout";
 
 interface Inputs {
   getDateRange(dates: Date[]): void;
