@@ -1,17 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Divider } from "@material-ui/core";
-import ms from "ms";
-import {
-  Button,
-  Box,
-  Typography,
-  GridList,
-  GridListTile,
-  TextField,
-  Grid,
-  Menu,
-  MenuItem,
-} from "@material-ui/core";
+import { Button, Box, Typography } from "@material-ui/core";
 import { DateSelect } from "./QuickDateSelect.tsx";
 import { DateRange, TermContext } from "./DateRange.tsx";
 
@@ -106,7 +95,7 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
           <Box className={props.classes.flexRow}>
             <Box className={props.classes.flexColumn}>
               {props.commonlyUsedText.slice(0, 4).map((object) => (
-                <Box>
+                <Box key={props.commonlyUsedText.slice(0, 4).indexOf(object)}>
                   <Button
                     onClick={() => handleClick(object)}
                     color="primary"
@@ -115,7 +104,9 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                     disableFocusRipple={true}
                     disableRipple={true}
                     className={props.classes.quickSelectContainerButton}
-                  ></Button>
+                  >
+                    {""}
+                  </Button>
                   <Box mt={-3}>
                     <Typography color="primary" variant="subtitle2">
                       {props.dateRange
@@ -131,7 +122,7 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
             </Box>
             <Box className={props.classes.flexColumn}>
               {props.commonlyUsedText.slice(4, 8).map((object) => (
-                <Box>
+                <Box key={props.commonlyUsedText.slice(4, 8).indexOf(object)}>
                   <Button
                     onClick={() => handleClick(object)}
                     color="primary"
@@ -140,7 +131,9 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                     disableFocusRipple={true}
                     disableRipple={true}
                     className={props.classes.quickSelectContainerButton}
-                  ></Button>
+                  >
+                    {""}
+                  </Button>
                   <Box mt={-3}>
                     <Typography color="primary" variant="subtitle2">
                       {props.dateRange
@@ -167,7 +160,11 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
               {props.recentlySelected
                 .slice(0, Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
-                  <Box>
+                  <Box
+                    key={props.recentlySelected
+                      .slice(0, Math.floor(props.recentlySelected.length / 2))
+                      .indexOf(object)}
+                  >
                     <Button
                       onClick={() => handleClick(object)}
                       color="primary"
@@ -176,7 +173,9 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                       disableFocusRipple={true}
                       disableRipple={true}
                       className={props.classes.quickSelectContainerButton}
-                    ></Button>
+                    >
+                      {""}
+                    </Button>
                     <Box mt={-3}>
                       <Typography color="primary" variant="subtitle2">
                         {props.dateRange
@@ -194,7 +193,11 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
               {props.recentlySelected
                 .slice(Math.floor(props.recentlySelected.length / 2))
                 .map((object) => (
-                  <Box>
+                  <Box
+                    key={props.recentlySelected
+                      .slice(Math.floor(props.recentlySelected.length / 2))
+                      .indexOf(object)}
+                  >
                     <Button
                       onClick={() => handleClick(object)}
                       color="primary"
@@ -203,7 +206,9 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
                       disableFocusRipple={true}
                       disableRipple={true}
                       className={props.classes.quickSelectContainerButton}
-                    ></Button>
+                    >
+                      {""}
+                    </Button>
                     <Box mt={-3}>
                       <Typography color="primary" variant="subtitle2">
                         {props.dateRange

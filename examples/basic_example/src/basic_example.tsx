@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import DateRangePicker from "../../../src/index.tsx";
-const humanize = require("humanize-duration");
 import { useHistory } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const app = document.getElementById("app");
 
@@ -13,27 +13,47 @@ function reset() {
 function getDateRange(data: Date[]): void {
   console.log(data);
 }
+interface Inputs {}
+
+const DateRangeWithHistory: React.FC<Inputs> = (props) => {
+  const history = useHistory();
+
+  // Set the persisted range into the URL
+  const persistRange = (range: string[]): void => {
+    history.replace("#range=" + encodeURIComponent(JSON.stringify(range)));
+  };
+
+  // Get the persisted range out of the URL
+  const getRange = (): string[] | null => {
+    let range = null;
+    try {
+      range = JSON.parse(
+        decodeURIComponent(history.location.hash.substring(1).split("=")[1])
+      );
+    } catch {
+      return null;
+    }
+    return range;
+  };
+
+  return (
+    <DateRangePicker
+      timeFormat="fr"
+      resetFn={() => {
+        console.log("reset");
+      }}
+      getDateRange={getDateRange}
+      setStoredRange={persistRange}
+      storedRange={getRange()}
+    />
+  );
+};
 
 ReactDOM.render(
-  <DateRangePicker
-    resetFn={reset}
-    getDateRange={getDateRange}
-    setRawRange={(range, history): void => {
-      let json = JSON.stringify(range);
-      history.replace("#range=" + json);
-    }}
-    getRawRange={(history) => {
-      let json = [];
-      let persistedRange = history.location.hash.substring(1).split("=")[1];
-      if (persistedRange) {
-        persistedRange = persistedRange.replace(/\%22/g, '"');
-        setTimeout(() => {
-          console.log(persistedRange);
-        }, 500);
-        json = JSON.parse(persistedRange);
-      }
-      return json;
-    }}
-  />,
+  <Router>
+    <Route path="/">
+      <DateRangeWithHistory />
+    </Route>
+  </Router>,
   app
 );

@@ -1,17 +1,7 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Box,
-  Typography,
-  GridList,
-  GridListTile,
-  TextField,
-  Grid,
-  Menu,
-  MenuItem,
-} from "@material-ui/core";
+import React from "react";
+import { Button, Box, Menu, MenuItem } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { DateType, DateRange, TermContext } from "./DateRange.tsx";
+import { DateRange, TermContext } from "./DateRange.tsx";
 
 interface Inputs {
   identifier: number;
@@ -22,12 +12,11 @@ interface Inputs {
   dropdownType: TermContext;
   dateRange: DateRange;
   handleMenuClick(identifier: number, event: EventTarget): void;
-  handleClose(identifier: number, item: any): void;
+  handleClose(identifier: number, item: number): void;
   getAnchorEl(identifier: number): Element;
 }
 
 export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
-  let term = props.firstDropdownText;
   let interval = props.secondDropdownText;
 
   enum menu {
@@ -35,11 +24,11 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
     interval = 1,
   }
 
-  const displayTerm = (item) => {
+  const displayTerm = (item: number) => {
     return props.dateRange.multiplierToHumanized(item, props.dropdownType);
   };
 
-  const displayInterval = (item) => {
+  const displayInterval = (item: number) => {
     return props.dateRange.localeObj.humanizer(item);
   };
 
@@ -88,8 +77,11 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
           )
         }
       >
-        {list.map((item) => (
-          <MenuItem onClick={() => props.handleClose(props.identifier, item)}>
+        {list.map((item: number) => (
+          <MenuItem
+            key={item}
+            onClick={() => props.handleClose(props.identifier, item)}
+          >
             {displayFn(item)}
           </MenuItem>
         ))}

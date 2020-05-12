@@ -2,7 +2,6 @@ import React from "react";
 import {
   Button,
   Box,
-  Typography,
   FormGroup,
   FormControlLabel,
   Switch,
@@ -28,7 +27,7 @@ interface Inputs {
   menuError: boolean;
 }
 
-export const MenuView: React.FC<Inputs> = props => {
+export const MenuView: React.FC<Inputs> = (props) => {
   function applyChanges() {
     props.setTimerRunning(true);
   }
@@ -148,4 +147,4 @@ export const MenuView: React.FC<Inputs> = props => {
       </Box>
     </Box>
   );
-}
+};

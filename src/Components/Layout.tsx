@@ -1,28 +1,9 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Box,
-  Typography,
-  GridList,
-  GridListTile,
-  TextField,
-  Grid,
-} from "@material-ui/core";
+import React, { useState } from "react";
+import { Button, Box } from "@material-ui/core";
 import ms from "ms";
 
-import {
-  format,
-  formatDistance,
-  formatRelative,
-  subDays,
-  getMonth,
-  getDay,
-  getYear,
-} from "date-fns";
-const humanize = require("humanize-duration");
-import { DateType, DateRange } from "./DateRange.tsx";
+import { DateRange } from "./DateRange.tsx";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import Timer from "react-compound-timer";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { Body } from "./Body.tsx";
 import { MenuView } from "./Menu.tsx";
@@ -34,8 +15,9 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { makeStyles } from "@material-ui/styles";
 import "./Styling.css";
-var locale = require('browser-locale')()
-import { useHistory } from "react-router-dom";
+
+var locale = require("browser-locale")();
+const humanize = require("humanize-duration");
 
 interface Inputs {
   resetFn(): void;
@@ -52,8 +34,8 @@ interface Inputs {
   minimumYearValue?: number;
   maximumYearValue?: number;
   humanizer?: any;
-  setRawRange?(dateRange, history): void;
-  getRawRange?(history);
+  setStoredRange?(dateRange: string[]): void;
+  storedRange: string[] | null;
 }
 
 const commonlyUsedTextDefault: number[] = [
@@ -69,7 +51,7 @@ const commonlyUsedTextDefault: number[] = [
 
 const quickSelectTermsDefault: string[] = ["Last", "Next"];
 
-const timeFormatDefault: string = locale.slice(0,2)
+const timeFormatDefault: string = locale.slice(0, 2);
 
 const quickSelectIntervalsDefault: number[] = [
   ms("1 minute"),
@@ -119,6 +101,7 @@ const maximumYearValueDefault: number = 3000;
 
 export const Layout: React.FC<Inputs> = (props) => {
   // OPTIONAL
+
   const timeFormat: string = props.timeFormat || timeFormatDefault;
 
   const commonlyUsedText: number[] =
@@ -164,21 +147,13 @@ export const Layout: React.FC<Inputs> = (props) => {
     humanizer,
   };
 
-  let history = useHistory();
-
-  const getRawRange = props.getRawRange
-    ? () => {
-        return props.getRawRange!(history);
-      }
-    : () => {
-        return null;
-      };
-
-  const setRawRange: ((dateRange) => void) | (() => null) = props.setRawRange
+  const setStoredRange:
+    | ((dateRange: DateRange) => void)
+    | (() => null) = props.setStoredRange
     ? (dateRange) => {
-        let dates = [
-          dateRange.finalDates[0].getTime(),
-          dateRange.finalDates[1].getTime(),
+        let dates: string[] = [
+          String(dateRange.finalDates[0].getTime()),
+          String(dateRange.finalDates[1].getTime()),
         ];
         for (let i = 0; i < dates.length; i++) {
           if (dateRange.isAbsolute(i)) {
@@ -187,29 +162,29 @@ export const Layout: React.FC<Inputs> = (props) => {
             dates[i] = dateRange.relativeMS[i] + "R";
           }
         }
-        return props.setRawRange!(dates, history);
+        return props.setStoredRange!(dates);
       }
     : () => {
         return null;
       };
 
-  window.onload = (e) => {
-    let data = getRawRange();
-    if (data.length == 2) {
+  let storedRange = new DateRange(localeObj);
+  {
+    let data = props.storedRange;
+    if (data) {
       let identifier = [data[0].slice(-1), data[1].slice(-1)];
       data = [data[0].slice(0, -1), data[1].slice(0, -1)];
       for (let p = 0; p < data.length; p++) {
-        let set = false;
-        if (identifier[p] == "A") {
+        if (identifier[p] === "A") {
           let out = new Date(parseInt(data[p]));
-          dateRange.setDate(out, p, dateFormatter, timeFormat);
+          storedRange.setDate(out, p, dateFormatter, timeFormat);
         } else {
-          dateRange.setRelative(parseInt(data[p]), p);
+          storedRange.setRelative(parseInt(data[p]), p);
         }
       }
+      storedRange.applyChanges();
     }
-    applyChanges(dateRange);
-  };
+  }
 
   // DATES
   const [propertySelected, setPropertySelected] = useState<number>(-1);
@@ -217,9 +192,7 @@ export const Layout: React.FC<Inputs> = (props) => {
     new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(),
     new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate(),
   ]);
-  const [dateRange, setDateRange] = useState<DateRange>(
-    new DateRange(localeObj)
-  );
+  const [dateRange, setDateRange] = useState<DateRange>(storedRange);
 
   // TAB LOGIC
   const [tabSelected, setTabSelected] = useState<number>(-1);
@@ -272,7 +245,7 @@ export const Layout: React.FC<Inputs> = (props) => {
   const [dateError, setDateError] = useState<boolean[]>([false, false]);
   const [timeError, setTimeError] = useState<boolean[]>([false, false]);
 
-  const useStyles = makeStyles((theme) => ({
+  const useStyles = makeStyles((_) => ({
     layout: {
       width: "600px",
       height: "600px",
@@ -521,7 +494,7 @@ export const Layout: React.FC<Inputs> = (props) => {
     ]);
   }
 
-  function formatTimeTextField(datesProp?): void {
+  function formatTimeTextField(datesProp?: DateRange): void {
     const dates = datesProp || dateRange;
     setTimeTextContents([
       DateRange.formatAbsoluteTime(dates.dates[0], timeFormat),
@@ -535,15 +508,16 @@ export const Layout: React.FC<Inputs> = (props) => {
     setDateRange(newObject);
   }
 
-  function applyChanges(dr): void {
+  function applyChanges(dr: DateRange): void {
     dr.applyChanges();
     resetDateRange(dr);
     props.getDateRange(dr.dates);
-    setRawRange(dr);
+    setStoredRange(dr);
 
     if (timerRunning) {
       setTimerRunning(false);
     }
+    setBoxClass("box-closed");
   }
 
   function refreshTime(): void {
@@ -578,7 +552,7 @@ export const Layout: React.FC<Inputs> = (props) => {
   return (
     <MuiThemeProvider theme={theme}>
       <div className={classes.layout}>
-        <Tabs onSelect={(index) => toggleDropdown(index)}>
+        <Tabs onSelect={(index: number) => toggleDropdown(index)}>
           <TabList
             style={{
               width: "800px",

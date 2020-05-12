@@ -1,18 +1,6 @@
-import React, { useState, useEffect } from "react";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import React from "react";
 import { DateRange, TermContext } from "./DateRange.tsx";
-import ms from "ms";
-import {
-  Button,
-  Box,
-  Typography,
-  GridList,
-  GridListTile,
-  TextField,
-  Grid,
-  Menu,
-  MenuItem,
-} from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown.tsx";
 
 interface Inputs {
@@ -54,7 +42,7 @@ export const DateSelect: React.FC<Inputs> = (props) => {
     setAnchorEl(identifier, event);
   }
 
-  function handleClose(identifier: number, item: any): void {
+  function handleClose(identifier: number, item: number): void {
     setAnchorEl(identifier, null);
     let words = props.relativeSelectContent;
     words[identifier] = item;

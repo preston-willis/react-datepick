@@ -1,8 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import { Layout } from "./Components/Layout.tsx";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 interface Inputs {
   getDateRange(dates: Date[]): void;
@@ -19,16 +16,10 @@ interface Inputs {
   minimumYearValue?: number;
   maximumYearValue?: number;
   humanizer?: any;
-  setRawRange?(dateRange, history): void;
-  getRawRange?(history): Date[];
+  setStoredRange?(dateRange: string[]): void;
+  storedRange: string[] | null;
 }
 
 export default function DatePick(props: Inputs) {
-  return (
-    <Router>
-      <Route path="/">
-        <Layout {...props} />{" "}
-      </Route>
-    </Router>
-  );
+  return <Layout {...props} />;
 }

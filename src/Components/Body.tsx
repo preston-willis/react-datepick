@@ -1,13 +1,11 @@
-import React, { Fragment, useEffect } from "react";
-import { Divider } from "@material-ui/core";
+import React, { useEffect } from "react";
 import {
   Button,
   Box,
   Typography,
-  GridList,
-  GridListTile,
   TextField,
   Grid,
+  IconButton,
 } from "@material-ui/core";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
@@ -16,16 +14,6 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { DateSelect } from "./RelativeDateSelect.tsx";
 import "./Styling.css";
 import { DateRange } from "./DateRange.tsx";
-import ms from "ms";
-import {
-  format,
-  formatDistance,
-  formatRelative,
-  subDays,
-  getMonth,
-  getDay,
-  getYear,
-} from "date-fns";
 
 interface Inputs {
   setBoxClass(boxClass: string): void;
@@ -85,7 +73,7 @@ export const Body: React.FC<Inputs> = (props) => {
   const shortWeekdays = Object.keys(shortWeekdayDateMap);
 
   const getDayOfWeek = (
-    shortName,
+    shortName: string,
     locale = props.timeFormat,
     length = "short"
   ) =>
@@ -256,11 +244,11 @@ export const Body: React.FC<Inputs> = (props) => {
     stateFormatter(daysInMonthContent, props.daysInMonth, props.setDaysInMonth);
   }
 
-  function renderItem(index: number): JSX.Element {
-    let key = property.year;
+  function renderItem(index: number, key: number): JSX.Element {
+    let dateKey = property.year;
     let name = "";
     if (props.propertySelected == 0) {
-      key = property.month;
+      dateKey = property.month;
       name = new Date(0, index + 1, 0).toLocaleString(props.timeFormat, {
         month: "long",
       });
@@ -269,7 +257,8 @@ export const Body: React.FC<Inputs> = (props) => {
     }
     return (
       <Button
-        onClick={() => handleClick(key, index + props.minimumYearValue)}
+        key={key}
+        onClick={() => handleClick(dateKey, index + props.minimumYearValue)}
         variant="text"
         color="primary"
         size="large"
@@ -288,7 +277,9 @@ export const Body: React.FC<Inputs> = (props) => {
             <div className={props.classes.bodyListContainer}>
               {" "}
               <ReactList
-                itemRenderer={(index) => renderItem(index)}
+                itemRenderer={(index: number, key: number) =>
+                  renderItem(index, key)
+                }
                 length={props.maximumYearValue - props.minimumYearValue}
                 type="uniform"
               />
@@ -301,7 +292,9 @@ export const Body: React.FC<Inputs> = (props) => {
             <div className={props.classes.bodyListContainer}>
               {" "}
               <ReactList
-                itemRenderer={(index) => renderItem(index)}
+                itemRenderer={(index: number, key: number) =>
+                  renderItem(index, key)
+                }
                 length={12}
                 type="uniform"
               />
@@ -372,7 +365,7 @@ export const Body: React.FC<Inputs> = (props) => {
   return (
     <Box className={props.boxClass}>
       <Tabs
-        onSelect={(index) => renderTab(index)}
+        onSelect={(index: number) => renderTab(index)}
         selectedIndex={props.bodySubTabIndex}
       >
         <TabList
@@ -405,14 +398,13 @@ export const Body: React.FC<Inputs> = (props) => {
           <Box className={props.classes.bodyAbsoluteTab}>
             <Box className={props.classes.bodyHeader} mt={2} mb={2}>
               <Box mt={2}>
-                <Button
+                <IconButton
                   onClick={() => updateTransition(0)}
                   className={props.classes.calendarButton}
                   size="small"
-                  variant="text"
                 >
                   <ArrowForwardIosIcon />
-                </Button>
+                </IconButton>
               </Box>
               <Box mt={2} mr={1}>
                 <Typography color="textPrimary" variant="h5">
@@ -430,15 +422,14 @@ export const Body: React.FC<Inputs> = (props) => {
                 </Typography>
               </Box>
               <Box ml={1} mt={2}>
-                <Button
+                <IconButton
                   onClick={() => updateTransition(1)}
                   className={props.classes.calendarButton}
                   size="small"
                   color="secondary"
-                  variant="text"
                 >
                   <ArrowBackIosIcon />
-                </Button>
+                </IconButton>
               </Box>
             </Box>
             <Box ml={4}>
@@ -449,7 +440,7 @@ export const Body: React.FC<Inputs> = (props) => {
                 className={props.classes.calendar}
               >
                 {[...Array(7).keys()].map((item) => (
-                  <Grid item>
+                  <Grid key={item} item>
                     <Button
                       disableRipple={true}
                       color="secondary"
@@ -478,7 +469,9 @@ export const Body: React.FC<Inputs> = (props) => {
                       color="primary"
                       variant="contained"
                       disableRipple
-                    ></Button>
+                    >
+                      {""}
+                    </Button>
                   </Grid>
                 ))}
                 {[...Array(props.daysInMonth[props.index]).keys()].map(

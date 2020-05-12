@@ -1,4 +1,3 @@
-import ms from "ms";
 const humanizer = require("humanize-duration");
 
 export enum DateType {
