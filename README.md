@@ -15,7 +15,7 @@ import ReactDOM from "react-dom";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import purple from "@material-ui/core/colors/purple";
 import green from "@material-ui/core/colors/green";
-import DatePick from "../src/index.tsx";
+import DatePick from "react-datepick";
 
 const app = document.getElementById("app");
 

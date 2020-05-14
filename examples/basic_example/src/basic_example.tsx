@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import DateRangePicker from "../../../src/index.tsx";
+import DateRangePicker from "react-datepick";
 import { useHistory } from "react-router-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -13,9 +13,10 @@ function reset() {
 function getDateRange(data: Date[]): void {
   console.log(data);
 }
+
 interface Inputs {}
 
-const DateRangeWithHistory: React.FC<Inputs> = (props) => {
+const DateRangeWithHistory: React.FC<Inputs> = props => {
   const history = useHistory();
 
   // Set the persisted range into the URL
@@ -27,9 +28,7 @@ const DateRangeWithHistory: React.FC<Inputs> = (props) => {
   const getRange = (): string[] | null => {
     let range = null;
     try {
-      range = JSON.parse(
-        decodeURIComponent(history.location.hash.substring(1).split("=")[1])
-      );
+      range = JSON.parse(decodeURIComponent(history.location.hash.substring(1).split("=")[1]));
     } catch {
       return null;
     }

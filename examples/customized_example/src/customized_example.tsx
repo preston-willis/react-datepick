@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
 import purple from "@material-ui/core/colors/purple";
 import green from "@material-ui/core/colors/green";
-import DateRangePicker from "../src/index.tsx";
+import DateRangePicker from "react-datepick";
 
 const app = document.getElementById("app");
 
@@ -23,14 +23,14 @@ ReactDOM.render(
       new Intl.DateTimeFormat("en", {
         year: "numeric",
         month: "short",
-        day: "2-digit",
+        day: "2-digit"
       })
     }
     theme={createMuiTheme({
       palette: {
         primary: purple,
-        secondary: green,
-      },
+        secondary: green
+      }
     })}
   />,
   app
