@@ -2,8 +2,8 @@ import React from "react";
 import { Layout } from "./Components/Layout";
 
 interface Inputs {
-  getDateRange(dates: Date[]): void;
-  resetFn(): void;
+  onDateEvent(dates: Date[]): void;
+  onTimerEvent(): void;
   dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
   commonlyUsedText?: number[];
@@ -11,7 +11,7 @@ interface Inputs {
   quickSelectIntervals?: number[];
   relativeTerms?: string[];
   relativeIntervals?: number[];
-  timeFormat?: string;
+  localeString?: string;
   nowText?: string;
   minimumYearValue?: number;
   maximumYearValue?: number;

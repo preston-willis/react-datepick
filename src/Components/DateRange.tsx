@@ -1,4 +1,5 @@
-const humanizer = require("humanize-duration");
+import { DateRangeUI, Locale } from "./Types";
+import { MSFormatter } from "./MSFormatter";
 
 export enum DateType {
   absolute = "absolute",
@@ -22,20 +23,12 @@ export class DateRange {
   finalDates: Date[] = [new Date(), new Date()];
   relativeMS: number[] = [0, 0];
   finalDisplayText: string[] = ["", ""];
-  localeObj = {
-    localeString: "en",
-    quickSelectTerms: ["", ""],
-    quickSelectIntervals: ["", ""],
-    relativeTerms: ["", ""],
-    relativeIntervals: ["", ""],
-    nowText: "",
-    humanizer: humanizer.humanizer({
-      language: "en",
-    }),
-  };
+  dateRangeUI: DateRangeUI;
+  localeObj: Locale;
 
-  constructor(localeObj) {
+  constructor(localeObj: Locale, dateRangeUI: DateRangeUI) {
     this.localeObj = localeObj;
+    this.dateRangeUI = dateRangeUI;
     this.setNow(DateIndex.start);
     this.setNow(DateIndex.end);
     this.applyChanges();
@@ -78,64 +71,32 @@ export class DateRange {
     this.dateTypes = [DateType.relative, DateType.relative];
   }
 
-  static formatAbsoluteDate(
-    date: Date,
-    dateFormatter: Intl.DateTimeFormat
-  ): string {
-    return dateFormatter.format(date);
-  }
-
-  static formatAbsoluteTime(date: Date, timeFormat: string): string {
-    return date.toLocaleTimeString(timeFormat);
-  }
-
-  static splitMilliseconds(ms: number): number[] {
-    let out = [-1, 0];
-    out[1] = Math.abs(ms);
-    if (ms >= 0) {
-      out[0] = 1;
-    }
-
-    return out;
-  }
-
-  multiplierToHumanized(mult: number, type: TermContext): string {
-    let out = "";
-    let terms = this.localeObj.relativeTerms;
-    if (type == TermContext.quickSelect) {
-      terms = this.localeObj.quickSelectTerms;
-    }
-    if (mult == -1) {
-      out = terms[0];
-    } else {
-      out = terms[1];
-    }
-    return out;
-  }
-
-  millisecondsToHumanized(array: number[], type: TermContext): string[] {
-    let out = ["", ""];
-    out[0] = this.multiplierToHumanized(array[0], type);
-    if (array[1] != 0) {
-      out[1] = this.localeObj.humanizer(Math.abs(array[1]));
-    } else {
-      out[1] = this.localeObj.nowText;
-    }
-    return out;
-  }
-
-  setDate(
-    date: Date,
-    index: number,
-    dateFormatter: Intl.DateTimeFormat,
-    timeFormat: string
-  ): void {
+  setDate(date: Date, index: number): void {
     this.dates[index] = date;
     this.displayText[index] =
-      DateRange.formatAbsoluteDate(this.dates[index], dateFormatter) +
+      MSFormatter.formatAbsoluteDate(
+        this.dates[index],
+        this.localeObj.dateFormatter
+      ) +
       " @ " +
-      DateRange.formatAbsoluteTime(this.dates[index], timeFormat);
+      MSFormatter.formatAbsoluteTime(
+        this.dates[index],
+        this.localeObj.localeString
+      );
     this.dateTypes[index] = DateType.absolute;
+  }
+
+  setUI() {
+    for (let i = 0; i < this.dates.length; i++) {
+      this.dateRangeUI.dateTextContent[i] = MSFormatter.formatAbsoluteDate(
+        this.dates[i],
+        this.localeObj.dateFormatter
+      );
+      this.dateRangeUI.timeTextContent[i] = MSFormatter.formatAbsoluteTime(
+        this.dates[i],
+        this.localeObj.localeString
+      );
+    }
   }
 
   setRelative(ms: number, index: number): void {
@@ -155,7 +116,6 @@ export class DateRange {
     } else {
       this.displayText[index] = this.localeObj.nowText;
     }
-
     this.dateTypes[index] = DateType.relative;
   }
 

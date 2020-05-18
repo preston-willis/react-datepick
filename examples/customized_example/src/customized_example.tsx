@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
+import { createMuiTheme } from "@material-ui/core/styles";
 import purple from "@material-ui/core/colors/purple";
 import green from "@material-ui/core/colors/green";
-import DateRangePicker from "../src/index.tsx";
+import DateRangePicker from "react-datepick";
 
 const app = document.getElementById("app");
 
@@ -11,7 +11,7 @@ function reset() {
   console.log("Reset!");
 }
 
-function getDateRange(data) {
+function getDateRange(data: Date[]) {
   console.log(data);
 }
 

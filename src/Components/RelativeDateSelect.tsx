@@ -1,76 +1,75 @@
-import React from "react";
-import { DateRange, TermContext } from "./DateRange.tsx";
+import React, { useContext } from "react";
+import { DateRange, TermContext } from "./DateRange";
 import { Box } from "@material-ui/core";
-import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown.tsx";
+import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown";
+import { DropdownData } from "./Types";
+import { GlobalContext } from "./Constants";
 
 interface Inputs {
-  termAnchorEl: any;
-  intervalAnchorEl: any;
-  firstDropdownText: number[];
-  secondDropdownText: string[];
-  relativeSelectContent: number[];
   classes: any;
   dateRange: DateRange;
   applyFn(text: number): void;
-  setTermAnchorEl(element: EventTarget | null): void;
-  setIntervalAnchorEl(element: EventTarget | null): void;
+  dropdownData: DropdownData;
+  setDropdownData(data: DropdownData): void;
 }
 
 export const DateSelect: React.FC<Inputs> = (props) => {
+  const globals = useContext(GlobalContext);
+
   enum menu {
     term = 0,
     interval = 1,
   }
 
   function getAnchorEl(identifier: number): Element {
+    console.log(props.dropdownData.intervalAnchorEl);
     if (identifier == menu.term) {
-      return props.termAnchorEl;
+      return props.dropdownData.termAnchorEl;
     } else {
-      return props.intervalAnchorEl;
+      return props.dropdownData.intervalAnchorEl;
     }
   }
 
   function setAnchorEl(identifier: number, item: EventTarget | null): void {
     if (identifier == menu.term) {
-      props.setTermAnchorEl(item);
+      props.setDropdownData({ ...props.dropdownData, termAnchorEl: item });
     } else {
-      props.setIntervalAnchorEl(item);
+      props.setDropdownData({ ...props.dropdownData, intervalAnchorEl: item });
     }
   }
 
   function handleMenuClick(identifier: number, event: EventTarget): void {
+    console.log(props.dropdownData.intervalAnchorEl);
     setAnchorEl(identifier, event);
   }
 
   function handleClose(identifier: number, item: number): void {
     setAnchorEl(identifier, null);
-    let words = props.relativeSelectContent;
+    let words = props.dropdownData.relativeSelectContent;
     words[identifier] = item;
+    console.log(words[0] * words[1]);
     props.applyFn(words[0] * words[1]);
   }
 
-  function getDropdownObj(index: number) {
-    return {
-      firstDropdownText: props.secondDropdownText,
-      secondDropdownText: props.firstDropdownText,
-      relativeSelectContent: props.relativeSelectContent,
-      handleClose,
-      dropdownType: TermContext.relative,
-      dateRange: props.dateRange,
-      classes: props.classes,
-      handleMenuClick,
-      getAnchorEl,
-      identifier: index,
-    };
-  }
+  const dropdownProps = {
+    firstDropdownText: [-1, 1],
+    secondDropdownText: globals.relativeIntervals,
+    content: props.dropdownData.relativeSelectContent,
+    handleClose,
+    dropdownType: TermContext.relative,
+    dateRange: props.dateRange,
+    classes: props.classes,
+    handleMenuClick,
+    getAnchorEl,
+  };
 
   return (
     <Box className={props.classes.flexRow}>
       <Box>
-        <RelativeDateSelectDropdown {...getDropdownObj(1)} />
+        <RelativeDateSelectDropdown {...dropdownProps} identifier={1} />
       </Box>
       <Box ml={1}>
-        <RelativeDateSelectDropdown {...getDropdownObj(0)} />
+        <RelativeDateSelectDropdown {...dropdownProps} identifier={0} />
       </Box>
     </Box>
   );

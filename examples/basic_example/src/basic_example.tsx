@@ -1,21 +1,12 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import DateRangePicker from "../../../src/index.tsx";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import DateRangePicker from "react-datepick";
 import { useHistory } from "react-router-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const app = document.getElementById("app");
 
-function reset() {
-  console.log("Reset!");
-}
-
-function getDateRange(data: Date[]): void {
-  console.log(data);
-}
-interface Inputs {}
-
-const DateRangeWithHistory: React.FC<Inputs> = (props) => {
+const DateRangeWithHistory: React.FC<{}> = () => {
   const history = useHistory();
 
   // Set the persisted range into the URL
@@ -38,11 +29,11 @@ const DateRangeWithHistory: React.FC<Inputs> = (props) => {
 
   return (
     <DateRangePicker
-      timeFormat="fr"
-      resetFn={() => {
+      localeString="fr"
+      onTimerEvent={() => {
         console.log("reset");
       }}
-      getDateRange={getDateRange}
+      onDateEvent={(dateRange: Date[]) => console.log(dateRange)}
       setStoredRange={persistRange}
       storedRange={getRange()}
     />
