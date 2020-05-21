@@ -2,11 +2,11 @@ import React from "react";
 import ms from "ms";
 var locale = require("browser-locale")();
 import humanize from "humanize-duration";
-import { Locale } from "./Types";
+import { Locale } from "./Locale";
 import { createMuiTheme } from "@material-ui/core/styles";
 
-interface Constants {
-  classes: any;
+export interface Constants {
+  classes?: any | undefined;
   commonlyUsedText: number[];
   quickSelectIntervals: number[];
   relativeIntervals: number[];
@@ -17,8 +17,6 @@ interface Constants {
 }
 
 export const GlobalContext: React.Context<Constants> = React.createContext({
-  classes: null,
-
   commonlyUsedText: [
     -ms("15 Minutes"),
     -ms("30 Minutes"),
@@ -77,6 +75,7 @@ export const GlobalContext: React.Context<Constants> = React.createContext({
   maximumYearValue: 3000,
 
   localeObj: {
+    weekDays: [""],
     nowText: "now",
     relativeTerms: ["ago", "from now"],
     dateFormatter: new Intl.DateTimeFormat("en", {

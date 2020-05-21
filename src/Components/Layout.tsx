@@ -1,18 +1,19 @@
 import React, { useState, useContext } from "react";
-import { Button, Box } from "@material-ui/core";
-import { DateRange } from "./DateRange";
+import { Box } from "@material-ui/core";
+import { DateRange } from "./../objects/DateRange";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { Body } from "./Body";
 import { MenuView } from "./Menu";
-import { TimerUI } from "./Timer";
 import { QuickSelect } from "./QuickSelect";
-import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
-import KeyboardTabIcon from "@material-ui/icons/KeyboardTab";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import RefreshIcon from "@material-ui/icons/Refresh";
-import "./Styling.css";
+import "./../objects/Styling.css";
 import { MuiThemeProvider } from "@material-ui/core/styles";
-import { GlobalContext } from "./Constants";
+import { GlobalContext } from "./../objects/Constants";
+import { OptionalLocale, getWeekDays } from "./../objects/Locale";
+import { style as themeStyle } from "./../objects/Style";
+import { TimerTab } from "./header/TimerTab";
+import { BodyTab } from "./header/BodyTab";
+import { QuickSelectTab } from "./header/QuickSelectTab";
+import { ApplyButton } from "./header/ApplyButton";
 import {
   DateRangeUI,
   uiData,
@@ -22,99 +23,43 @@ import {
   RefreshData,
   bodyConfig as bConfig,
   BodyConfig,
-} from "./Types";
-import { style as themeStyle } from "./Style";
+} from "./../objects/Types";
 
 interface Inputs {
   onTimerEvent(): void;
   onDateEvent(dates: Date[]): void;
-  dateFormatter?: Intl.DateTimeFormat;
   theme?: any;
   commonlyUsedText?: number[];
-  quickSelectTerms?: string[];
   quickSelectIntervals?: number[];
-  relativeTerms?: string[];
   relativeIntervals?: number[];
-  localeString?: string;
-  nowText?: string;
   minimumYearValue?: number;
   maximumYearValue?: number;
-  humanizer?: any;
   setStoredRange?(dateRange: string[]): void;
   storedRange: string[] | null;
+  localeObj: OptionalLocale;
 }
 
 export const Layout: React.FC<Inputs> = (props) => {
   // GLOBAL
   let defaults = useContext(GlobalContext);
-  defaults.classes = themeStyle();
-  defaults.commonlyUsedText =
-    props.commonlyUsedText || defaults.commonlyUsedText;
-
-  defaults.quickSelectIntervals =
-    props.quickSelectIntervals || defaults.quickSelectIntervals;
-
-  defaults.relativeIntervals =
-    props.relativeIntervals || defaults.quickSelectIntervals;
-
-  defaults.minimumYearValue =
-    props.minimumYearValue || defaults.minimumYearValue;
-
-  defaults.maximumYearValue =
-    props.maximumYearValue || defaults.maximumYearValue;
-
-  defaults.localeObj = {
-    localeString: props.localeString || defaults.localeObj.localeString,
-    dateFormatter: props.dateFormatter || defaults.localeObj.dateFormatter,
-    quickSelectTerms:
-      props.quickSelectTerms || defaults.localeObj.quickSelectTerms,
-    relativeTerms: props.relativeTerms || defaults.localeObj.relativeTerms,
-    nowText: props.nowText || defaults.localeObj.nowText,
-    humanizer: props.humanizer || defaults.localeObj.humanizer,
+  let noLocale: any = [];
+  for (let obj of [defaults, props]) {
+    let { localeObj, ...rest } = obj;
+    noLocale.push(rest);
+  }
+  let localeObj = { ...defaults.localeObj, ...props.localeObj };
+  localeObj.weekDays = getWeekDays(localeObj.localeString);
+  defaults = {
+    ...noLocale[0],
+    ...noLocale[1],
+    classes: themeStyle(),
+    localeObj: localeObj,
   };
 
-  // STORAGE
-  const setStoredRange:
-    | ((dateRange: DateRange) => void)
-    | (() => null) = props.setStoredRange
-    ? (dateRange) => {
-        let dates: string[] = [
-          String(dateRange.finalDates[0].getTime()),
-          String(dateRange.finalDates[1].getTime()),
-        ];
-        for (let i = 0; i < dates.length; i++) {
-          if (dateRange.isAbsolute(i)) {
-            dates[i] = dates[i] + "A";
-          } else {
-            dates[i] = dateRange.relativeMS[i] + "R";
-          }
-        }
-        return props.setStoredRange!(dates);
-      }
-    : () => {
-        return null;
-      };
-
-  let storedRange = new DateRange(defaults.localeObj, uiData);
-  {
-    let data = props.storedRange;
-    if (data) {
-      let identifier = [data[0].slice(-1), data[1].slice(-1)];
-      data = [data[0].slice(0, -1), data[1].slice(0, -1)];
-      for (let p = 0; p < data.length; p++) {
-        if (identifier[p] === "A") {
-          let out = new Date(parseInt(data[p]));
-          storedRange.setDate(out, p);
-        } else {
-          storedRange.setRelative(parseInt(data[p]), p);
-        }
-      }
-      storedRange.applyChanges();
-    }
-  }
-
   // STATE OBJECTS
-  const [dateRange, setDateRange] = useState<DateRange>(storedRange);
+  const [dateRange, setDateRange] = useState<DateRange>(
+    new DateRange(defaults.localeObj, uiData, props.storedRange)
+  );
   const [refreshData, setRefreshData] = useState<RefreshData>(rData);
   const [dropdownData, setDropdownData] = useState<DropdownData>(dData);
   const [bodyConfig, setBodyConfig] = useState<BodyConfig>(bConfig);
@@ -134,6 +79,14 @@ export const Layout: React.FC<Inputs> = (props) => {
   const [menuError, setMenuError] = useState<boolean>(false);
 
   // STYLING
+  const listStyle = {
+    width: "800px",
+    height: "30px",
+    display: "flex",
+    justifyContent: "left",
+    alignItems: "center",
+    listStyle: "none",
+  };
   const [menuClass, setMenuClass] = useState<string>("menu-closed");
   const [boxClass, setBoxClass] = useState<string>("box-closed");
   const toggleDropdown = (num: number): void => {
@@ -208,6 +161,16 @@ export const Layout: React.FC<Inputs> = (props) => {
     };
   }
 
+  const timerObj = {
+    timerRunning,
+    dateRange,
+    onTimerEvent: props.onTimerEvent,
+    setTimerRunning,
+    resetDateRange,
+    onDateEvent: props.onDateEvent,
+    refreshData,
+  };
+
   // REFRESH FUNCTIONS
   function resetDateRange(previous: DateRange): void {
     setDateRangeUI(previous.dateRangeUI);
@@ -218,10 +181,9 @@ export const Layout: React.FC<Inputs> = (props) => {
   }
 
   function applyChanges(dr: DateRange): void {
-    dr.applyChanges();
+    dr.applyChanges(props.setStoredRange);
     resetDateRange(dr);
     props.onDateEvent(dr.dates);
-    setStoredRange(dr);
 
     if (timerRunning) {
       setTimerRunning(false);
@@ -229,116 +191,49 @@ export const Layout: React.FC<Inputs> = (props) => {
     setBoxClass("box-closed");
   }
 
-  function refreshTime(): void {
-    dateRange.refreshDates();
-    resetDateRange(dateRange);
-
-    props.onDateEvent(dateRange.dates);
-    setTimerRunning(false);
-    setTimerRunning(true);
-  }
-
-  // RENDERING
-  function getApplyText(): JSX.Element {
-    if (timerRunning) {
-      return (
-        <Box className={defaults.classes.flexRow}>
-          <RefreshIcon />
-          <Box ml={1} />
-          Refresh
-        </Box>
-      );
-    } else {
-      return (
-        <Box className={defaults.classes.flexRow}>
-          <KeyboardTabIcon />
-          <Box ml={1} />
-          Update
-        </Box>
-      );
-    }
-  }
-
   return (
     <MuiThemeProvider theme={defaults.theme}>
-      <div className={defaults.classes.layout}>
-        <Tabs onSelect={(index: number) => toggleDropdown(index)}>
-          <TabList
-            style={{
-              width: "800px",
-              height: "30px",
-              display: "flex",
-              justifyContent: "left",
-              alignItems: "center",
-              listStyle: "none",
-            }}
-          >
-            <Tab>
-              <Button
-                color="primary"
-                variant="contained"
-                className={defaults.classes.headerIconButton}
-              >
-                <CalendarTodayIcon />
-                <ExpandMoreIcon />
-              </Button>
-            </Tab>
-            <Tab>
+      <GlobalContext.Provider value={defaults}>
+        <div className={defaults.classes.layout}>
+          <Tabs onSelect={(index: number) => toggleDropdown(index)}>
+            <TabList style={listStyle}>
+              <Tab>
+                <QuickSelectTab />
+              </Tab>
+              <Tab>
+                <TimerTab {...timerObj} />
+              </Tab>
               <Box ml={1}>
-                <Button
-                  color="primary"
-                  variant="contained"
-                  className={defaults.classes.headerIconButton}
-                >
-                  <TimerUI
-                    timerRunning={timerRunning}
-                    refreshInterval={refreshData.refreshInterval}
-                    refreshIntervalUnits={refreshData.refreshIntervalUnits}
-                    resetFn={props.onTimerEvent}
-                    applyFn={refreshTime}
-                  />
-                </Button>
+                <ApplyButton
+                  dateRange={dateRange}
+                  applyChanges={applyChanges}
+                  timerRunning={timerRunning}
+                />
               </Box>
-            </Tab>
-            <Box ml={1}>
-              <Button
-                onClick={() => applyChanges(dateRange)}
-                variant="contained"
-                color="primary"
-                className={defaults.classes.headerApplyButton}
-              >
-                {getApplyText()}
-              </Button>
-            </Box>
-            <Tab>
-              <Box ml={2}>
-                <Button color="primary" variant="text">
-                  {dateRange.finalDisplayText[0]}
-                </Button>
-              </Box>
-            </Tab>
-            <span>&#10230;</span>
-            <Tab>
-              <Button color="primary" variant="text">
-                {dateRange.finalDisplayText[1]}
-              </Button>
-            </Tab>
-          </TabList>
-          <TabPanel>
-            <QuickSelect {...getQuickSelectObj()} />
-          </TabPanel>
-          <TabPanel>
-            <MenuView {...getMenuObj()} />
-          </TabPanel>
-          <TabPanel>
-            <Body {...getBodyObj(0)} />
-          </TabPanel>
-          <TabPanel>
-            <Body {...getBodyObj(1)} />
-          </TabPanel>
-        </Tabs>
-      </div>
-      ,
+              <Tab>
+                <BodyTab dateRange={dateRange} index={0} />
+              </Tab>
+              <span>&#10230;</span>
+              <Tab>
+                <BodyTab dateRange={dateRange} index={1} />
+              </Tab>
+            </TabList>
+            <TabPanel>
+              <QuickSelect {...getQuickSelectObj()} />
+            </TabPanel>
+            <TabPanel>
+              <MenuView {...getMenuObj()} />
+            </TabPanel>
+            <TabPanel>
+              <Body {...getBodyObj(0)} />
+            </TabPanel>
+            <TabPanel>
+              <Body {...getBodyObj(1)} />
+            </TabPanel>
+          </Tabs>
+        </div>
+        ,
+      </GlobalContext.Provider>
     </MuiThemeProvider>
   );
 };

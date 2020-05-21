@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { DateRange, TermContext } from "./DateRange";
+import { DateRange, TermContext } from "./../../objects/DateRange";
 import { Box } from "@material-ui/core";
-import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown";
-import { DropdownData } from "./Types";
-import { GlobalContext } from "./Constants";
+import { RelativeDateSelectDropdown } from "./../RelativeDateSelectDropdown";
+import { DropdownData } from "./../../objects/Types";
+import { GlobalContext } from "./../../objects/Constants";
 
 interface Inputs {
   classes: any;
@@ -22,7 +22,6 @@ export const DateSelect: React.FC<Inputs> = (props) => {
   }
 
   function getAnchorEl(identifier: number): Element {
-    console.log(props.dropdownData.intervalAnchorEl);
     if (identifier == menu.term) {
       return props.dropdownData.termAnchorEl;
     } else {
@@ -39,7 +38,6 @@ export const DateSelect: React.FC<Inputs> = (props) => {
   }
 
   function handleMenuClick(identifier: number, event: EventTarget): void {
-    console.log(props.dropdownData.intervalAnchorEl);
     setAnchorEl(identifier, event);
   }
 
@@ -47,7 +45,6 @@ export const DateSelect: React.FC<Inputs> = (props) => {
     setAnchorEl(identifier, null);
     let words = props.dropdownData.relativeSelectContent;
     words[identifier] = item;
-    console.log(words[0] * words[1]);
     props.applyFn(words[0] * words[1]);
   }
 

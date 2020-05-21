@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { Divider } from "@material-ui/core";
 import { Button, Box, Typography } from "@material-ui/core";
 import { DateSelect } from "./QuickDateSelect";
-import { DateRange, TermContext } from "./DateRange";
-import { GlobalContext } from "./Constants";
-import { DateRangeUI, DropdownData } from "./Types";
-import { MSFormatter } from "./MSFormatter";
+import { DateRange, TermContext } from "./../objects/DateRange";
+import { GlobalContext } from "./../objects/Constants";
+import { DateRangeUI, DropdownData } from "./../objects/Types";
+import { MSFormatter } from "./../objects/MSFormatter";
 
 interface Inputs {
   boxClass: string;
@@ -23,28 +23,17 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
   const globals = useContext(GlobalContext);
   let out = props.dropdownData.quickSelectContent;
 
-  let commonlyUsedFirstRow = globals.commonlyUsedText.slice(
-    0,
-    Math.floor(globals.commonlyUsedText.length / 2)
-  );
+  const comUseMid = Math.floor(globals.commonlyUsedText.length / 2);
+  const recSelMid = Math.floor(props.recentlySelected.length / 2);
+  let commonlyUsedColumns: number[][] = [
+    globals.commonlyUsedText.slice(0, comUseMid),
+    globals.commonlyUsedText.slice(comUseMid),
+  ];
 
-  let commonlyUsedSecondRow = globals.commonlyUsedText.slice(
-    Math.floor(globals.commonlyUsedText.length / 2),
-    8
-  );
-
-  function getRecentlySelectedFirstRow(): number[] {
-    return props.recentlySelected.slice(
-      0,
-      Math.floor(props.recentlySelected.length / 2)
-    );
-  }
-
-  function getRecentlySelectedSecondRow(): number[] {
-    return props.recentlySelected.slice(
-      Math.floor(props.recentlySelected.length / 2)
-    );
-  }
+  let recentlySelectedColumns: number[][] = [
+    props.recentlySelected.slice(0, recSelMid),
+    props.recentlySelected.slice(recSelMid),
+  ];
 
   function handleClick(text: number): void {
     out = MSFormatter.splitMilliseconds(text);
@@ -56,11 +45,14 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
     dateRange.setQuickSelect(props.dropdownData.quickSelectContent);
     props.applyChanges(dateRange);
 
+    // Add the current value to recentlySelected
     let recentlySelected = props.recentlySelected;
     recentlySelected.unshift(
       props.dropdownData.quickSelectContent[0] *
         props.dropdownData.quickSelectContent[1]
     );
+
+    // If recentlySelected exceeds its maximum size, remove the last value
     if (recentlySelected.length > 6) {
       recentlySelected.pop();
     }
@@ -106,8 +98,8 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
           </Typography>
           <Box className={globals.classes.flexRow}>
             <Box className={globals.classes.flexColumn}>
-              {commonlyUsedFirstRow.map((object) => (
-                <Box key={commonlyUsedFirstRow.indexOf(object)}>
+              {commonlyUsedColumns[0].map((object, index) => (
+                <Box key={commonlyUsedColumns[0][index]}>
                   <Button
                     onClick={() => handleClick(object)}
                     color="primary"
@@ -132,8 +124,8 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
               ))}
             </Box>
             <Box className={globals.classes.flexColumn}>
-              {commonlyUsedSecondRow.map((object) => (
-                <Box key={commonlyUsedSecondRow.indexOf(object)}>
+              {commonlyUsedColumns[1].map((object) => (
+                <Box key={commonlyUsedColumns[1].indexOf(object)}>
                   <Button
                     onClick={() => handleClick(object)}
                     color="primary"
@@ -167,8 +159,8 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
           </Typography>
           <Box mt={1} className={globals.classes.flexRow}>
             <Box className={globals.classes.flexColumn}>
-              {getRecentlySelectedFirstRow().map((object) => (
-                <Box key={getRecentlySelectedFirstRow().indexOf(object)}>
+              {recentlySelectedColumns[0].map((object) => (
+                <Box key={recentlySelectedColumns[0].indexOf(object)}>
                   <Button
                     onClick={() => handleClick(object)}
                     color="primary"
@@ -193,8 +185,8 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
               ))}
             </Box>
             <Box className={globals.classes.flexColumn}>
-              {getRecentlySelectedSecondRow().map((object) => (
-                <Box key={getRecentlySelectedSecondRow().indexOf(object)}>
+              {recentlySelectedColumns[1].map((object) => (
+                <Box key={recentlySelectedColumns[1].indexOf(object)}>
                   <Button
                     onClick={() => handleClick(object)}
                     color="primary"

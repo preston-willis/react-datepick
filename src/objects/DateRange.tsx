@@ -1,4 +1,5 @@
-import { DateRangeUI, Locale } from "./Types";
+import { DateRangeUI } from "./Types";
+import { Locale } from "./Locale";
 import { MSFormatter } from "./MSFormatter";
 
 export enum DateType {
@@ -26,12 +27,17 @@ export class DateRange {
   dateRangeUI: DateRangeUI;
   localeObj: Locale;
 
-  constructor(localeObj: Locale, dateRangeUI: DateRangeUI) {
+  constructor(
+    localeObj: Locale,
+    dateRangeUI: DateRangeUI,
+    storedRange?: string[] | null
+  ) {
     this.localeObj = localeObj;
     this.dateRangeUI = dateRangeUI;
     this.setNow(DateIndex.start);
     this.setNow(DateIndex.end);
     this.applyChanges();
+    storedRange ? this.loadFromStorage(storedRange) : () => {};
   }
 
   load(obj: DateRange): void {
@@ -41,6 +47,37 @@ export class DateRange {
     this.finalDates = obj.finalDates;
     this.finalDisplayText = obj.finalDisplayText;
     this.relativeMS = obj.relativeMS;
+  }
+
+  loadFromStorage(data: string[]): void {
+    let identifier = [data[0].slice(-1), data[1].slice(-1)];
+    data = [data[0].slice(0, -1), data[1].slice(0, -1)];
+    for (let p = 0; p < data.length; p++) {
+      if (identifier[p] === "A") {
+        let out = new Date(parseInt(data[p]));
+        this.setDate(out, p);
+      } else {
+        this.setRelative(parseInt(data[p]), p);
+      }
+    }
+    this.applyChanges();
+  }
+
+  setStoredRange(setStoredFn?: (dateRange: string[]) => void): void {
+    if (setStoredFn) {
+      let dates: string[] = [
+        String(this.finalDates[0].getTime()),
+        String(this.finalDates[1].getTime()),
+      ];
+      for (let i = 0; i < dates.length; i++) {
+        if (this.isAbsolute(i)) {
+          dates[i] = dates[i] + "A";
+        } else {
+          dates[i] = this.relativeMS[i] + "R";
+        }
+      }
+      setStoredFn!(dates);
+    }
   }
 
   setQuickSelect(quickSelectText: number[]): void {
@@ -127,13 +164,14 @@ export class DateRange {
       }
     }
   }
-  applyChanges(): void {
+  applyChanges(storedFn?: (dateRange: string[]) => void): void {
     this.refreshDates();
     this.finalDates = [this.dates[DateIndex.start], this.dates[DateIndex.end]];
     this.finalDisplayText = [
       this.displayText[DateIndex.start],
       this.displayText[DateIndex.end],
     ];
+    this.setStoredRange(storedFn);
   }
 
   isAbsolute(index: number): Boolean {

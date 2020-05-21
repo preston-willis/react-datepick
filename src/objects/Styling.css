@@ -1,0 +1,75 @@
+
+.box {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 1;
+  width: 400px;
+  height: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+}
+
+.menu {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 1;
+  width: 400px;
+  height: 175px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.menu-closed {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 0;
+  width: 400px;
+  height: 175px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+
+.box-closed {
+  margin-top: 10px;
+  margin-left: 40px;
+  opacity: 0;
+  width: 400px;
+  height: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+}
+.box-wide {
+  margin-top: 10px;
+  margin-left: 40px;
+  width: 600px;
+  height: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+}
+
+.box-tiny {
+  margin-top: 10px;
+  margin-left: 40px;
+  width: 400px;
+  height: 225px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: row;
+  align-items: left;
+}

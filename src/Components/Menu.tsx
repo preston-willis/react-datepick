@@ -10,8 +10,8 @@ import {
   MenuItem,
 } from "@material-ui/core";
 
-import { GlobalContext } from "./Constants";
-import { RefreshData } from "./Types";
+import { GlobalContext } from "./../objects/Constants";
+import { RefreshData } from "./../objects/Types";
 
 interface Inputs {
   menuClass: string;

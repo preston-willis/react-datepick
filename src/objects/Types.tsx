@@ -5,15 +5,6 @@ export interface DateRangeUI {
   timeError: boolean[];
 }
 
-export interface Locale {
-  localeString: string;
-  dateFormatter: Intl.DateTimeFormat;
-  quickSelectTerms: string[];
-  relativeTerms: string[];
-  nowText: string;
-  humanizer: any;
-}
-
 export interface DropdownData {
   termAnchorEl: any;
   intervalAnchorEl: any;

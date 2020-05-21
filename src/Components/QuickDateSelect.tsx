@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import { Box } from "@material-ui/core";
-import { DateRange, TermContext } from "./DateRange";
+import { DateRange, TermContext } from "./../objects/DateRange";
 import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown";
-import { DropdownData } from "./Types";
-import { GlobalContext } from "./Constants";
-import { MSFormatter } from "./MSFormatter";
+import { DropdownData } from "./../objects/Types";
+import { GlobalContext } from "./../objects/Constants";
+import { MSFormatter } from "./../objects/MSFormatter";
 
 interface Inputs {
   classes: any;
@@ -32,13 +32,10 @@ export const DateSelect: React.FC<Inputs> = (props) => {
   }
 
   function setAnchorEl(identifier: number, item: EventTarget | null): void {
-    console.log("setting anchor el to " + item);
     if (identifier == menu.term) {
       props.setDropdownData({ ...props.dropdownData, termAnchorEl: item });
-      console.log("anchor el is " + props.dropdownData.termAnchorEl);
     } else {
       props.setDropdownData({ ...props.dropdownData, intervalAnchorEl: item });
-      console.log("anchor el is " + props.dropdownData.intervalAnchorEl);
     }
   }
 

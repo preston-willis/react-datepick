@@ -1,21 +1,14 @@
 import React, { useEffect, useContext } from "react";
-import {
-  Button,
-  Box,
-  Typography,
-  TextField,
-  Grid,
-  IconButton,
-} from "@material-ui/core";
-import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
-import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
+import { Button, Box } from "@material-ui/core";
+import { NowSelect } from "./body/NowSelect";
+import { AbsoluteView } from "./body/AbsoluteView";
 import ReactList from "react-list";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
-import { DateSelect } from "./RelativeDateSelect";
-import "./Styling.css";
-import { DateRange } from "./DateRange";
-import { DateRangeUI, DropdownData, BodyConfig } from "./Types";
-import { GlobalContext } from "./Constants";
+import { DateSelect } from "./body/RelativeDateSelect";
+import "./../objects/Styling.css";
+import { DateRange } from "./../objects/DateRange";
+import { DateRangeUI, DropdownData, BodyConfig } from "./../objects/Types";
+import { GlobalContext } from "./../objects/Constants";
 
 interface Inputs {
   setBoxClass(boxClass: string): void;
@@ -40,166 +33,28 @@ enum property {
 
 export const Body: React.FC<Inputs> = (props) => {
   const globals = useContext(GlobalContext);
+  console.log("BODY " + JSON.stringify(globals, null, 4));
 
-  const shortWeekdayDateMap = {
-    Mon: new Date("2020-01-06"),
-    Tue: new Date("2020-01-07"),
-    Wed: new Date("2020-01-08"),
-    Thu: new Date("2020-01-09"),
-    Fri: new Date("2020-01-10"),
-    Sat: new Date("2020-01-11"),
-    Sun: new Date("2020-01-12"),
+  const absoluteViewObj = {
+    setBoxClass: props.setBoxClass,
+    setDateRange: props.setDateRange,
+    setDateRangeUI: props.setDateRangeUI,
+    setBodyConfig: props.setBodyConfig,
+    dateRangeUI: props.dateRangeUI,
+    dateRange: props.dateRange,
+    boxClass: props.boxClass,
+    index: props.index,
+    bodyConfig: props.bodyConfig,
+    property,
+    handleClick,
+    resetDate,
   };
 
-  const shortWeekdays = Object.keys(shortWeekdayDateMap);
-
-  const getDayOfWeek = (
-    shortName: string,
-    locale = globals.localeObj.localeString,
-    length = "short"
-  ) =>
-    new Intl.DateTimeFormat(locale, { weekday: length }).format(
-      shortWeekdayDateMap[shortName]
-    );
-
-  const getDaysOfWeek = (
-    locale = globals.localeObj.localeString,
-    length = "short"
-  ) =>
-    shortWeekdays.map((shortName) => getDayOfWeek(shortName, locale, length));
-
-  const day = getDaysOfWeek(globals.localeObj.localeString);
-
-  const getVariant = (item: number) => {
-    if (item == props.dateRange.dates[props.index].getDate()) {
-      return "contained";
-    } else {
-      return "outlined";
-    }
+  const nowSelectObj = {
+    applyMasterChanges: props.applyMasterChanges,
+    dateRange: props.dateRange,
+    index: props.index,
   };
-
-  function toggleBox(): void {
-    if (props.boxClass == "box") {
-      props.setBoxClass("box-wide");
-    } else {
-      props.setBoxClass("box");
-    }
-  }
-
-  function updateTransition(index: number): void {
-    if (props.bodyConfig.propertySelected == -1) {
-      props.setBodyConfig({ ...props.bodyConfig, propertySelected: index });
-      props.setBoxClass("box-wide");
-    } else if (index == props.bodyConfig.propertySelected) {
-      toggleBox();
-    } else if (
-      index != props.bodyConfig.propertySelected &&
-      props.boxClass == "box-wide"
-    ) {
-      props.setBodyConfig({ ...props.bodyConfig, propertySelected: index });
-    } else if (
-      index != props.bodyConfig.propertySelected &&
-      props.boxClass == "box"
-    ) {
-      props.setBodyConfig({ ...props.bodyConfig, propertySelected: index });
-      toggleBox();
-    }
-  }
-
-  function handleTextChange(event: string): void {
-    let error = false;
-
-    try {
-      let newDate = new Date(event);
-      const dtf = globals.localeObj.dateFormatter;
-
-      const [
-        { value: textMonth },
-        ,
-        { value: textDay },
-        ,
-        { value: textYear },
-      ] = dtf.formatToParts(newDate);
-      console.log(textMonth);
-      console.log(textYear);
-      console.log(textDay);
-
-      if (
-        parseInt(textDay) >= 0 &&
-        parseInt(textMonth) >= 0 &&
-        parseInt(textMonth) < 12 &&
-        parseInt(textYear) > globals.minimumYearValue &&
-        parseInt(textYear) < globals.maximumYearValue
-      ) {
-        resetDate(property.day, textDay);
-        resetDate(property.month, String(parseInt(textMonth) - 1));
-        resetDate(property.year, textYear);
-      } else {
-        error = true;
-      }
-    } catch (err) {
-      error = true;
-    }
-
-    props.setDateRangeUI({
-      ...props.dateRangeUI,
-      dateTextContent: props.dateRangeUI.dateTextContent.map((value, index) => {
-        if (index == props.index) {
-          return event;
-        } else {
-          return value;
-        }
-      }),
-      dateError: props.dateRangeUI.dateError.map((value, index) => {
-        if (index == props.index) {
-          return error;
-        } else {
-          return value;
-        }
-      }),
-    });
-  }
-
-  function handleTimeChange(event: string): void {
-    let error = false;
-    let dateRange = props.dateRange;
-
-    try {
-      let date = new Date(
-        props.dateRange.dates[props.index].toDateString() + " " + event
-      );
-      if (!isNaN(date.getTime())) {
-        dateRange.setDate(date, props.index);
-        props.setDateRange(dateRange);
-      } else {
-        error = true;
-      }
-    } catch (err) {
-      error = true;
-    }
-
-    props.setDateRangeUI({
-      ...props.dateRangeUI,
-      timeTextContent: props.dateRangeUI.timeTextContent.map((value, index) => {
-        if (index == props.index) {
-          return event;
-        } else {
-          return value;
-        }
-      }),
-      timeError: props.dateRangeUI.timeError.map((value, index) => {
-        if (index == props.index) {
-          return error;
-        } else {
-          return value;
-        }
-      }),
-    });
-  }
-
-  function handleClick(key: string, value: string | number): void {
-    resetDate(key, value);
-  }
 
   function applyFn(text: number): void {
     let dateRange = props.dateRange;
@@ -207,10 +62,34 @@ export const Body: React.FC<Inputs> = (props) => {
     props.setDateRange(dateRange);
   }
 
-  function setNow(): void {
-    let dateRange = props.dateRange;
-    dateRange.setNow(props.index);
-    props.applyMasterChanges(dateRange);
+  function renderItem(index: number, key: number): JSX.Element {
+    let dateKey = property.year;
+    let name = "";
+    let offset = 0;
+    if (props.bodyConfig.propertySelected == 0) {
+      dateKey = property.month;
+      name = new Date(0, index + 1, 0).toLocaleString(
+        globals.localeObj.localeString,
+        {
+          month: "long",
+        }
+      );
+    } else {
+      name = String(index + globals.minimumYearValue);
+      offset = globals.maximumYearValue;
+    }
+    return (
+      <Button
+        key={key}
+        onClick={() => handleClick(dateKey, index + offset)}
+        variant="text"
+        color="primary"
+        size="large"
+        className={globals.classes.bodyList}
+      >
+        {name}
+      </Button>
+    );
   }
 
   function resetDate(key: string, value: any): void {
@@ -245,34 +124,8 @@ export const Body: React.FC<Inputs> = (props) => {
     });
   }
 
-  function renderItem(index: number, key: number): JSX.Element {
-    let dateKey = property.year;
-    let name = "";
-    let offset = 0;
-    if (props.bodyConfig.propertySelected == 0) {
-      dateKey = property.month;
-      name = new Date(0, index + 1, 0).toLocaleString(
-        globals.localeObj.localeString,
-        {
-          month: "long",
-        }
-      );
-    } else {
-      name = String(index + globals.minimumYearValue);
-      offset = globals.maximumYearValue;
-    }
-    return (
-      <Button
-        key={key}
-        onClick={() => handleClick(dateKey, index + offset)}
-        variant="text"
-        color="primary"
-        size="large"
-        className={globals.classes.bodyList}
-      >
-        {name}
-      </Button>
-    );
+  function handleClick(key: string, value: string | number): void {
+    resetDate(key, value);
   }
 
   function renderScroll(): JSX.Element {
@@ -306,14 +159,6 @@ export const Body: React.FC<Inputs> = (props) => {
       }
     } else {
       return <div />;
-    }
-  }
-
-  function getTextTitle(): string {
-    if (props.index == 1) {
-      return "End Date";
-    } else {
-      return "Start Date";
     }
   }
 
@@ -392,128 +237,7 @@ export const Body: React.FC<Inputs> = (props) => {
           </Tab>
         </TabList>
         <TabPanel>
-          <Box className={globals.classes.bodyAbsoluteTab}>
-            <Box className={globals.classes.bodyHeader} mt={2} mb={2}>
-              <Box mt={2}>
-                <IconButton
-                  onClick={() => updateTransition(0)}
-                  className={globals.classes.calendarButton}
-                  size="small"
-                >
-                  <ArrowForwardIosIcon />
-                </IconButton>
-              </Box>
-              <Box mt={2} mr={1}>
-                <Typography color="textPrimary" variant="h5">
-                  {props.dateRange.dates[props.index].toLocaleString(
-                    globals.localeObj.localeString,
-                    {
-                      month: "long",
-                    }
-                  )}
-                </Typography>
-              </Box>
-              <Box mt={2}>
-                <Typography color="secondary" variant="h5">
-                  {props.dateRange.dates[props.index].getFullYear()}
-                </Typography>
-              </Box>
-              <Box ml={1} mt={2}>
-                <IconButton
-                  onClick={() => updateTransition(1)}
-                  className={globals.classes.calendarButton}
-                  size="small"
-                  color="secondary"
-                >
-                  <ArrowBackIosIcon />
-                </IconButton>
-              </Box>
-            </Box>
-            <Box ml={4}>
-              <Grid
-                container
-                justify="flex-start"
-                spacing={1}
-                className={globals.classes.calendar}
-              >
-                {[...Array(7).keys()].map((item) => (
-                  <Grid key={item} item>
-                    <Button
-                      disableRipple={true}
-                      color="secondary"
-                      size="small"
-                      variant="text"
-                      className={globals.classes.calendarButton}
-                    >
-                      {day[item]}
-                    </Button>
-                  </Grid>
-                ))}
-
-                {[
-                  ...Array(
-                    new Date(
-                      props.dateRange.dates[props.index].getFullYear(),
-                      props.dateRange.dates[props.index].getMonth(),
-                      1
-                    ).getDay()
-                  ).keys(),
-                ].map((item) => (
-                  <Grid key={item} item>
-                    <Button
-                      className={globals.classes.calendarButton}
-                      size="small"
-                      color="primary"
-                      variant="contained"
-                      disableRipple
-                    >
-                      {""}
-                    </Button>
-                  </Grid>
-                ))}
-                {[
-                  ...Array(props.bodyConfig.daysInMonth[props.index]).keys(),
-                ].map((item) => (
-                  <Grid key={item} item>
-                    <Button
-                      onClick={() => handleClick("day", item + 1)}
-                      className={globals.classes.calendarButton}
-                      size="small"
-                      color="primary"
-                      variant={getVariant(item + 1)}
-                      disableRipple
-                    >
-                      {item + 1}
-                    </Button>
-                  </Grid>
-                ))}
-              </Grid>
-            </Box>
-            <Box mt={11} className={globals.classes.flexRow}>
-              <TextField
-                error={props.dateRangeUI.dateError[props.index]}
-                fullWidth={false}
-                className={globals.classes.bodyTextField}
-                value={props.dateRangeUI.dateTextContent[props.index]}
-                size="small"
-                id="outlined-basic"
-                label={getTextTitle()}
-                variant="outlined"
-                onChange={(event) => handleTextChange(event.target.value)}
-              />
-              <TextField
-                error={props.dateRangeUI.timeError[props.index]}
-                fullWidth={false}
-                className={globals.classes.bodyTextField}
-                value={props.dateRangeUI.timeTextContent[props.index]}
-                size="small"
-                id="outlined-basic"
-                label="Time"
-                variant="outlined"
-                onChange={(event) => handleTimeChange(event.target.value)}
-              />
-            </Box>
-          </Box>
+          <AbsoluteView {...absoluteViewObj} />
         </TabPanel>
         <TabPanel>
           <Box mt={7} className={globals.classes.bodyDateSelectDropdown}>
@@ -521,24 +245,7 @@ export const Body: React.FC<Inputs> = (props) => {
           </Box>
         </TabPanel>
         <TabPanel>
-          <Box className={globals.classes.bodyDateSelectDropdown}>
-            <Box mt={3} className={globals.classes.bodySetNow}>
-              <Typography>
-                Setting time to now means that on every refresh, the current
-                time will be reset.
-              </Typography>
-            </Box>
-            <Box mt={3}>
-              <Button
-                onClick={() => setNow()}
-                variant="contained"
-                color="primary"
-                className={globals.classes.bodySetNowButton}
-              >
-                Set time to now
-              </Button>
-            </Box>
-          </Box>
+          <NowSelect {...nowSelectObj} />
         </TabPanel>
       </Tabs>
       {renderScroll()}

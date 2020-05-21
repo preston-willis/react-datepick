@@ -1,5 +1,5 @@
 import { TermContext } from "./DateRange";
-import { Locale } from "./Types";
+import { Locale } from "./Locale";
 
 export class MSFormatter {
   static formatAbsoluteDate(
