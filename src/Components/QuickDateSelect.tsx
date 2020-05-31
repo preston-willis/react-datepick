@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import { Box } from "@material-ui/core";
-import { DateRange, TermContext } from "./../objects/DateRange";
+import { DateRange, TermContext } from "../objects/DateRange";
 import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown";
-import { DropdownData } from "./../objects/Types";
-import { GlobalContext } from "./../objects/Constants";
-import { MSFormatter } from "./../objects/MSFormatter";
+import { DropdownData } from "../objects/Types";
+import { GlobalContext } from "../objects/Constants";
+import { MSFormatter } from "../objects/MSFormatter";
 
 interface Inputs {
   classes: any;
@@ -14,13 +14,13 @@ interface Inputs {
   setDropdownData(data: DropdownData): void;
 }
 
-export const DateSelect: React.FC<Inputs> = (props) => {
+export const DateSelect: React.FC<Inputs> = props => {
   let globals = useContext(GlobalContext);
   let out = props.dropdownData.quickSelectContent;
 
   enum menu {
     term = 0,
-    interval = 1,
+    interval = 1
   }
 
   function getAnchorEl(identifier: number): Element {
@@ -47,13 +47,13 @@ export const DateSelect: React.FC<Inputs> = (props) => {
     if (!props.dropdownData.termAnchorEl) {
       props.setDropdownData({ ...props.dropdownData, quickSelectContent: out });
     }
-  }, [props.dropdownData.termAnchorEl]);
+  }, [out, props, props.dropdownData.termAnchorEl]);
 
   useEffect(() => {
     if (!props.dropdownData.intervalAnchorEl) {
       props.setDropdownData({ ...props.dropdownData, quickSelectContent: out });
     }
-  }, [props.dropdownData.intervalAnchorEl]);
+  }, [out, props, props.dropdownData.intervalAnchorEl]);
 
   function handleClose(identifier: number, item: any): void {
     setAnchorEl(identifier, null);
@@ -71,7 +71,7 @@ export const DateSelect: React.FC<Inputs> = (props) => {
     getAnchorEl,
     firstDropdownText: [-1, 1],
     secondDropdownText: globals.quickSelectIntervals,
-    classes: props.classes,
+    classes: props.classes
   };
 
   return (

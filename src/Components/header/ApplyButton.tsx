@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { DateRange } from "./../../objects/DateRange";
-import { GlobalContext } from "./../../objects/Constants";
+import { DateRange } from "../../objects/DateRange";
+import { GlobalContext } from "../../objects/Constants";
 import KeyboardTabIcon from "@material-ui/icons/KeyboardTab";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { Button, Box } from "@material-ui/core";
@@ -11,7 +11,7 @@ interface Inputs {
   applyChanges(dateRange: DateRange): void;
 }
 
-export const ApplyButton: React.FC<Inputs> = (props) => {
+export const ApplyButton: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
 
   function getApplyText(): JSX.Element {

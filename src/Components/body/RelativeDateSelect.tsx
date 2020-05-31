@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { DateRange, TermContext } from "./../../objects/DateRange";
+import { DateRange, TermContext } from "../../objects/DateRange";
 import { Box } from "@material-ui/core";
 import { RelativeDateSelectDropdown } from "./../RelativeDateSelectDropdown";
-import { DropdownData } from "./../../objects/Types";
-import { GlobalContext } from "./../../objects/Constants";
+import { DropdownData } from "../../objects/Types";
+import { GlobalContext } from "../../objects/Constants";
 
 interface Inputs {
   classes: any;
@@ -13,12 +13,12 @@ interface Inputs {
   setDropdownData(data: DropdownData): void;
 }
 
-export const DateSelect: React.FC<Inputs> = (props) => {
+export const DateSelect: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
 
   enum menu {
     term = 0,
-    interval = 1,
+    interval = 1
   }
 
   function getAnchorEl(identifier: number): Element {
@@ -57,7 +57,7 @@ export const DateSelect: React.FC<Inputs> = (props) => {
     dateRange: props.dateRange,
     classes: props.classes,
     handleMenuClick,
-    getAnchorEl,
+    getAnchorEl
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import {
   Button,
   Box,
@@ -7,26 +7,25 @@ import {
   Switch,
   TextField,
   Menu,
-  MenuItem,
+  MenuItem
 } from "@material-ui/core";
 
-import { GlobalContext } from "./../objects/Constants";
-import { RefreshData } from "./../objects/Types";
+import { GlobalContext } from "../objects/Constants";
+import { RefreshData } from "../objects/Types";
 
 interface Inputs {
   menuClass: string;
   refreshData: RefreshData;
   setRefreshData(refreshData: RefreshData): void;
-  setAnchorEl(element: EventTarget | null): void;
-  anchorEl: any;
   setTimerRunning(isRunning: boolean): void;
   timerRunning: boolean;
-  setMenuError(error: boolean): void;
-  menuError: boolean;
 }
 
-export const MenuView: React.FC<Inputs> = (props) => {
+export const MenuView: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
+
+  const [anchorEl, setAnchorEl] = useState<any>(null);
+  const [menuError, setMenuError] = useState<boolean>(false);
 
   function applyChanges() {
     props.setTimerRunning(true);
@@ -36,35 +35,35 @@ export const MenuView: React.FC<Inputs> = (props) => {
     if (props.refreshData.refreshIntervalEnabled) {
       props.setRefreshData({
         ...props.refreshData,
-        refreshIntervalEnabled: false,
+        refreshIntervalEnabled: false
       });
       props.setTimerRunning(false);
     } else {
       props.setRefreshData({
         ...props.refreshData,
-        refreshIntervalEnabled: true,
+        refreshIntervalEnabled: true
       });
     }
   }
 
   function handleTextChange(event: string): void {
     if (isNaN(parseFloat(event))) {
-      props.setMenuError(true);
+      setMenuError(true);
     } else {
       props.setRefreshData({
         ...props.refreshData,
-        refreshInterval: parseFloat(event),
+        refreshInterval: parseFloat(event)
       });
-      props.setMenuError(false);
+      setMenuError(false);
     }
   }
 
   function handleClick(event: EventTarget): void {
-    props.setAnchorEl(event);
+    setAnchorEl(event);
   }
 
   function handleClose(item: string): void {
-    props.setAnchorEl(null);
+    setAnchorEl(null);
     props.setRefreshData({ ...props.refreshData, refreshIntervalUnits: item });
   }
 
@@ -95,9 +94,9 @@ export const MenuView: React.FC<Inputs> = (props) => {
       </Box>
       <Box ml={2} mt={1} display="flex" flexDirection="row" alignItems="center">
         <TextField
-          error={props.menuError}
-          helperText={props.menuError}
-          onChange={(event) => handleTextChange(event.target.value)}
+          error={menuError}
+          helperText={menuError}
+          onChange={event => handleTextChange(event.target.value)}
           size="small"
           defaultValue={setDefaultValue()}
           disabled={!props.refreshData.refreshIntervalEnabled}
@@ -112,15 +111,15 @@ export const MenuView: React.FC<Inputs> = (props) => {
           variant="outlined"
           color="primary"
           aria-haspopup="true"
-          onClick={(event) => handleClick(event.currentTarget)}
+          onClick={event => handleClick(event.currentTarget)}
         >
           {props.refreshData.refreshIntervalUnits}
         </Button>
         <Menu
           id="simple-menu"
-          anchorEl={props.anchorEl}
+          anchorEl={anchorEl}
           keepMounted
-          open={Boolean(props.anchorEl)}
+          open={Boolean(anchorEl)}
           onClose={() => handleClose(props.refreshData.refreshIntervalUnits)}
         >
           <MenuItem onClick={() => handleClose("Seconds")}>Seconds</MenuItem>
@@ -131,9 +130,7 @@ export const MenuView: React.FC<Inputs> = (props) => {
       <Box mt={1} ml={2} className={globals.classes.menuTimerButtonsContainer}>
         <Box>
           <Button
-            disabled={
-              !props.refreshData.refreshIntervalEnabled || props.menuError
-            }
+            disabled={!props.refreshData.refreshIntervalEnabled || menuError}
             className={globals.classes.menuTimerStateButton}
             aria-controls="simple-menu"
             variant="contained"

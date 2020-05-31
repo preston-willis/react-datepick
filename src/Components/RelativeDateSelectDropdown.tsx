@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Button, Box, Menu, MenuItem } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { DateRange, TermContext } from "./../objects/DateRange";
-import { MSFormatter } from "./../objects/MSFormatter";
-import { GlobalContext } from "./../objects/Constants";
+import { DateRange, TermContext } from "../objects/DateRange";
+import { MSFormatter } from "../objects/MSFormatter";
+import { GlobalContext } from "../objects/Constants";
 
 interface Inputs {
   identifier: number;
@@ -18,14 +18,14 @@ interface Inputs {
   getAnchorEl(identifier: number): Element;
 }
 
-export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
+export const RelativeDateSelectDropdown: React.FC<Inputs> = props => {
   let globals = useContext(GlobalContext);
   let interval = props.secondDropdownText;
   let term = props.firstDropdownText;
 
   enum menu {
     term = 0,
-    interval = 1,
+    interval = 1
   }
 
   const displayTerm = (item: number) => {
@@ -58,7 +58,7 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
         variant="outlined"
         color="primary"
         aria-haspopup="true"
-        onClick={(event) =>
+        onClick={event =>
           props.handleMenuClick(props.identifier, event.currentTarget)
         }
       >

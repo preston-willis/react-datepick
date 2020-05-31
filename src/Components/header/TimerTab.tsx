@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Button, Box } from "@material-ui/core";
-import { GlobalContext } from "./../../objects/Constants";
-import { TimerUI } from "./../Timer";
-import { DateRange } from "./../../objects/DateRange";
-import { RefreshData } from "./../../objects/Types";
+import { GlobalContext } from "../../objects/Constants";
+import { TimerUI } from "../Timer";
+import { DateRange } from "../../objects/DateRange";
+import { RefreshData } from "../../objects/Types";
 
 interface Inputs {
   timerRunning: boolean;
@@ -15,7 +15,7 @@ interface Inputs {
   refreshData: RefreshData;
 }
 
-export const TimerTab: React.FC<Inputs> = (props) => {
+export const TimerTab: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
 
   function refreshTime(): void {
