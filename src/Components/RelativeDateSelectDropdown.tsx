@@ -1,42 +1,53 @@
-import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Box,
-  Typography,
-  GridList,
-  GridListTile,
-  TextField,
-  Grid,
-  Menu,
-  MenuItem,
-} from "@material-ui/core";
+import React, { useContext } from "react";
+import { Button, Box, Menu, MenuItem } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import { DateRange, TermContext } from "../objects/DateRange";
+import { MSFormatter } from "../objects/MSFormatter";
+import { GlobalContext } from "../objects/Constants";
 
 interface Inputs {
   identifier: number;
-  relativeTerms: string[];
-  relativeIntervals: string[];
-  relativeSelectContent: string[];
+  firstDropdownText: number[];
+  secondDropdownText: number[];
+  content: number[];
   classes: any;
+  dropdownType: TermContext;
+  dateRange: DateRange;
   handleMenuClick(identifier: number, event: EventTarget): void;
-  handleClose(identifier: number, item: string): void;
+  handleClose(identifier: number, item: number): void;
   getAnchorEl(identifier: number): Element;
 }
 
 export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
-  let term = props.relativeTerms;
-  let interval = props.relativeIntervals;
+  let globals = useContext(GlobalContext);
+  let interval = props.secondDropdownText;
+  let term = props.firstDropdownText;
 
   enum menu {
     term = 0,
     interval = 1,
   }
 
-  let list: string[] = [];
+  const displayTerm = (item: number) => {
+    return MSFormatter.multiplierToHumanized(
+      item,
+      props.dropdownType,
+      globals.localeObj
+    );
+  };
+
+  const displayInterval = (item: number) => {
+    return props.dateRange.localeObj.humanizer(item);
+  };
+
+  let displayFn: (item: any) => any;
+  let list: any = [];
   if (props.identifier == menu.term) {
     list = term;
+    displayFn = displayTerm;
   } else if (props.identifier == menu.interval) {
     list = interval;
+    displayFn = displayInterval;
   }
 
   return (
@@ -52,7 +63,13 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
         }
       >
         <Box className={props.classes.flexRow}>
-          {props.relativeSelectContent[props.identifier]}
+          {
+            MSFormatter.millisecondsToHumanized(
+              props.content,
+              props.dropdownType,
+              globals.localeObj
+            )[props.identifier]
+          }
           <Box ml={1} />
           <ExpandMoreIcon />
         </Box>
@@ -63,15 +80,15 @@ export const RelativeDateSelectDropdown: React.FC<Inputs> = (props) => {
         keepMounted
         open={Boolean(props.getAnchorEl(props.identifier))}
         onClose={() =>
-          props.handleClose(
-            props.identifier,
-            props.relativeSelectContent[props.identifier]
-          )
+          props.handleClose(props.identifier, props.content[props.identifier])
         }
       >
-        {list.map((item) => (
-          <MenuItem onClick={() => props.handleClose(props.identifier, item)}>
-            {item}
+        {list.map((item: number) => (
+          <MenuItem
+            key={item}
+            onClick={() => props.handleClose(props.identifier, item)}
+          >
+            {displayFn(item)}
           </MenuItem>
         ))}
       </Menu>

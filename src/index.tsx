@@ -1,22 +1,19 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import { MuiThemeProvider, createMuiTheme } from "@material-ui/core/styles";
-import { Layout } from "./Components/Layout.tsx";
+import { Layout } from "./components/Layout";
+import { OptionalLocale } from "./objects/Locale";
 
 interface Inputs {
-  getDateRange(dates: Date[]): void;
-  resetFn(): void;
-  dateFormatter?: Intl.DateTimeFormat;
+  onDateEvent(dates: Date[]): void;
+  onTimerEvent(): void;
   theme?: any;
-  timeIntervalText?: string[][];
-  quickSelectTerms?: string[];
-  quickSelectIntervals?: string[];
-  relativeTerms?: string[];
-  relativeIntervals?: string[];
-  timeFormat?: string;
-  nowText?: string;
+  commonlyUsedText?: number[];
+  quickSelectIntervals?: number[];
+  relativeIntervals?: number[];
   minimumYearValue?: number;
   maximumYearValue?: number;
+  setStoredRange?(dateRange: string[]): void;
+  storedRange: string[] | null;
+  localeObj: OptionalLocale;
 }
 
 export default function DatePick(props: Inputs) {

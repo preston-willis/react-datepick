@@ -1,15 +1,51 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import DateRangePicker from "../../../src/index.tsx";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import DateRangePicker from "react-datepick";
+import { useHistory } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const app = document.getElementById("app");
 
-function reset() {
-  console.log("Reset!");
-}
+const DateRangeWithHistory: React.FC<{}> = () => {
+  const history = useHistory();
 
-function getDateRange(data: Date[]): void {
-  console.log(data);
-}
+  // Set the persisted range into the URL
+  const persistRange = (range: string[]): void => {
+    history.replace("#range=" + encodeURIComponent(JSON.stringify(range)));
+  };
 
-ReactDOM.render(<DateRangePicker relativeTerms={["ago", "from now"]} resetFn={reset} getDateRange={getDateRange} />, app);
+  // Get the persisted range out of the URL
+  const getRange = (): string[] | null => {
+    let range = null;
+    try {
+      range = JSON.parse(
+        decodeURIComponent(history.location.hash.substring(1).split("=")[1])
+      );
+    } catch {
+      return null;
+    }
+    return range;
+  };
+
+  return (
+    <DateRangePicker
+      localeObj={{ nowText: "NOW", localeString: "fr" }}
+      minimumYearValue={3100}
+      onTimerEvent={() => {
+        console.log("reset");
+      }}
+      onDateEvent={(dateRange: Date[]) => console.log(dateRange)}
+      setStoredRange={persistRange}
+      storedRange={getRange()}
+    />
+  );
+};
+
+ReactDOM.render(
+  <Router>
+    <Route path="/">
+      <DateRangeWithHistory />
+    </Route>
+  </Router>,
+  app
+);

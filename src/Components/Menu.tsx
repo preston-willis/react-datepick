@@ -1,75 +1,81 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import {
   Button,
   Box,
-  Typography,
   FormGroup,
   FormControlLabel,
   Switch,
   TextField,
   Menu,
-  MenuItem,
+  MenuItem
 } from "@material-ui/core";
 
+import { GlobalContext } from "../objects/Constants";
+import { RefreshData } from "../objects/Types";
+
 interface Inputs {
-  refreshIntervalEnabled: boolean;
-  setRefreshIntervalEnabled(isEnabled: boolean): void;
   menuClass: string;
-  classes: any;
-  setAnchorEl(element: EventTarget | null): void;
-  anchorEl: any;
-  refreshIntervalUnits: string;
-  setRefreshIntervalUnits(units: string): void;
-  refreshInterval: number;
-  setRefreshInterval(interval: number): void;
+  refreshData: RefreshData;
+  setRefreshData(refreshData: RefreshData): void;
   setTimerRunning(isRunning: boolean): void;
   timerRunning: boolean;
-  setMenuError(error: boolean): void;
-  menuError: boolean;
 }
 
 export const MenuView: React.FC<Inputs> = props => {
+  const globals = useContext(GlobalContext);
+  const [anchorEl, setAnchorEl] = useState<any>(null);
+  const [menuError, setMenuError] = useState<boolean>(false);
+
   function applyChanges() {
     props.setTimerRunning(true);
   }
 
   function toggleSwitch(): void {
-    if (props.refreshIntervalEnabled) {
-      props.setRefreshIntervalEnabled(false);
+    if (props.refreshData.refreshIntervalEnabled) {
+      props.setRefreshData({
+        ...props.refreshData,
+        refreshIntervalEnabled: false
+      });
       props.setTimerRunning(false);
     } else {
-      props.setRefreshIntervalEnabled(true);
+      props.setRefreshData({
+        ...props.refreshData,
+        refreshIntervalEnabled: true
+      });
     }
   }
 
   function handleTextChange(event: string): void {
     if (isNaN(parseFloat(event))) {
-      props.setMenuError(true);
+      setMenuError(true);
     } else {
-      props.setRefreshInterval(parseFloat(event));
-      props.setMenuError(false);
+      props.setRefreshData({
+        ...props.refreshData,
+        refreshInterval: parseFloat(event)
+      });
+      setMenuError(false);
     }
   }
 
   function handleClick(event: EventTarget): void {
-    props.setAnchorEl(event);
+    setAnchorEl(event);
   }
 
   function handleClose(item: string): void {
-    props.setAnchorEl(null);
-    props.setRefreshIntervalUnits(item);
+    setAnchorEl(null);
+    props.setRefreshData({ ...props.refreshData, refreshIntervalUnits: item });
   }
 
   function setDefaultValue(): string | number {
-    if (props.refreshInterval != -1) {
-      return props.refreshInterval;
+    if (props.refreshData.refreshInterval != -1) {
+      return props.refreshData.refreshInterval;
     } else {
       return "";
     }
   }
 
   return (
-    <Box mt={2} className={props.menuClass}>
+    <Box mt={2} className={globals.classes[props.menuClass]}>
       <Box mt={2} ml={2}>
         <FormGroup>
           <FormControlLabel
@@ -77,7 +83,7 @@ export const MenuView: React.FC<Inputs> = props => {
               <Switch
                 color="primary"
                 size="medium"
-                checked={props.refreshIntervalEnabled}
+                checked={props.refreshData.refreshIntervalEnabled}
                 onChange={() => toggleSwitch()}
               />
             }
@@ -87,44 +93,44 @@ export const MenuView: React.FC<Inputs> = props => {
       </Box>
       <Box ml={2} mt={1} display="flex" flexDirection="row" alignItems="center">
         <TextField
-          error={props.menuError}
-          helperText={props.menuError}
-          onChange={(event) => handleTextChange(event.target.value)}
+          error={menuError}
+          helperText={menuError}
+          onChange={event => handleTextChange(event.target.value)}
           size="small"
           defaultValue={setDefaultValue()}
-          disabled={!props.refreshIntervalEnabled}
+          disabled={!props.refreshData.refreshIntervalEnabled}
           id="outlined-basic"
           label="Refresh Interval"
           variant="outlined"
         />
         <Button
-          disabled={!props.refreshIntervalEnabled}
-          className={props.classes.menuEnableButton}
+          disabled={!props.refreshData.refreshIntervalEnabled}
+          className={globals.classes.menuEnableButton}
           aria-controls="simple-menu"
           variant="outlined"
           color="primary"
           aria-haspopup="true"
-          onClick={(event) => handleClick(event.currentTarget)}
+          onClick={event => handleClick(event.currentTarget)}
         >
-          {props.refreshIntervalUnits}
+          {props.refreshData.refreshIntervalUnits}
         </Button>
         <Menu
           id="simple-menu"
-          anchorEl={props.anchorEl}
+          anchorEl={anchorEl}
           keepMounted
-          open={Boolean(props.anchorEl)}
-          onClose={() => handleClose(props.refreshIntervalUnits)}
+          open={Boolean(anchorEl)}
+          onClose={() => handleClose(props.refreshData.refreshIntervalUnits)}
         >
           <MenuItem onClick={() => handleClose("Seconds")}>Seconds</MenuItem>
           <MenuItem onClick={() => handleClose("Minutes")}>Minutes</MenuItem>
           <MenuItem onClick={() => handleClose("Hours")}>Hours</MenuItem>
         </Menu>
       </Box>
-      <Box mt={1} ml={2} className={props.classes.menuTimerButtonsContainer}>
+      <Box mt={1} ml={2} className={globals.classes.menuTimerButtonsContainer}>
         <Box>
           <Button
-            disabled={!props.refreshIntervalEnabled || props.menuError}
-            className={props.classes.menuTimerStateButton}
+            disabled={!props.refreshData.refreshIntervalEnabled || menuError}
+            className={globals.classes.menuTimerStateButton}
             aria-controls="simple-menu"
             variant="contained"
             color="primary"
@@ -137,7 +143,7 @@ export const MenuView: React.FC<Inputs> = props => {
         <Box ml={1}>
           <Button
             disabled={!props.timerRunning}
-            className={props.classes.menuTimerStateButton}
+            className={globals.classes.menuTimerStateButton}
             variant="contained"
             color="primary"
             onClick={() => props.setTimerRunning(false)}
@@ -148,4 +154,4 @@ export const MenuView: React.FC<Inputs> = props => {
       </Box>
     </Box>
   );
-}
+};

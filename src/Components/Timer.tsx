@@ -1,9 +1,9 @@
 import Timer from "react-compound-timer";
-import React, { useState } from "react";
+import React from "react";
 import TimerOffIcon from "@material-ui/icons/TimerOff";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import TimerIcon from "@material-ui/icons/Timer";
-import { Button, Box } from "@material-ui/core";
+import { Box } from "@material-ui/core";
 import ms from "ms";
 
 interface Inputs {
@@ -42,7 +42,7 @@ export function TimerUI(props: Inputs) {
           },
         ]}
       >
-        <Box>
+        <Box mt={1}>
           <TimerIcon />
           <ExpandMoreIcon />
         </Box>
@@ -50,7 +50,7 @@ export function TimerUI(props: Inputs) {
     );
   } else {
     return (
-      <Box>
+      <Box mt={1}>
         <TimerOffIcon />
         <ExpandMoreIcon />
       </Box>
