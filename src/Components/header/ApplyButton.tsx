@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
-import { DateRange } from "./../../objects/DateRange";
-import { GlobalContext } from "./../../objects/Constants";
+import { DateRange } from "../../objects/DateRange";
+import { GlobalContext } from "../../objects/Constants";
 import KeyboardTabIcon from "@material-ui/icons/KeyboardTab";
 import RefreshIcon from "@material-ui/icons/Refresh";
 import { Button, Box } from "@material-ui/core";

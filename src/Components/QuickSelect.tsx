@@ -1,38 +1,39 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Divider } from "@material-ui/core";
 import { Button, Box, Typography } from "@material-ui/core";
 import { DateSelect } from "./QuickDateSelect";
-import { DateRange, TermContext } from "./../objects/DateRange";
-import { GlobalContext } from "./../objects/Constants";
-import { DateRangeUI, DropdownData } from "./../objects/Types";
-import { MSFormatter } from "./../objects/MSFormatter";
+import { DateRange } from "../objects/DateRange";
+import { GlobalContext } from "../objects/Constants";
+import { DateRangeUI, DropdownData } from "../objects/Types";
+import { MSFormatter } from "../objects/MSFormatter";
+import { QuickSelectColumn } from "./QuickSelectColumn";
 
 interface Inputs {
   boxClass: string;
-  recentlySelected: number[];
-  dateRange: DateRange;
-  dateRangeUI: DateRangeUI;
-  dropdownData: DropdownData;
-  setDropdownData(data: DropdownData): void;
-  setDateRangeUI(dateRangeUI: DateRangeUI): void;
   applyChanges(dr: DateRange): void;
-  setRecentlySelected(items: number[]): void;
+  dateRange: DateRange;
+  setDateRangeUI(dateRangeUI: DateRangeUI): void;
+  dateRangeUI: DateRangeUI;
+  setDropdownData(data: DropdownData): void;
+  dropdownData: DropdownData;
 }
 
-export const QuickSelect: React.FC<Inputs> = (props) => {
+export const QuickSelect: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
+  const [recentlySelected, setRecentlySelected] = useState<number[]>([]);
+
   let out = props.dropdownData.quickSelectContent;
 
   const comUseMid = Math.floor(globals.commonlyUsedText.length / 2);
-  const recSelMid = Math.floor(props.recentlySelected.length / 2);
+  const recSelMid = Math.floor(recentlySelected.length / 2);
   let commonlyUsedColumns: number[][] = [
     globals.commonlyUsedText.slice(0, comUseMid),
-    globals.commonlyUsedText.slice(comUseMid),
+    globals.commonlyUsedText.slice(comUseMid)
   ];
 
   let recentlySelectedColumns: number[][] = [
-    props.recentlySelected.slice(0, recSelMid),
-    props.recentlySelected.slice(recSelMid),
+    recentlySelected.slice(0, recSelMid),
+    recentlySelected.slice(recSelMid)
   ];
 
   function handleClick(text: number): void {
@@ -46,17 +47,17 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
     props.applyChanges(dateRange);
 
     // Add the current value to recentlySelected
-    let recentlySelected = props.recentlySelected;
-    recentlySelected.unshift(
+    let recentlySelectedTemp = recentlySelected;
+    recentlySelectedTemp.unshift(
       props.dropdownData.quickSelectContent[0] *
         props.dropdownData.quickSelectContent[1]
     );
 
     // If recentlySelected exceeds its maximum size, remove the last value
-    if (recentlySelected.length > 6) {
-      recentlySelected.pop();
+    if (recentlySelectedTemp.length > 6) {
+      recentlySelectedTemp.pop();
     }
-    props.setRecentlySelected(recentlySelected);
+    setRecentlySelected(recentlySelectedTemp);
   }
 
   function getDateSelectObj() {
@@ -65,12 +66,12 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
       dateRange: props.dateRange,
       classes: globals.classes,
       dropdownData: props.dropdownData,
-      setDropdownData: props.setDropdownData,
+      setDropdownData: props.setDropdownData
     };
   }
 
   return (
-    <Box className={props.boxClass}>
+    <Box className={globals.classes[props.boxClass]}>
       <Box className={globals.classes.flexColumn}>
         <Box ml={2} mt={2}>
           <Typography variant="subtitle1" color="textPrimary">
@@ -97,58 +98,14 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
             Commonly used
           </Typography>
           <Box className={globals.classes.flexRow}>
-            <Box className={globals.classes.flexColumn}>
-              {commonlyUsedColumns[0].map((object, index) => (
-                <Box key={commonlyUsedColumns[0][index]}>
-                  <Button
-                    onClick={() => handleClick(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    disableFocusRipple={true}
-                    disableRipple={true}
-                    className={globals.classes.quickSelectContainerButton}
-                  >
-                    {""}
-                  </Button>
-                  <Box mt={-3}>
-                    <Typography color="primary" variant="subtitle2">
-                      {MSFormatter.millisecondsToHumanized(
-                        MSFormatter.splitMilliseconds(object),
-                        TermContext.quickSelect,
-                        globals.localeObj
-                      ).join(" ")}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-            <Box className={globals.classes.flexColumn}>
-              {commonlyUsedColumns[1].map((object) => (
-                <Box key={commonlyUsedColumns[1].indexOf(object)}>
-                  <Button
-                    onClick={() => handleClick(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    disableFocusRipple={true}
-                    disableRipple={true}
-                    className={globals.classes.quickSelectContainerButton}
-                  >
-                    {""}
-                  </Button>
-                  <Box mt={-3}>
-                    <Typography color="primary" variant="subtitle2">
-                      {MSFormatter.millisecondsToHumanized(
-                        MSFormatter.splitMilliseconds(object),
-                        TermContext.quickSelect,
-                        globals.localeObj
-                      ).join(" ")}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
+            <QuickSelectColumn
+              content={commonlyUsedColumns[0]}
+              handleClick={handleClick}
+            />
+            <QuickSelectColumn
+              content={commonlyUsedColumns[1]}
+              handleClick={handleClick}
+            />
           </Box>
         </Box>
         <Box ml={2} mt={2} className={globals.classes.flexColumn}>
@@ -158,58 +115,14 @@ export const QuickSelect: React.FC<Inputs> = (props) => {
             Recently used date ranges
           </Typography>
           <Box mt={1} className={globals.classes.flexRow}>
-            <Box className={globals.classes.flexColumn}>
-              {recentlySelectedColumns[0].map((object) => (
-                <Box key={recentlySelectedColumns[0].indexOf(object)}>
-                  <Button
-                    onClick={() => handleClick(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    disableFocusRipple={true}
-                    disableRipple={true}
-                    className={globals.classes.quickSelectContainerButton}
-                  >
-                    {""}
-                  </Button>
-                  <Box mt={-3}>
-                    <Typography color="primary" variant="subtitle2">
-                      {MSFormatter.millisecondsToHumanized(
-                        MSFormatter.splitMilliseconds(object),
-                        TermContext.quickSelect,
-                        globals.localeObj
-                      ).join(" ")}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
-            <Box className={globals.classes.flexColumn}>
-              {recentlySelectedColumns[1].map((object) => (
-                <Box key={recentlySelectedColumns[1].indexOf(object)}>
-                  <Button
-                    onClick={() => handleClick(object)}
-                    color="primary"
-                    variant="text"
-                    size="small"
-                    disableFocusRipple={true}
-                    disableRipple={true}
-                    className={globals.classes.quickSelectContainerButton}
-                  >
-                    {""}
-                  </Button>
-                  <Box mt={-3}>
-                    <Typography color="primary" variant="subtitle2">
-                      {MSFormatter.millisecondsToHumanized(
-                        MSFormatter.splitMilliseconds(object),
-                        TermContext.quickSelect,
-                        globals.localeObj
-                      ).join(" ")}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
-            </Box>
+            <QuickSelectColumn
+              content={recentlySelectedColumns[0]}
+              handleClick={handleClick}
+            />
+            <QuickSelectColumn
+              content={recentlySelectedColumns[1]}
+              handleClick={handleClick}
+            />
           </Box>
         </Box>
       </Box>

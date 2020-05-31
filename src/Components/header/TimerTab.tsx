@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Button, Box } from "@material-ui/core";
-import { GlobalContext } from "./../../objects/Constants";
-import { TimerUI } from "./../Timer";
-import { DateRange } from "./../../objects/DateRange";
-import { RefreshData } from "./../../objects/Types";
+import { GlobalContext } from "../../objects/Constants";
+import { TimerUI } from "../Timer";
+import { DateRange } from "../../objects/DateRange";
+import { RefreshData } from "../../objects/Types";
 
 interface Inputs {
   timerRunning: boolean;

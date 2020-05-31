@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { GlobalContext } from "./../../objects/Constants";
+import { GlobalContext } from "../../objects/Constants";
 import CalendarTodayIcon from "@material-ui/icons/CalendarToday";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { Button } from "@material-ui/core";

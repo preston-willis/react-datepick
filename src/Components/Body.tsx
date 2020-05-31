@@ -5,10 +5,9 @@ import { AbsoluteView } from "./body/AbsoluteView";
 import ReactList from "react-list";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { DateSelect } from "./body/RelativeDateSelect";
-import "./../objects/Styling.css";
-import { DateRange } from "./../objects/DateRange";
-import { DateRangeUI, DropdownData, BodyConfig } from "./../objects/Types";
-import { GlobalContext } from "./../objects/Constants";
+import { DateRange } from "../objects/DateRange";
+import { DateRangeUI, DropdownData, BodyConfig } from "../objects/Types";
+import { GlobalContext } from "../objects/Constants";
 
 interface Inputs {
   setBoxClass(boxClass: string): void;
@@ -28,12 +27,11 @@ interface Inputs {
 enum property {
   day = "day",
   month = "month",
-  year = "year",
+  year = "year"
 }
 
-export const Body: React.FC<Inputs> = (props) => {
+export const Body: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
-  console.log("BODY " + JSON.stringify(globals, null, 4));
 
   const absoluteViewObj = {
     setBoxClass: props.setBoxClass,
@@ -47,13 +45,13 @@ export const Body: React.FC<Inputs> = (props) => {
     bodyConfig: props.bodyConfig,
     property,
     handleClick,
-    resetDate,
+    resetDate
   };
 
   const nowSelectObj = {
     applyMasterChanges: props.applyMasterChanges,
     dateRange: props.dateRange,
-    index: props.index,
+    index: props.index
   };
 
   function applyFn(text: number): void {
@@ -71,7 +69,7 @@ export const Body: React.FC<Inputs> = (props) => {
       name = new Date(0, index + 1, 0).toLocaleString(
         globals.localeObj.localeString,
         {
-          month: "long",
+          month: "long"
         }
       );
     } else {
@@ -120,7 +118,7 @@ export const Body: React.FC<Inputs> = (props) => {
         } else {
           return value;
         }
-      }),
+      })
     });
   }
 
@@ -129,7 +127,7 @@ export const Body: React.FC<Inputs> = (props) => {
   }
 
   function renderScroll(): JSX.Element {
-    if (props.boxClass == "box-wide") {
+    if (props.boxClass == "boxWide") {
       if (props.bodyConfig.propertySelected == 1) {
         return (
           <Box mt={10}>
@@ -176,7 +174,7 @@ export const Body: React.FC<Inputs> = (props) => {
 
   function renderTab(index: number): void {
     if (index !== 0) {
-      props.setBoxClass("box-tiny");
+      props.setBoxClass("boxTiny");
     } else {
       props.setBoxClass("box");
     }
@@ -189,7 +187,7 @@ export const Body: React.FC<Inputs> = (props) => {
   }, [props.index]);
 
   useEffect(() => {
-    if (props.boxClass == "box-closed") {
+    if (props.boxClass == "boxClosed") {
       props.setBodyConfig({ ...props.bodyConfig, bodySubTabIndex: 0 });
     }
   }, [props.boxClass]);
@@ -200,12 +198,12 @@ export const Body: React.FC<Inputs> = (props) => {
       dropdownData: props.dropdownData,
       applyFn,
       dateRange: props.dateRange,
-      classes: globals.classes,
+      classes: globals.classes
     };
   }
 
   return (
-    <Box className={props.boxClass}>
+    <Box className={globals.classes[props.boxClass]}>
       <Tabs
         onSelect={(index: number) => renderTab(index)}
         selectedIndex={props.bodyConfig.bodySubTabIndex}
@@ -217,7 +215,7 @@ export const Body: React.FC<Inputs> = (props) => {
             alignItems: "center",
             flexDirection: "row",
             listStyle: "none",
-            height: "25px",
+            height: "25px"
           }}
         >
           <Tab>

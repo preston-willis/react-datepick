@@ -7,17 +7,15 @@ import DateRangePicker from "react-datepick";
 
 const app = document.getElementById("app");
 
-function reset() {
-  console.log("Reset!");
-}
-
 function getDateRange(data: Date[]) {
   console.log(data);
 }
 
 ReactDOM.render(
   <DateRangePicker
-    resetFn={reset}
+    resetFn={() => {
+      console.log("reset");
+    }}
     getDateRange={getDateRange}
     dateFormatter={
       new Intl.DateTimeFormat("en", {

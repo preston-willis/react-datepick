@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
-import "./../../objects/Styling.css";
-import { DateRange } from "./../../objects/DateRange";
-import { GlobalContext } from "./../../objects/Constants";
+import { DateRange } from "../../objects/DateRange";
+import { GlobalContext } from "../../objects/Constants";
 import { Button, Box, Typography } from "@material-ui/core";
 
 interface Inputs {
@@ -10,7 +9,7 @@ interface Inputs {
   index: number;
 }
 
-export const NowSelect: React.FC<Inputs> = (props) => {
+export const NowSelect: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
 
   function setNow(): void {

@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import DateRangePicker from "../../../src/index";
+import DateRangePicker from "react-datepick";
 import { useHistory } from "react-router-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
@@ -29,7 +29,7 @@ const DateRangeWithHistory: React.FC<{}> = () => {
 
   return (
     <DateRangePicker
-      localeObj={{ nowText: "BOW", localeString: "fr" }}
+      localeObj={{ nowText: "NOW", localeString: "fr" }}
       minimumYearValue={3100}
       onTimerEvent={() => {
         console.log("reset");

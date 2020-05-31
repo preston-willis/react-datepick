@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { Button, Box, Menu, MenuItem } from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import { DateRange, TermContext } from "./../objects/DateRange";
-import { MSFormatter } from "./../objects/MSFormatter";
-import { GlobalContext } from "./../objects/Constants";
+import { DateRange, TermContext } from "../objects/DateRange";
+import { MSFormatter } from "../objects/MSFormatter";
+import { GlobalContext } from "../objects/Constants";
 
 interface Inputs {
   identifier: number;

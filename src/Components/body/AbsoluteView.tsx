@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { GlobalContext } from "./../../objects/Constants";
+import { GlobalContext } from "../../objects/Constants";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 import ArrowBackIosIcon from "@material-ui/icons/ArrowBackIos";
 import {
@@ -8,12 +8,10 @@ import {
   Typography,
   TextField,
   Grid,
-  IconButton,
+  IconButton
 } from "@material-ui/core";
-
-import "./../../objects/Styling.css";
-import { DateRange } from "./../../objects/DateRange";
-import { DateRangeUI, BodyConfig } from "./../../objects/Types";
+import { DateRange } from "../../objects/DateRange";
+import { DateRangeUI, BodyConfig } from "../../objects/Types";
 
 interface Inputs {
   setBoxClass(boxClass: string): void;
@@ -30,7 +28,7 @@ interface Inputs {
   property: any;
 }
 
-export const AbsoluteView: React.FC<Inputs> = (props) => {
+export const AbsoluteView: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
 
   function getTextTitle(): string {
@@ -74,7 +72,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
         } else {
           return value;
         }
-      }),
+      })
     });
   }
 
@@ -90,7 +88,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
         ,
         { value: textDay },
         ,
-        { value: textYear },
+        { value: textYear }
       ] = dtf.formatToParts(newDate);
 
       if (
@@ -121,7 +119,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
       }),
       dateError: props.dateRangeUI.dateError.map((value, index) => {
         return index == props.index ? error : value;
-      }),
+      })
     });
   }
 
@@ -136,12 +134,12 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
   function updateTransition(index: number): void {
     if (props.bodyConfig.propertySelected == -1) {
       props.setBodyConfig({ ...props.bodyConfig, propertySelected: index });
-      props.setBoxClass("box-wide");
+      props.setBoxClass("boxWide");
     } else if (index == props.bodyConfig.propertySelected) {
       toggleBox();
     } else if (
       index != props.bodyConfig.propertySelected &&
-      props.boxClass == "box-wide"
+      props.boxClass == "boxWide"
     ) {
       props.setBodyConfig({ ...props.bodyConfig, propertySelected: index });
     } else if (
@@ -155,7 +153,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
 
   function toggleBox(): void {
     if (props.boxClass == "box") {
-      props.setBoxClass("box-wide");
+      props.setBoxClass("boxWide");
     } else {
       props.setBoxClass("box");
     }
@@ -178,7 +176,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
             {props.dateRange.dates[props.index].toLocaleString(
               globals.localeObj.localeString,
               {
-                month: "long",
+                month: "long"
               }
             )}
           </Typography>
@@ -206,7 +204,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
           spacing={1}
           className={globals.classes.calendar}
         >
-          {[...Array(7).keys()].map((item) => (
+          {[...Array(7).keys()].map(item => (
             <Grid key={item} item>
               <Button
                 disableRipple={true}
@@ -227,8 +225,8 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
                 props.dateRange.dates[props.index].getMonth(),
                 1
               ).getDay()
-            ).keys(),
-          ].map((item) => (
+            ).keys()
+          ].map(item => (
             <Grid key={item} item>
               <Button
                 className={globals.classes.calendarButton}
@@ -242,7 +240,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
             </Grid>
           ))}
           {[...Array(props.bodyConfig.daysInMonth[props.index]).keys()].map(
-            (item) => (
+            item => (
               <Grid key={item} item>
                 <Button
                   onClick={() => props.handleClick("day", item + 1)}
@@ -269,7 +267,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
           id="outlined-basic"
           label={getTextTitle()}
           variant="outlined"
-          onChange={(event) => handleTextChange(event.target.value)}
+          onChange={event => handleTextChange(event.target.value)}
         />
         <TextField
           error={props.dateRangeUI.timeError[props.index]}
@@ -280,7 +278,7 @@ export const AbsoluteView: React.FC<Inputs> = (props) => {
           id="outlined-basic"
           label="Time"
           variant="outlined"
-          onChange={(event) => handleTimeChange(event.target.value)}
+          onChange={event => handleTimeChange(event.target.value)}
         />
       </Box>
     </Box>

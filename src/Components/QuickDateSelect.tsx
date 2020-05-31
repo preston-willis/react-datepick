@@ -1,10 +1,10 @@
 import React, { useContext, useEffect } from "react";
 import { Box } from "@material-ui/core";
-import { DateRange, TermContext } from "./../objects/DateRange";
+import { DateRange, TermContext } from "../objects/DateRange";
 import { RelativeDateSelectDropdown } from "./RelativeDateSelectDropdown";
-import { DropdownData } from "./../objects/Types";
-import { GlobalContext } from "./../objects/Constants";
-import { MSFormatter } from "./../objects/MSFormatter";
+import { DropdownData } from "../objects/Types";
+import { GlobalContext } from "../objects/Constants";
+import { MSFormatter } from "../objects/MSFormatter";
 
 interface Inputs {
   classes: any;
