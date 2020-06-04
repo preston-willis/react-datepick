@@ -1,35 +1,51 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { createMuiTheme } from "@material-ui/core/styles";
-import purple from "@material-ui/core/colors/purple";
-import green from "@material-ui/core/colors/green";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 import DateRangePicker from "react-datepick";
+import { useHistory } from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
 const app = document.getElementById("app");
 
-function getDateRange(data: Date[]) {
-  console.log(data);
-}
+const DateRangeWithHistory: React.FC<{}> = () => {
+  const history = useHistory();
+
+  // Set the persisted range into the URL
+  const persistRange = (range: string[]): void => {
+    history.replace("#range=" + encodeURIComponent(JSON.stringify(range)));
+  };
+
+  // Get the persisted range out of the URL
+  const getRange = (): string[] | null => {
+    let range = null;
+    try {
+      range = JSON.parse(
+        decodeURIComponent(history.location.hash.substring(1).split("=")[1])
+      );
+    } catch {
+      return null;
+    }
+    return range;
+  };
+
+  return (
+    <DateRangePicker
+      localeObj={{ nowText: "NOW", localeString: "fr" }}
+      minimumYearValue={3100}
+      onTimerEvent={() => {
+        console.log("reset");
+      }}
+      onDateEvent={(dateRange: Date[]) => console.log(dateRange)}
+      setStoredRange={persistRange}
+      storedRange={getRange()}
+    />
+  );
+};
 
 ReactDOM.render(
-  <DateRangePicker
-    resetFn={() => {
-      console.log("reset");
-    }}
-    getDateRange={getDateRange}
-    dateFormatter={
-      new Intl.DateTimeFormat("en", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-      })
-    }
-    theme={createMuiTheme({
-      palette: {
-        primary: purple,
-        secondary: green,
-      },
-    })}
-  />,
+  <Router>
+    <Route path="/">
+      <DateRangeWithHistory />
+    </Route>
+  </Router>,
   app
 );
