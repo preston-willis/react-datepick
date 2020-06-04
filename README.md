@@ -78,7 +78,7 @@ ReactDOM.render(
   ```javascript
    quickSelectIntervals: {[-60000, 1000]}
   ```
-- `localeObj` (optional `string`)
+- `localeObj` (optional `OptionalLocale`)
   - Takes any of the followng optional properties
   ```javascript
   localeObj={{ nowText: "NOW", localeString: "fr" }}
@@ -109,10 +109,10 @@ ReactDOM.render(
   - Takes an array of relative terms to be used in the quick select dropdown menu
   ```javascript
    quickSelectTerms: {["ago", "from now"]}
-- `commonlyUsedText` (optional `string[]`)
+- `commonlyUsedText` (optional `number[]`)
   - Takes an array of relative intervals to be used in the quick select dropdown menu
   ```javascript
-   commonlyUsedText: {["last 20 minutes", "next 1 hour"]}   
+   commonlyUsedText: {[-60000, 10000]}   
 - `nowText` (optional `string`)
   - Takes a string to represent the displayed "now" text
   ```javascript
