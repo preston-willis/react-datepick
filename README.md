@@ -42,10 +42,48 @@ ReactDOM.render(
 ```
 
 ## Props
-- `getData(data: Date[])` (required `(data: Date[]) => void)`)
+- `onDateEvent(data: Date[])` (required `(data: Date[]) => void)`)
   - Called every time the user chooses a date, takes a `Date[]` object
-- `resetFn()` (required `(() => void)`)
+- `onTimerEvent()` (required `(() => void)`)
   - Called when the refresh timer resets
+
+- `theme` (optional)
+  - Takes a materialUI `createMuiTheme()` object
+  ```javascript
+   theme={createMuiTheme({
+      palette: {
+        primary: purple,
+        secondary: green,
+      },
+    })}
+    ```   
+- `minimumYearValue` (optional `number`)
+  - Takes a number to represent the minimum year to be chosen
+  ```javascript
+      maximumYearValue: {100}
+   ```
+- `maximumYearValue` (optional `number`)
+  - Takes a number to represent the maximum year to be chosen
+  ```javascript
+   maximumYearValue: {2500}
+   ```
+- `relativeIntervals` (optional `number[]`)
+  - Takes an array of relative intervals to be used in the relative date select dropdown menu
+  ```javascript
+   relativeIntervals: {[60000, 1000]}
+    ```
+   
+- `quickSelectIntervals` (optional `number[]`)
+  - Takes an array of relative intervals to be used in the quick select dropdown menu
+  ```javascript
+   quickSelectIntervals: {[-60000, 1000]}
+  ```
+- `localeObj` (optional `string`)
+  - Takes any of the followng optional properties
+  ```javascript
+  localeObj={{ nowText: "NOW", localeString: "fr" }}
+  ```
+### localeObj properties
 - `dateFormatter` (optional `Intl.DateTimeFormat`)
   - Takes a `Intl.DateTimeFormat` object used to format displayed dates
   ```javascript
@@ -57,65 +95,34 @@ ReactDOM.render(
       })
     }
   ```
-- `theme` (optional)
-  - Takes a materialUI `createMuiTheme()` object
-  ```javascript
-   theme={createMuiTheme({
-      palette: {
-        primary: purple,
-        secondary: green,
-      },
-    })}
-    ```
-- `timeFormat` (optional `string`)
+- `localeString` (optional `string`)
   - Takes a time-locale string format
   ```javascript
-   timeFormat="en-US"
+   localeString: "en-US"
     ```
 - `relativeTerms` (optional `string[]`)
   - Takes an array of 2 relative terms to be used in the relative date select dropdown menu
   ```javascript
-   relativeTerms={["ago", "from now"]}
-    ```
-- `relativeIntervals` (optional `string[]`)
-  - Takes an array of relative intervals to be used in the relative date select dropdown menu
-  ```javascript
-   relativeIntervals={["15 minutes", "1 hour"]}
+   relativeTerms=: {["ago", "from now"]}
     ```
 - `quickSelectTerms` (optional `string[]`)
   - Takes an array of relative terms to be used in the quick select dropdown menu
   ```javascript
-   quickSelectTerms={["ago", "from now"]}
-   
-- `quickSelectIntervals` (optional `string[]`)
-  - Takes an array of relative intervals to be used in the quick select dropdown menu
-  ```javascript
-   quickSelectIntervals={["last", "next"]}
-   
+   quickSelectTerms: {["ago", "from now"]}
 - `commonlyUsedText` (optional `string[]`)
   - Takes an array of relative intervals to be used in the quick select dropdown menu
   ```javascript
-   commonlyUsedText={["last 20 minutes", "next 1 hour"]}
-   
+   commonlyUsedText: {["last 20 minutes", "next 1 hour"]}   
 - `nowText` (optional `string`)
   - Takes a string to represent the displayed "now" text
   ```javascript
-   nowText="ahora"
+   nowText: "ahora"
    ```
-- `minimumYearValue` (optional `number`)
-  - Takes a number to represent the minimum year to be chosen
+### Storage
+- `storedRange` (optional `() => string[] | null`)
+  - Takes a function that returns a `string[]` object representing the date range in milliseconds. Can be used to set date range data to preset or stored value
   ```javascript
-      maximumYearValue={100}
-   ```
-- `maximumYearValue` (optional `number`)
-  - Takes a number to represent the maximum year to be chosen
-  ```javascript
-   maximumYearValue={2500}
-   ```
-- `getRawRange` (optional `((history) => Date[])`)
-  - Takes a function with an optional `useHistory()` hook parameter, and a `Date[]` parameter. Can be used to store or parse data
-  ```javascript
-   getRawRange={(history): Date[] => {
+   getRawRange={(): Date[] => {
       let persistedRange = history.location.hash.substring(1).split("=")[1];
       persistedRange = persistedRange.replace(/\%22/g, '"');
       console.log(persistedRange);
@@ -124,8 +131,8 @@ ReactDOM.render(
       return [new Date(json[0]), new Date(json[1])];
     }
    ```
-- `setRawRange` (optional `((history, dates: Date[]) => void)`)
-  - Takes a function that returns a `Date[]` object. Can be used to set date range data to preset or stored value
+- `setRawRange` (optional `Date[]`)
+  - Takes a `Date[]` object
   ```javascript
    setRawRange={(range: Date[], history): void => {
       let json = JSON.stringify(range);
