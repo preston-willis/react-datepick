@@ -122,7 +122,7 @@ ReactDOM.render(
 - `storedRange` (optional `() => string[] | null`)
   - Takes a function that returns a `string[]` object representing the date range in milliseconds. Can be used to set date range data to preset or stored value
   ```javascript
-   getRawRange={(): Date[] => {
+   storedRange={(): Date[] => {
       let persistedRange = history.location.hash.substring(1).split("=")[1];
       persistedRange = persistedRange.replace(/\%22/g, '"');
       console.log(persistedRange);
@@ -131,12 +131,19 @@ ReactDOM.render(
       return [new Date(json[0]), new Date(json[1])];
     }
    ```
-- `setRawRange` (optional `Date[]`)
+- `setStoredRange` (optional `Date[]`)
   - Takes a `Date[]` object
   ```javascript
-   setRawRange={(range: Date[], history): void => {
-      let json = JSON.stringify(range);
-      history.replace("#range=" + json);
+      setRawRange={(): string | null => {
+         let range = null;
+       try {
+         range = JSON.parse(
+           decodeURIComponent(history.location.hash.substring(1).split("=")[1])
+         );
+       } catch {
+         return null;
+       }
+       return range;
     }}
 
    ```
@@ -146,3 +153,4 @@ ReactDOM.render(
  - Compatible with any materialUI `createMuiTheme()` object configuration
  - Add custom date formatters (11/2/2000 vs November 2, 2000)
  - Add custom menu text and preset time options
+ - Fully localized
