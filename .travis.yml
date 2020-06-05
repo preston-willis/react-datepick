@@ -4,6 +4,7 @@ node_js:
 install:
   - npm i -g yarn && yarn
   - npm i -g webpack
+  - npm i -g webpack-cli
 
 before_script:
   - yarn prod
