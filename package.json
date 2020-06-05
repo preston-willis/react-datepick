@@ -12,11 +12,11 @@
     "ms": "^2.1.2",
     "react-compound-timer": "^1.2.0",
     "react-list": "^0.8.14",
-    "react-tabs": "^3.1.0"
+    "react-tabs": "^3.1.0",
+    "react-dom": "^16.13.1"
   },
   "peerDependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^16.13.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.9.0",
