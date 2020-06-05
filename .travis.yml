@@ -3,6 +3,7 @@ node_js:
   - "stable"
 install:
   - npm i -g yarn && yarn
+  - npm i webpack-cli
   - npm i webpack
 
 before_script:
