@@ -17,5 +17,4 @@ build
 .env.production.local
 
 npm-debug.log*
-*.config.js
 examples/client.min.tsx

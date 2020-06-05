@@ -40,6 +40,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prod": "webpack --config ./examples/basic_example/webpack.config.js",
     "build": "react-scripts build",
     "test": "mocha",
     "eject": "react-scripts eject"
