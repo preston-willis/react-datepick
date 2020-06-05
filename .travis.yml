@@ -5,6 +5,7 @@ install:
   - npm i -g yarn && yarn
   - npm i webpack-cli
   - npm i webpack
+  - npm install
 
 before_script:
   - yarn prod
