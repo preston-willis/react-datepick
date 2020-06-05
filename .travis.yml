@@ -3,9 +3,7 @@ node_js:
   - "stable"
 install:
   - npm i -g yarn && yarn
-  - npm i -g webpack
+  - npm i webpack
 
 before_script:
-  - export DEBIAN_FRONTEND=noninteractive
-  - sudo apt-get -q -y install couchdb
   - yarn prod
