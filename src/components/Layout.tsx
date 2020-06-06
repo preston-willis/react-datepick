@@ -34,8 +34,8 @@ interface Inputs {
   minimumYearValue?: number;
   maximumYearValue?: number;
   setStoredRange?(dateRange: string[]): void;
-  storedRange: string[] | null;
-  localeObj: OptionalLocale;
+  storedRange?: string[] | null;
+  localeObj?: OptionalLocale;
 }
 
 export const Layout: React.FC<Inputs> = props => {
@@ -51,7 +51,7 @@ export const Layout: React.FC<Inputs> = props => {
   defaults = {
     ...noLocale[0],
     ...noLocale[1],
-    classes: themeStyle(),
+    classes: props.theme || themeStyle(),
     localeObj: localeObj
   };
 
@@ -112,12 +112,12 @@ export const Layout: React.FC<Inputs> = props => {
 
   // COMPONENT OBJECTS
   const menuObj = {
-      refreshData,
-      setRefreshData,
-      menuClass,
-      timerRunning,
-      setTimerRunning
-  }
+    refreshData,
+    setRefreshData,
+    menuClass,
+    timerRunning,
+    setTimerRunning
+  };
 
   function getBodyObj(index: number) {
     return {
@@ -137,14 +137,14 @@ export const Layout: React.FC<Inputs> = props => {
   }
 
   const quickSelectObj = {
-      dateRange,
-      applyChanges,
-      dateRangeUI,
-      boxClass,
-      setDropdownData,
-      dropdownData,
-      setDateRangeUI
-  }
+    dateRange,
+    applyChanges,
+    dateRangeUI,
+    boxClass,
+    setDropdownData,
+    dropdownData,
+    setDateRangeUI
+  };
 
   const timerObj = {
     timerRunning,

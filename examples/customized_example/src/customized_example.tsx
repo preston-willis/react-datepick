@@ -1,6 +1,6 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import DateRangePicker from "react-datepick";
+import DateRangePicker from "../../../src/index";
 import { useHistory } from "react-router-dom";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 

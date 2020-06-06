@@ -1,0 +1,16 @@
+language: node_js
+node_js:
+  - "stable"
+install:
+  - npm i -g yarn && yarn
+  - npm i webpack-cli
+  - npm i webpack
+  - npm install
+  - npm i react
+
+before_script:
+  - ls -la node_modules
+
+jobs:
+  include:
+    - script: yarn prod

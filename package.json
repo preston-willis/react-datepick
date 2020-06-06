@@ -11,12 +11,13 @@
     "material-ui": "^0.20.2",
     "ms": "^2.1.2",
     "react-compound-timer": "^1.2.0",
+    "react-router-dom": "^5.2.0",
     "react-list": "^0.8.14",
-    "react-tabs": "^3.1.0"
+    "react-tabs": "^3.1.0",
+    "react-dom": "^16.13.1"
   },
   "peerDependencies": {
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react": "^16.13.1"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.9.0",
@@ -31,7 +32,6 @@
     "@types/react-tabs": "^2.3.1",
     "css-loader": "^3.5.3",
     "mocha": "^7.2.0",
-    "npm": "^6.14.5",
     "react-scripts": "3.4.1",
     "react-tabs": "^3.1.0",
     "style-loader": "^1.2.1",
@@ -40,6 +40,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "prod": "npx webpack --config ./examples/basic_example/webpack.config.js",
     "build": "react-scripts build",
     "test": "mocha",
     "eject": "react-scripts eject"

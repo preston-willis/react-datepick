@@ -12,8 +12,8 @@ interface Inputs {
   minimumYearValue?: number;
   maximumYearValue?: number;
   setStoredRange?(dateRange: string[]): void;
-  storedRange: string[] | null;
-  localeObj: OptionalLocale;
+  storedRange?: string[] | null;
+  localeObj?: OptionalLocale;
 }
 
 export default function DatePick(props: Inputs) {
