@@ -6,6 +6,7 @@ install:
   - npm i webpack-cli
   - npm i webpack
   - npm install
+  - npm i react
   - ls -la node_modules
 before_script:
   - yarn prod
