@@ -7,7 +7,7 @@ install:
   - npm i webpack
   - npm install
   - npm i react
-  - npm i materialui
+  - npm i material-ui
   - npm i react-dom
   - npm i typescript
   - npm i @types/node
