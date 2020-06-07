@@ -20,7 +20,8 @@
   "devDependencies": {
     "css-loader": "^3.5.3",
     "style-loader": "^1.2.1",
-    "ts-loader": "^7.0.2"
+    "ts-loader": "^7.0.2",
+    "typescript": "^3.7.5"
   },
   "scripts": {
     "start": "react-scripts start",
