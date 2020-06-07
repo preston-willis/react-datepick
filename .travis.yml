@@ -7,6 +7,10 @@ install:
   - npm i webpack
   - npm install
   - npm i react
+  - npm i material-ui
+  - npm i react-dom
+  - npm i typescript
+  - npm i @types/node
 
 before_script:
   - ls -la node_modules
