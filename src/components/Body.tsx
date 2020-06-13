@@ -74,7 +74,7 @@ export const Body: React.FC<Inputs> = props => {
       );
     } else {
       name = String(index + globals.minimumYearValue);
-      offset = globals.maximumYearValue;
+      offset = globals.minimumYearValue;
     }
     return (
       <Button

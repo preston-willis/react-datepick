@@ -24,7 +24,7 @@ module.exports = {
     ]
   },
   output: {
-    path: __dirname + ".",
+    path: __dirname + "/",
     filename: "client.min.tsx"
   },
   plugins: debug
