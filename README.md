@@ -46,7 +46,7 @@ ReactDOM.render(
 ## Props
 - `onDateEvent(data: Date[])` (required `(data: Date[]) => void)`)
   - Called every time the user chooses a date, takes a `Date[]` object
-- `onTimerEvent()` (required `(() => void)`)
+- `onTimerEvent()` (optional `(() => void)`)
   - Called when the refresh timer resets
 
 - `theme` (optional)
