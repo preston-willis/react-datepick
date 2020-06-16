@@ -11,7 +11,7 @@ interface Inputs {
   refreshIntervalUnits: string;
   timerRunning: boolean;
   applyFn(): void;
-  resetFn(): void;
+  resetFn?(): void;
 }
 
 export function TimerUI(props: Inputs) {
@@ -26,7 +26,9 @@ export function TimerUI(props: Inputs) {
   }
 
   function resetTimer() {
-    props.resetFn();
+    if (props.resetFn !== undefined) {
+      props.resetFn();
+    }
     props.applyFn();
   }
 
@@ -38,8 +40,8 @@ export function TimerUI(props: Inputs) {
         checkpoints={[
           {
             time: 0,
-            callback: () => resetTimer(),
-          },
+            callback: () => resetTimer()
+          }
         ]}
       >
         <Box mt={1}>

@@ -25,7 +25,7 @@ import {
 } from "./../objects/Types";
 
 interface Inputs {
-  onTimerEvent(): void;
+  onTimerEvent?(): void;
   onDateEvent(dates: Date[]): void;
   theme?: any;
   commonlyUsedText?: number[];

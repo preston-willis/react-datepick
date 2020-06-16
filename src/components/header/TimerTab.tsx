@@ -8,14 +8,14 @@ import { RefreshData } from "../../objects/Types";
 interface Inputs {
   timerRunning: boolean;
   dateRange: DateRange;
-  onTimerEvent(): void;
+  onTimerEvent?(): void;
   setTimerRunning(running: boolean): void;
   resetDateRange(dateRange: DateRange): void;
   onDateEvent(dates: Date[]): void;
   refreshData: RefreshData;
 }
 
-export const TimerTab: React.FC<Inputs> = (props) => {
+export const TimerTab: React.FC<Inputs> = props => {
   const globals = useContext(GlobalContext);
 
   function refreshTime(): void {
@@ -26,22 +26,28 @@ export const TimerTab: React.FC<Inputs> = (props) => {
     props.setTimerRunning(false);
     props.setTimerRunning(true);
   }
-
-  return (
-    <Box ml={1}>
-      <Button
-        color="primary"
-        variant="contained"
-        className={globals.classes.headerIconButton}
-      >
-        <TimerUI
-          timerRunning={props.timerRunning}
-          refreshInterval={props.refreshData.refreshInterval}
-          refreshIntervalUnits={props.refreshData.refreshIntervalUnits}
-          resetFn={props.onTimerEvent}
-          applyFn={refreshTime}
-        />
-      </Button>
-    </Box>
-  );
+  function renderTab() {
+    if (props.onTimerEvent !== undefined) {
+      return (
+        <Box ml={1}>
+          <Button
+            color="primary"
+            variant="contained"
+            className={globals.classes.headerIconButton}
+          >
+            <TimerUI
+              timerRunning={props.timerRunning}
+              refreshInterval={props.refreshData.refreshInterval}
+              refreshIntervalUnits={props.refreshData.refreshIntervalUnits}
+              resetFn={props.onTimerEvent}
+              applyFn={refreshTime}
+            />
+          </Button>
+        </Box>
+      );
+    } else {
+      return <Box />;
+    }
+  }
+  return renderTab();
 };

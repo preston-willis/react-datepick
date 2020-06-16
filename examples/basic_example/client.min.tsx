@@ -85651,15 +85651,17 @@ function TimerUI(props) {
         }
     }
     function resetTimer() {
-        props.resetFn();
+        if (props.resetFn !== undefined) {
+            props.resetFn();
+        }
         props.applyFn();
     }
     if (props.timerRunning == true) {
         return (react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(react_compound_timer__WEBPACK_IMPORTED_MODULE_0___default.a, { initialTime: determineInitialTime(), direction: "backward", checkpoints: [
                 {
                     time: 0,
-                    callback: function () { return resetTimer(); },
-                },
+                    callback: function () { return resetTimer(); }
+                }
             ] },
             react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_5__["Box"], { mt: 1 },
                 react__WEBPACK_IMPORTED_MODULE_1___default.a.createElement(_material_ui_icons_Timer__WEBPACK_IMPORTED_MODULE_4___default.a, null),
@@ -86116,9 +86118,17 @@ var TimerTab = function (props) {
         props.setTimerRunning(false);
         props.setTimerRunning(true);
     }
-    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: 1 },
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Button"], { color: "primary", variant: "contained", className: globals.classes.headerIconButton },
-            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Timer__WEBPACK_IMPORTED_MODULE_3__["TimerUI"], { timerRunning: props.timerRunning, refreshInterval: props.refreshData.refreshInterval, refreshIntervalUnits: props.refreshData.refreshIntervalUnits, resetFn: props.onTimerEvent, applyFn: refreshTime }))));
+    function renderTab() {
+        if (props.onTimerEvent !== undefined) {
+            return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: 1 },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Button"], { color: "primary", variant: "contained", className: globals.classes.headerIconButton },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Timer__WEBPACK_IMPORTED_MODULE_3__["TimerUI"], { timerRunning: props.timerRunning, refreshInterval: props.refreshData.refreshInterval, refreshIntervalUnits: props.refreshData.refreshIntervalUnits, resetFn: props.onTimerEvent, applyFn: refreshTime }))));
+        }
+        else {
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], null);
+        }
+    }
+    return renderTab();
 };
 
 
@@ -86802,9 +86812,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var app = document.getElementById("app");
 var DateRangeWithHistory = function () {
-    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_src_index__WEBPACK_IMPORTED_MODULE_2__["default"], { onTimerEvent: function () {
-            console.log("reset");
-        }, onDateEvent: function (dateRange) { return console.log(dateRange); } }));
+    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_src_index__WEBPACK_IMPORTED_MODULE_2__["default"], { onDateEvent: function (dateRange) { return console.log(dateRange); } }));
 };
 react_dom__WEBPACK_IMPORTED_MODULE_1__["render"](react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_3__["BrowserRouter"], null,
     react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Route"], { path: "/" },

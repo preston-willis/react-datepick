@@ -4,7 +4,7 @@ import { OptionalLocale } from "./objects/Locale";
 
 interface Inputs {
   onDateEvent(dates: Date[]): void;
-  onTimerEvent(): void;
+  onTimerEvent?(): void;
   theme?: any;
   commonlyUsedText?: number[];
   quickSelectIntervals?: number[];

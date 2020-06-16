@@ -8,9 +8,6 @@ const app = document.getElementById("app");
 const DateRangeWithHistory: React.FC<{}> = () => {
   return (
     <DateRangePicker
-      onTimerEvent={() => {
-        console.log("reset");
-      }}
       onDateEvent={(dateRange: Date[]) => console.log(dateRange)}
     />
   );
