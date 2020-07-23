@@ -47,21 +47,26 @@ ReactDOM.render(
 
 ## Building and Serving the Examples
 
-1. Build the `react-datapick` project.  It will install all of the peer dependencies, so that it may produce a
-   clean build.  Finally, link it into the global registry.
+1. Build the `react-datepick` project.  It will install all of the peer dependencies, so that it may produce a clean build.  Finally, link it into the global registry.
 ```sh
-  $ npm install && npm build && npm link
+  $ npm link
+  $ npm install
+  $ npm run-script build
 ```
 
-3. In the example directory, specify the link for the project, the link for react (to avoid duplicate
-   versions), install the dependencies, and then serve locally:
+NOTE: Make sure you do `npm link` first, before you run `npm install`.  If the link to the `../../node_modules/react` fails below, then it's likely because these steps were inverted.
+
+2. In the example directory, specify the link for the project, install the dependencies, link the duplicate `react` modules (to avoid duplicate versions), and then serve locally:
 ```sh
-  examples/basic_example $ npm link @preston10/react-datapick && npm link ../../node_modules/react && npm install
+  examples/basic_example $ npm link @preston10/react-datepick
+  examples/basic_example $ npm install
+  examples/basic_example $ npm link ../../node_modules/react
   examples/basic_example $ npm run-script start
 ```
 
-NOTE: Occasionally an error of 'Cannot read property 'match' of undefined' occurs.  If this happens, remove
-the `package-lock.json` and `node_modules` complete and try again.
+NOTE: Occasionally an error of 'Cannot read property 'match' of undefined' occurs.  If this happens, remove the `package-lock.json` and `node_modules` complete and try again.
+
+NOTE: The sequence of link's and installs is fragile and may not work if executed out of order.
 
 ## Creating a new version in NPM
 
