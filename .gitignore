@@ -8,6 +8,7 @@ coverage
 
 # production
 build
+libc
 
 # misc
 .DS_Store
@@ -15,6 +16,7 @@ build
 .env.development.local
 .env.test.local
 .env.production.local
+react-app-env.d.ts
 
 npm-debug.log*
 examples/client.min.tsx
