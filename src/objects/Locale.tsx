@@ -18,7 +18,18 @@ export interface OptionalLocale {
 }
 
 export function getWeekDays(localeString: string) {
-  const shortWeekdayDateMap = {
+  type tshortWeekdayDateMap = {
+    [key: string]: Date;
+    Mon: Date;
+    Tue: Date;
+    Wed: Date;
+    Thu: Date;
+    Fri: Date;
+    Sat: Date;
+    Sun: Date;
+  };
+
+  const shortWeekdayDateMap : tshortWeekdayDateMap = {
     Mon: new Date("2020-01-06"),
     Tue: new Date("2020-01-07"),
     Wed: new Date("2020-01-08"),

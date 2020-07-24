@@ -6,11 +6,13 @@ react-datepick can be used to pick a date range in react and specify a data refr
 [![Build Status](https://travis-ci.org/iamPres/react-datepick.svg?branch=master)](https://travis-ci.org/iamPres/react-datepick)
 [![license](https://img.shields.io/badge/license-BSD--2-blue)](https://github.com/iamPres/react-datepick/blob/master/LICENSE)
 #### [![Edit confident-night-iqfek](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/confident-night-iqfek?fontsize=14&hidenavigation=1&theme=dark)
+
 ## Demo
 ![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-1.PNG)
 ![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-2.PNG)
 ![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-3.PNG)
 ![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-4.PNG)
+
 ## Dependencies
  - install the [package.json](https://github.com/iamPres/react-datepick/blob/master/package.json) dependencies with npm
 
@@ -41,6 +43,35 @@ ReactDOM.render(
   app
 );
 
+```
+
+## Building and Serving the Examples
+
+1. Build the `react-datepick` project.  It will install all of the peer dependencies, so that it may produce a clean build.  Finally, link it into the global registry.
+```sh
+  $ npm link
+  $ npm install
+  $ npm run-script build
+```
+
+NOTE: Make sure you do `npm link` first, before you run `npm install`.  If the link to the `../../node_modules/react` fails below, then it's likely because these steps were inverted.
+
+2. In the example directory, specify the link for the project, install the dependencies, link the duplicate `react` modules (to avoid duplicate versions), and then serve locally:
+```sh
+  examples/basic_example $ npm link @preston10/react-datepick
+  examples/basic_example $ npm install
+  examples/basic_example $ npm link ../../node_modules/react
+  examples/basic_example $ npm run-script start
+```
+
+NOTE: Occasionally an error of 'Cannot read property 'match' of undefined' occurs.  If this happens, remove the `package-lock.json` and `node_modules` complete and try again.
+
+NOTE: The sequence of link's and installs is fragile and may not work if executed out of order.
+
+## Creating a new version in NPM
+
+```
+$ npm install && npm build && npm publish
 ```
 
 ## Props

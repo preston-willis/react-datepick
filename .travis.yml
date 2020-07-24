@@ -2,19 +2,13 @@ language: node_js
 node_js:
   - "stable"
 install:
-  - npm i -g yarn && yarn
   - npm i webpack-cli
   - npm i webpack
   - npm install
-  - npm i react
-  - npm i material-ui
-  - npm i react-dom
-  - npm i typescript
-  - npm i @types/node
 
 before_script:
   - ls -la node_modules
 
 jobs:
   include:
-    - script: yarn prod
+    - script: npm build
