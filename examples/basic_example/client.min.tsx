@@ -84957,18 +84957,18 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _material_ui_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @material-ui/core */ "../../node_modules/@material-ui/core/esm/index.js");
 /* harmony import */ var _objects_DateRange__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../objects/DateRange */ "../../src/objects/DateRange.tsx");
-/* harmony import */ var react_tabs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! react-tabs */ "../../node_modules/react-tabs/esm/index.js");
-/* harmony import */ var _Body__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Body */ "../../src/components/Body.tsx");
-/* harmony import */ var _Menu__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./Menu */ "../../src/components/Menu.tsx");
-/* harmony import */ var _QuickSelect__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./QuickSelect */ "../../src/components/QuickSelect.tsx");
-/* harmony import */ var _material_ui_core_styles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @material-ui/core/styles */ "../../node_modules/@material-ui/core/esm/styles/index.js");
-/* harmony import */ var _objects_Constants__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../objects/Constants */ "../../src/objects/Constants.tsx");
-/* harmony import */ var _objects_Locale__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../objects/Locale */ "../../src/objects/Locale.tsx");
-/* harmony import */ var _objects_Style__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../objects/Style */ "../../src/objects/Style.tsx");
-/* harmony import */ var _header_TimerTab__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./header/TimerTab */ "../../src/components/header/TimerTab.tsx");
-/* harmony import */ var _header_BodyTab__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./header/BodyTab */ "../../src/components/header/BodyTab.tsx");
-/* harmony import */ var _header_QuickSelectTab__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./header/QuickSelectTab */ "../../src/components/header/QuickSelectTab.tsx");
-/* harmony import */ var _header_ApplyButton__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./header/ApplyButton */ "../../src/components/header/ApplyButton.tsx");
+/* harmony import */ var _Body__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Body */ "../../src/components/Body.tsx");
+/* harmony import */ var _Menu__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Menu */ "../../src/components/Menu.tsx");
+/* harmony import */ var _QuickSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./QuickSelect */ "../../src/components/QuickSelect.tsx");
+/* harmony import */ var _material_ui_core_styles__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @material-ui/core/styles */ "../../node_modules/@material-ui/core/esm/styles/index.js");
+/* harmony import */ var _objects_Constants__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../objects/Constants */ "../../src/objects/Constants.tsx");
+/* harmony import */ var _objects_Locale__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../objects/Locale */ "../../src/objects/Locale.tsx");
+/* harmony import */ var _objects_Style__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../objects/Style */ "../../src/objects/Style.tsx");
+/* harmony import */ var _header_TimerTab__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./header/TimerTab */ "../../src/components/header/TimerTab.tsx");
+/* harmony import */ var _header_BodyTab__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./header/BodyTab */ "../../src/components/header/BodyTab.tsx");
+/* harmony import */ var _header_QuickSelectTab__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./header/QuickSelectTab */ "../../src/components/header/QuickSelectTab.tsx");
+/* harmony import */ var _header_ApplyButton__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./header/ApplyButton */ "../../src/components/header/ApplyButton.tsx");
+/* harmony import */ var _material_ui_core_Popper__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @material-ui/core/Popper */ "../../node_modules/@material-ui/core/esm/Popper/index.js");
 /* harmony import */ var _objects_Types__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./../objects/Types */ "../../src/objects/Types.tsx");
 var __assign = (undefined && undefined.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -85038,7 +85038,7 @@ var __read = (undefined && undefined.__read) || function (o, n) {
 var Layout = function (props) {
     var e_1, _a;
     // GLOBAL
-    var defaults = Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(_objects_Constants__WEBPACK_IMPORTED_MODULE_8__["GlobalContext"]);
+    var defaults = Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(_objects_Constants__WEBPACK_IMPORTED_MODULE_7__["GlobalContext"]);
     var noLocale = [];
     try {
         for (var _b = __values([defaults, props]), _c = _b.next(); !_c.done; _c = _b.next()) {
@@ -85055,8 +85055,8 @@ var Layout = function (props) {
         finally { if (e_1) throw e_1.error; }
     }
     var localeObj = __assign(__assign({}, defaults.localeObj), props.localeObj);
-    localeObj.weekDays = Object(_objects_Locale__WEBPACK_IMPORTED_MODULE_9__["getWeekDays"])(localeObj.localeString);
-    defaults = __assign(__assign(__assign({}, noLocale[0]), noLocale[1]), { classes: props.theme || Object(_objects_Style__WEBPACK_IMPORTED_MODULE_10__["style"])(), localeObj: localeObj });
+    localeObj.weekDays = Object(_objects_Locale__WEBPACK_IMPORTED_MODULE_8__["getWeekDays"])(localeObj.localeString);
+    defaults = __assign(__assign(__assign({}, noLocale[0]), noLocale[1]), { classes: props.theme || Object(_objects_Style__WEBPACK_IMPORTED_MODULE_9__["style"])(), localeObj: localeObj });
     // STATE OBJECTS
     var _d = __read(Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(new _objects_DateRange__WEBPACK_IMPORTED_MODULE_2__["DateRange"](defaults.localeObj, _objects_Types__WEBPACK_IMPORTED_MODULE_15__["uiData"], props.storedRange)), 2), dateRange = _d[0], setDateRange = _d[1];
     var _e = __read(Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(_objects_Types__WEBPACK_IMPORTED_MODULE_15__["refreshData"]), 2), refreshData = _e[0], setRefreshData = _e[1];
@@ -85074,41 +85074,22 @@ var Layout = function (props) {
         alignItems: "center",
         listStyle: "none"
     };
-    var _k = __read(Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])("menuClosed"), 2), menuClass = _k[0], setMenuClass = _k[1];
-    var _l = __read(Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])("boxClosed"), 2), boxClass = _l[0], setBoxClass = _l[1];
-    var toggleDropdown = function (num) {
-        if (num != 1 && bodyConfig.tabSelected != num) {
-            if (boxClass == "boxClosed" || boxClass == "boxTiny") {
-                setBoxClass("box");
-                setMenuClass("menuClosed");
-            }
+    var _k = __read(Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])("box"), 2), boxClass = _k[0], setBoxClass = _k[1];
+    var _l = __read(Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(null), 2), popperAnchorEL = _l[0], setPopperAnchorEl = _l[1];
+    var toggleDropdown = function (num, event) {
+        if (bodyConfig.tabSelected == num) {
+            setBodyConfig(__assign(__assign({}, bodyConfig), { tabSelected: -1 }));
+            setPopperAnchorEl(null);
+        }
+        else {
             setBodyConfig(__assign(__assign({}, bodyConfig), { tabSelected: num }));
-        }
-        else if (bodyConfig.tabSelected == num) {
-            if (boxClass == "boxClosed") {
-                setBoxClass("box");
-                setMenuClass("menuClosed");
-            }
-            else {
-                setBoxClass("boxClosed");
-            }
-        }
-        if (num == 1) {
-            if (menuClass == "menuClosed") {
-                setMenuClass("menu");
-                setBoxClass("boxClosed");
-                setBodyConfig(__assign(__assign({}, bodyConfig), { tabSelected: num }));
-            }
-            else {
-                setMenuClass("menuClosed");
-            }
+            setPopperAnchorEl(event.currentTarget);
         }
     };
     // COMPONENT OBJECTS
     var menuObj = {
         refreshData: refreshData,
         setRefreshData: setRefreshData,
-        menuClass: menuClass,
         timerRunning: timerRunning,
         setTimerRunning: setTimerRunning
     };
@@ -85161,32 +85142,32 @@ var Layout = function (props) {
         if (timerRunning) {
             setTimerRunning(false);
         }
-        setBoxClass("boxClosed");
+        setBodyConfig(__assign(__assign({}, bodyConfig), { tabSelected: -1 }));
     }
-    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_7__["MuiThemeProvider"], { theme: defaults.theme },
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_objects_Constants__WEBPACK_IMPORTED_MODULE_8__["GlobalContext"].Provider, { value: defaults },
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_styles__WEBPACK_IMPORTED_MODULE_6__["MuiThemeProvider"], { theme: defaults.theme },
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_objects_Constants__WEBPACK_IMPORTED_MODULE_7__["GlobalContext"].Provider, { value: defaults },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", { className: defaults.classes.layout },
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["Tabs"], { onSelect: function (index) { return toggleDropdown(index); } },
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["TabList"], { style: listStyle },
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["Tab"], null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_QuickSelectTab__WEBPACK_IMPORTED_MODULE_13__["QuickSelectTab"], null)),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["Tab"], null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_TimerTab__WEBPACK_IMPORTED_MODULE_11__["TimerTab"], __assign({}, timerObj))),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: 1, mr: 2 },
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_ApplyButton__WEBPACK_IMPORTED_MODULE_14__["ApplyButton"], { dateRange: dateRange, applyChanges: applyChanges, timerRunning: timerRunning })),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["Tab"], null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_BodyTab__WEBPACK_IMPORTED_MODULE_12__["BodyTab"], { dateRange: dateRange, index: 0 })),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\u27F6"),
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["Tab"], null,
-                            react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_BodyTab__WEBPACK_IMPORTED_MODULE_12__["BodyTab"], { dateRange: dateRange, index: 1 }))),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["TabPanel"], null,
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_QuickSelect__WEBPACK_IMPORTED_MODULE_6__["QuickSelect"], __assign({}, quickSelectObj))),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["TabPanel"], null,
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Menu__WEBPACK_IMPORTED_MODULE_5__["MenuView"], __assign({}, menuObj))),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["TabPanel"], null,
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Body__WEBPACK_IMPORTED_MODULE_4__["Body"], __assign({}, getBodyObj(0)))),
-                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(react_tabs__WEBPACK_IMPORTED_MODULE_3__["TabPanel"], null,
-                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Body__WEBPACK_IMPORTED_MODULE_4__["Body"], __assign({}, getBodyObj(1)))))),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { className: defaults.classes.flexRow },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_QuickSelectTab__WEBPACK_IMPORTED_MODULE_12__["QuickSelectTab"], { handleClick: toggleDropdown }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_TimerTab__WEBPACK_IMPORTED_MODULE_10__["TimerTab"], __assign({ handleClick: toggleDropdown }, timerObj)),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: 1, mr: 2 },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_ApplyButton__WEBPACK_IMPORTED_MODULE_13__["ApplyButton"], { dateRange: dateRange, applyChanges: applyChanges, timerRunning: timerRunning })),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_BodyTab__WEBPACK_IMPORTED_MODULE_11__["BodyTab"], { handleClick: toggleDropdown, dateRange: dateRange, index: 0 }),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { mt: 1 },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "\u27F6")),
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_header_BodyTab__WEBPACK_IMPORTED_MODULE_11__["BodyTab"], { handleClick: toggleDropdown, dateRange: dateRange, index: 1 })),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Popper__WEBPACK_IMPORTED_MODULE_14__["default"], { open: bodyConfig.tabSelected == 0, anchorEl: popperAnchorEL },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: -4 },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_QuickSelect__WEBPACK_IMPORTED_MODULE_5__["QuickSelect"], __assign({}, quickSelectObj)))),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Popper__WEBPACK_IMPORTED_MODULE_14__["default"], { open: bodyConfig.tabSelected == 1, anchorEl: popperAnchorEL },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: -4 },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Menu__WEBPACK_IMPORTED_MODULE_4__["MenuView"], __assign({}, menuObj)))),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Popper__WEBPACK_IMPORTED_MODULE_14__["default"], { open: bodyConfig.tabSelected == 2, anchorEl: popperAnchorEL },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: -4 },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Body__WEBPACK_IMPORTED_MODULE_3__["Body"], __assign({}, getBodyObj(0))))),
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core_Popper__WEBPACK_IMPORTED_MODULE_14__["default"], { open: bodyConfig.tabSelected == 3, anchorEl: popperAnchorEL },
+                    react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: -4 },
+                        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Body__WEBPACK_IMPORTED_MODULE_3__["Body"], __assign({}, getBodyObj(1)))))),
             ",")));
 };
 
@@ -85277,7 +85258,7 @@ var MenuView = function (props) {
             return "";
         }
     }
-    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { mt: 2, className: globals.classes[props.menuClass] },
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { mt: 2, className: globals.classes.menu },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { mt: 2, ml: 2 },
             react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["FormGroup"], null,
                 react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["FormControlLabel"], { control: react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Switch"], { color: "primary", size: "medium", checked: props.refreshData.refreshIntervalEnabled, onChange: function () { return toggleSwitch(); } }), label: "Timer" }))),
@@ -86051,7 +86032,9 @@ __webpack_require__.r(__webpack_exports__);
 
 var BodyTab = function (props) {
     return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], null,
-        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Button"], { color: "primary", variant: "text" }, props.dateRange.finalDisplayText[props.index])));
+        react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Button"], { onClick: function (event) {
+                props.handleClick(props.index + 2, event);
+            }, color: "primary", variant: "text" }, props.dateRange.finalDisplayText[props.index])));
 };
 
 
@@ -86080,9 +86063,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var QuickSelectTab = function () {
+var QuickSelectTab = function (props) {
     var globals = Object(react__WEBPACK_IMPORTED_MODULE_0__["useContext"])(_objects_Constants__WEBPACK_IMPORTED_MODULE_1__["GlobalContext"]);
-    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_4__["Button"], { color: "primary", variant: "contained", className: globals.classes.headerIconButton },
+    return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_4__["Button"], { onClick: function (event) {
+            props.handleClick(0, event);
+        }, color: "primary", variant: "contained", className: globals.classes.headerIconButton },
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_icons_CalendarToday__WEBPACK_IMPORTED_MODULE_2___default.a, null),
         react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_icons_ExpandMore__WEBPACK_IMPORTED_MODULE_3___default.a, null)));
 };
@@ -86121,7 +86106,9 @@ var TimerTab = function (props) {
     function renderTab() {
         if (props.onTimerEvent !== undefined) {
             return (react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Box"], { ml: 1 },
-                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Button"], { color: "primary", variant: "contained", className: globals.classes.headerIconButton },
+                react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_material_ui_core__WEBPACK_IMPORTED_MODULE_1__["Button"], { onClick: function (event) {
+                        props.handleClick(1, event);
+                    }, color: "primary", variant: "contained", className: globals.classes.headerIconButton },
                     react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Timer__WEBPACK_IMPORTED_MODULE_3__["TimerUI"], { timerRunning: props.timerRunning, refreshInterval: props.refreshData.refreshInterval, refreshIntervalUnits: props.refreshData.refreshIntervalUnits, resetFn: props.onTimerEvent, applyFn: refreshTime }))));
         }
         else {
@@ -86812,7 +86799,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var app = document.getElementById("app");
 var DateRangeWithHistory = function () {
-    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_src_index__WEBPACK_IMPORTED_MODULE_2__["default"], { onDateEvent: function (dateRange) { return console.log(dateRange); } }));
+    return (react__WEBPACK_IMPORTED_MODULE_0__["createElement"](_src_index__WEBPACK_IMPORTED_MODULE_2__["default"], { onDateEvent: function (dateRange) { return console.log(dateRange); }, onTimerEvent: function () { } }));
 };
 react_dom__WEBPACK_IMPORTED_MODULE_1__["render"](react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_3__["BrowserRouter"], null,
     react__WEBPACK_IMPORTED_MODULE_0__["createElement"](react_router_dom__WEBPACK_IMPORTED_MODULE_3__["Route"], { path: "/" },

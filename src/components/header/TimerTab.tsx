@@ -12,6 +12,7 @@ interface Inputs {
   setTimerRunning(running: boolean): void;
   resetDateRange(dateRange: DateRange): void;
   onDateEvent(dates: Date[]): void;
+  handleClick(tab: number, event: any): void;
   refreshData: RefreshData;
 }
 
@@ -31,6 +32,9 @@ export const TimerTab: React.FC<Inputs> = props => {
       return (
         <Box ml={1}>
           <Button
+            onClick={event => {
+              props.handleClick(1, event);
+            }}
             color="primary"
             variant="contained"
             className={globals.classes.headerIconButton}

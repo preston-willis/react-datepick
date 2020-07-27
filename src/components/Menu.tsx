@@ -14,7 +14,6 @@ import { GlobalContext } from "../objects/Constants";
 import { RefreshData } from "../objects/Types";
 
 interface Inputs {
-  menuClass: string;
   refreshData: RefreshData;
   setRefreshData(refreshData: RefreshData): void;
   setTimerRunning(isRunning: boolean): void;
@@ -75,7 +74,7 @@ export const MenuView: React.FC<Inputs> = props => {
   }
 
   return (
-    <Box mt={2} className={globals.classes[props.menuClass]}>
+    <Box mt={2} className={globals.classes.menu}>
       <Box mt={2} ml={2}>
         <FormGroup>
           <FormControlLabel
