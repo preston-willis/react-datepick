@@ -217,7 +217,6 @@ export const Layout: React.FC<Inputs> = props => {
             </TabPanel>
           </Tabs>
         </div>
-        ,
       </GlobalContext.Provider>
     </MuiThemeProvider>
   );
