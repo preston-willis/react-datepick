@@ -8,10 +8,10 @@ react-datepick can be used to pick a date range in react and specify a data refr
 #### [![Edit confident-night-iqfek](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/confident-night-iqfek?fontsize=14&hidenavigation=1&theme=dark)
 
 ## Demo
-![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-1.PNG)
-![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-2.PNG)
-![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-3.PNG)
-![media](https://github.com/iamPres/react-datepick/blob/master/media/demo-4.PNG)
+![media](https://github.com/iamPres/react-datepick/raw/master/media/demo-1.PNG)
+![media](https://github.com/iamPres/react-datepick/raw/master/media/demo-2.PNG)
+![media](https://github.com/iamPres/react-datepick/raw/master/media/demo-3.PNG)
+![media](https://github.com/iamPres/react-datepick/raw/master/media/demo-4.PNG)
 
 ## Dependencies
  - install the [package.json](https://github.com/iamPres/react-datepick/blob/master/package.json) dependencies with npm
