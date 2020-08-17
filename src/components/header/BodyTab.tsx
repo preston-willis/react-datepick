@@ -4,11 +4,18 @@ import { DateRange } from "../../objects/DateRange";
 interface Inputs {
   dateRange: DateRange;
   index: number;
+  handleClick(tab: number, event: any): void;
 }
-export const BodyTab: React.FC<Inputs> = (props) => {
+export const BodyTab: React.FC<Inputs> = props => {
   return (
     <Box>
-      <Button color="primary" variant="text">
+      <Button
+        onClick={event => {
+          props.handleClick(props.index + 2, event);
+        }}
+        color="primary"
+        variant="text"
+      >
         {props.dateRange.finalDisplayText[props.index]}
       </Button>
     </Box>

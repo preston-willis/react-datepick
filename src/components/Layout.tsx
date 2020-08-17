@@ -1,7 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Box } from "@material-ui/core";
 import { DateRange } from "../objects/DateRange";
-import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import { Body } from "./Body";
 import { MenuView } from "./Menu";
 import { QuickSelect } from "./QuickSelect";
@@ -13,6 +12,7 @@ import { TimerTab } from "./header/TimerTab";
 import { BodyTab } from "./header/BodyTab";
 import { QuickSelectTab } from "./header/QuickSelectTab";
 import { ApplyButton } from "./header/ApplyButton";
+import Popper from "@material-ui/core/Popper";
 import {
   DateRangeUI,
   uiData,
@@ -72,41 +72,17 @@ export const Layout: React.FC<Inputs> = props => {
   );
 
   const [timerRunning, setTimerRunning] = useState<boolean>(false);
-
-  // STYLING
-  const listStyle = {
-    width: "800px",
-    height: "30px",
-    display: "flex",
-    justifyContent: "left",
-    alignItems: "center",
-    listStyle: "none"
-  };
-  const [menuClass, setMenuClass] = useState<string>("menuClosed");
-  const [boxClass, setBoxClass] = useState<string>("boxClosed");
-  const toggleDropdown = (num: number): void => {
-    if (num != 1 && bodyConfig.tabSelected != num) {
-      if (boxClass == "boxClosed" || boxClass == "boxTiny") {
-        setBoxClass("box");
-        setMenuClass("menuClosed");
-      }
+  const [boxClass, setBoxClass] = useState<string>("box");
+  const [popperAnchorEL, setPopperAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const toggleDropdown = (num: number, event: any): void => {
+    if (bodyConfig.tabSelected == num) {
+      setBodyConfig({ ...bodyConfig, tabSelected: -1 });
+      setPopperAnchorEl(null);
+    } else {
       setBodyConfig({ ...bodyConfig, tabSelected: num });
-    } else if (bodyConfig.tabSelected == num) {
-      if (boxClass == "boxClosed") {
-        setBoxClass("box");
-        setMenuClass("menuClosed");
-      } else {
-        setBoxClass("boxClosed");
-      }
-    }
-    if (num == 1) {
-      if (menuClass == "menuClosed") {
-        setMenuClass("menu");
-        setBoxClass("boxClosed");
-        setBodyConfig({ ...bodyConfig, tabSelected: num });
-      } else {
-        setMenuClass("menuClosed");
-      }
+      setPopperAnchorEl(event.currentTarget);
     }
   };
 
@@ -114,7 +90,6 @@ export const Layout: React.FC<Inputs> = props => {
   const menuObj = {
     refreshData,
     setRefreshData,
-    menuClass,
     timerRunning,
     setTimerRunning
   };
@@ -173,49 +148,58 @@ export const Layout: React.FC<Inputs> = props => {
     if (timerRunning) {
       setTimerRunning(false);
     }
-    setBoxClass("boxClosed");
+    setBodyConfig({ ...bodyConfig, tabSelected: -1 });
   }
 
   return (
     <MuiThemeProvider theme={defaults.theme}>
       <GlobalContext.Provider value={defaults}>
         <div className={defaults.classes.layout}>
-          <Tabs onSelect={(index: number) => toggleDropdown(index)}>
-            <TabList style={listStyle}>
-              <Tab>
-                <QuickSelectTab />
-              </Tab>
-              <Tab>
-                <TimerTab {...timerObj} />
-              </Tab>
-              <Box ml={1} mr={2}>
-                <ApplyButton
-                  dateRange={dateRange}
-                  applyChanges={applyChanges}
-                  timerRunning={timerRunning}
-                />
-              </Box>
-              <Tab>
-                <BodyTab dateRange={dateRange} index={0} />
-              </Tab>
+          <Box className={defaults.classes.flexRow}>
+            <QuickSelectTab handleClick={toggleDropdown} />
+            <TimerTab handleClick={toggleDropdown} {...timerObj} />
+            <Box ml={1} mr={2}>
+              <ApplyButton
+                dateRange={dateRange}
+                applyChanges={applyChanges}
+                timerRunning={timerRunning}
+              />
+            </Box>
+
+            <BodyTab
+              handleClick={toggleDropdown}
+              dateRange={dateRange}
+              index={0}
+            />
+            <Box mt={1}>
               <span>&#10230;</span>
-              <Tab>
-                <BodyTab dateRange={dateRange} index={1} />
-              </Tab>
-            </TabList>
-            <TabPanel>
+            </Box>
+            <BodyTab
+              handleClick={toggleDropdown}
+              dateRange={dateRange}
+              index={1}
+            />
+          </Box>
+          <Popper open={bodyConfig.tabSelected == 0} anchorEl={popperAnchorEL}>
+            <Box ml={-4}>
               <QuickSelect {...quickSelectObj} />
-            </TabPanel>
-            <TabPanel>
+            </Box>
+          </Popper>
+          <Popper open={bodyConfig.tabSelected == 1} anchorEl={popperAnchorEL}>
+            <Box ml={-4}>
               <MenuView {...menuObj} />
-            </TabPanel>
-            <TabPanel>
+            </Box>
+          </Popper>
+          <Popper open={bodyConfig.tabSelected == 2} anchorEl={popperAnchorEL}>
+            <Box ml={-4}>
               <Body {...getBodyObj(0)} />
-            </TabPanel>
-            <TabPanel>
+            </Box>
+          </Popper>
+          <Popper open={bodyConfig.tabSelected == 3} anchorEl={popperAnchorEL}>
+            <Box ml={-4}>
               <Body {...getBodyObj(1)} />
-            </TabPanel>
-          </Tabs>
+            </Box>
+          </Popper>
         </div>
       </GlobalContext.Provider>
     </MuiThemeProvider>
